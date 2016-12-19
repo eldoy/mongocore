@@ -8,6 +8,11 @@ Does validations, associations, scopes, filters, counter cache, request cache, a
 
 We're using a YAML schema file, which supports default values, data types, and security levels for each key.
 
+### Installation
+```
+gem install mongo_core
+```
+
 ### Status
 CRUD and querying works, working on validations, scopes, filters and cache.
 
