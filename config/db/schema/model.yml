@@ -1,0 +1,66 @@
+---
+meta:
+  type: document
+keys:
+  id:
+    desc: Unique id
+    read: all
+    write: app
+  link:
+    desc: Campaign link
+    read: all
+    write: dev
+    tags:
+    - badge
+  goal:
+    desc: Campaign goal
+    type: float
+    read: all
+    write: user
+    tags:
+    - badge
+  duration:
+    desc: Campaign duration in days
+    type: integer
+    default: 60
+    read: all
+    write: user
+    tags:
+    - badge
+  expires_at:
+    desc: Campaign expiry date
+    type: time
+    read: all
+    write: dev
+    tags:
+    - badge
+  location_data:
+    desc: Campaign location data
+    type: hash
+    read: all
+    write: user
+  reminders_sent:
+    desc: Reminders sent?
+    type: boolean
+    default: false
+    read: user
+    write: dev
+  votes_count:
+    desc: Votes count
+    type: integer
+    default: 0
+    read: all
+    write: dev
+    tags:
+    - badge
+belong:
+  parent:
+    read: all
+    write: dev
+accessor:
+- submittable
+- update_expires_at
+- skip_before_save
+- owner
+- validate_campaign_fields
+- update_link

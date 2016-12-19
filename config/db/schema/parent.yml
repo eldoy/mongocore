@@ -1,0 +1,16 @@
+---
+meta:
+  type: document
+keys:
+  id:
+    desc: Unique id
+    read: all
+    write: app
+  link:
+    desc: Link
+    read: all
+    write: dev
+    tags:
+many:
+  models:
+    dependent: destroy
