@@ -67,10 +67,10 @@ module MongoCore
       end
 
       # Save attributes to db
-      def save(options = {})
+      def save(o = {})
         # Create a new query
-        query = MongoCore::Query.new(self.class, {:id => @id}, options)
-        query.update(attributes)
+        q = MongoCore::Query.new(self.class, {:id => @id}, o)
+        q.update(attributes)
       end
 
       # Update document in db
@@ -143,18 +143,18 @@ module MongoCore
     class_methods do
 
       # Find, takes an id or a hash
-      def find(query = {}, options = {})
-        MongoCore::Query.new(self, query, options)
+      def find(q = {}, o = {})
+        MongoCore::Query.new(self, q, o)
       end
 
       # Count
-      def count(query = {}, options = {})
-        find(query, options).count
+      def count(q = {}, o = {})
+        find(q, o).count
       end
 
       # First
-      def first(query = {}, options = {})
-        find(query, options).first
+      def first(q = {}, o = {})
+        find(q, o).first
       end
 
       # One
@@ -197,7 +197,7 @@ module MongoCore
 
         # Replace data if we are using parameters
         params.each do |a|
-          t.scan(%r{(=>"(#{a})(\.[a-z0-9]{1,})?")}).each do |n|
+          t.scan(%r{(=>"(#{a})(\.[a-z0-9]+)?")}).each do |n|
             t.gsub!(n[0], %{=>#{n[1]}#{n[2]}})
           end
         end
