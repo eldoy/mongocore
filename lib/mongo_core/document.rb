@@ -91,13 +91,13 @@ module MongoCore
 
       # Collect the attributes
       def attributes
-        a = {};@@keys.keys.each{|k| a[k] = send(k)};a
+        a = {}; @@keys.keys.each{|k| a[k] = send(k)}; a
       end
 
       # Method missing. Here we set up variables.
       def method_missing(name, *arguments, &block)
         # Extract name and write mode
-        name =~ /([a-z0-9_]+)(=)?/
+        name =~ /([^=]+)(=)?/
         key = $1.to_sym
 
         # Dynamically read or write the value

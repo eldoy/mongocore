@@ -13,7 +13,16 @@ We're using a YAML schema file, which supports default values, data types, and s
 gem install mongo_core
 ```
 
+Then in your model:
+```ruby
+class Model
+  include MongoCore::Document
+end
+```
+
 ### Status
-CRUD and querying works, working on validations, scopes, filters and cache.
+CRUD, querying, scopes and associations works.
+
+Working on validations, sorting, dirty, counters, limit and cache.
 
 Send us a message if you want to contribute.
