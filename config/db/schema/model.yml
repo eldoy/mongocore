@@ -1,6 +1,7 @@
 ---
 meta:
   type: document
+
 keys:
   id:
     desc: Unique id
@@ -53,10 +54,12 @@ keys:
     write: dev
     tags:
     - badge
+
 belong:
   parent:
     read: all
     write: dev
+
 accessor:
 - submittable
 - update_expires_at
@@ -64,3 +67,27 @@ accessor:
 - owner
 - validate_campaign_fields
 - update_link
+
+scopes:
+  featured:
+    duration: 60
+  nested:
+    goal: 10
+  finished:
+    duration: 60
+    goal:
+      $gt: 10
+  active:
+    params:
+      - duration
+    duration:
+      $ne: duration
+  ending:
+    params:
+     - user
+    $or:
+      - user_id: user.id
+      - listener: user.id
+      - listener: user.link
+    deletors:
+      $ne: user.id

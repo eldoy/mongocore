@@ -35,7 +35,7 @@ module MongoCore
 
     # Find. Returns a MongoCore::Query
     def find(q = {}, o = {})
-      MongoCore::Query.new(@model, q, @options.merge(o))
+      MongoCore::Query.new(@model, @query.merge(q), @options.merge(o))
     end
 
     # Count. Returns the number of documents as an integer
@@ -65,5 +65,14 @@ module MongoCore
       docs.map{|doc| doc ? @model.new(doc.to_hash) : nil}.compact
     end
 
+    # Method missing. Calling scopes.
+    def method_missing(name, *arguments, &block)
+      # puts "\n\n!!!!!!!!!!!!!!!!!"
+      # puts name
+      # puts name.class
+      # puts arguments
+      return @model.send(name, @query, @options) if @model.scopes.has_key?(name)
+      super
+    end
   end
 end

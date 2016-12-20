@@ -1,6 +1,8 @@
 require 'bundler/setup'
 Bundler.require(:default, :development)
 
+require 'yaml'
+
 require './lib/mongo_core.rb'
 require './models/parent.rb'
 require './models/model.rb'

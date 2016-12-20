@@ -7,3 +7,4 @@ end
 
 require_relative 'mongo_core/document'
 require_relative 'mongo_core/query'
+require_relative 'mongo_core/scope'

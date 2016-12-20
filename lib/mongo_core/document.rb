@@ -4,21 +4,53 @@ module MongoCore
 
     # Class methods
     class_methods do
+
       # Find, takes an id or a hash
       def find(query = {}, options = {})
-        MongoCore::Query.new(self).find(query, options)
+        MongoCore::Query.new(self, query, options)
       end
 
       # Count
       def count(query = {}, options = {})
         find(query, options).count
       end
+
+      # First
+      def first(query = {}, options = {})
+        find(query, options).first
+      end
+
+
+      # Set up scope and insert it
+      def scope(name, data)
+        params = data.delete(:params) || []
+
+        # Define the scope method so we can call it
+        j = params.any? ? %{#{params.join(', ')},} : ''
+        t = %Q{
+          def #{name}(#{j} q = {}, o = {})
+            MongoCore::Query.new(self, q.merge(#{data}), o)
+          end
+        }
+
+        # Replace data if we are using parameters
+        params.each do |a|
+          t.scan(%r{(=>"(#{a})(\.[a-z0-9]{1,})?")}).each do |n|
+            t.gsub!(n[0], %{=>#{n[1]}#{n[2]}})
+          end
+        end
+
+        # puts t
+
+        # Add the method to the class
+        instance_eval t
+      end
     end
 
     # Setup model
     included do
       # Accessors, everything is writable if you need something dynamic.
-      cattr_accessor :schema, :meta, :accessors, :keys, :belong, :many, :defaults
+      cattr_accessor :schema, :meta, :accessors, :keys, :belong, :many, :scopes, :defaults
 
       # Load schema from root/config/db/schema/model_name.yml
       name = "#{self.to_s.downcase}.yml"
@@ -40,6 +72,11 @@ module MongoCore
       # Accessors
       @@accessors.each{|a| attr_accessor a.to_sym}
 
+      # Scopes
+      @@scopes = @@schema[:scopes] || {}
+
+      @@scopes.each{|k, v| scope(k, v)}
+
       # Defaults
       @@defaults = {}
       @@keys.each{|k, v| @@defaults[k] = v[:default]}
@@ -55,14 +92,14 @@ module MongoCore
         @db ||= MongoCore.db
 
         # Defaults
-        @@defaults.each{|k, v| write_attribute(k, v)}
+        @@defaults.each{|k, v| write(k, v)}
 
         # Set the attributes
-        a.each{|k, v| write_attribute(k, v)}
+        a.each{|k, v| write(k, v)}
 
         # Add IDs. The _id has the BSON object, the id has the string
-        write_attribute(:_id, BSON::ObjectId.new)
-        write_attribute(:id, @_id.to_s)
+        write(:_id, BSON::ObjectId.new)
+        write(:id, @_id.to_s)
       end
 
       # Save attributes to db
@@ -74,7 +111,7 @@ module MongoCore
 
       # Update document in db
       def update(a = {})
-        a.each{|k, v| write_attribute(k, v)}
+        a.each{|k, v| write(k, v)}
         MongoCore::Query.new(self.class, :id => @id).update(a)
       end
 
@@ -112,8 +149,8 @@ module MongoCore
 
         # Dynamically read or write the value
         if @@keys.has_key?(key)
-          return write_attribute(key, arguments.first) if write
-          return read_attribute(key)
+          return write(key, arguments.first) if write
+          return read(key)
         end
 
         super
@@ -122,12 +159,12 @@ module MongoCore
       private
 
       # Set attribute
-      def write_attribute(key, val)
+      def write(key, val)
         instance_variable_set("@#{key}", strict(key, val))
       end
 
       # Get attribute
-      def read_attribute(key)
+      def read(key)
         instance_variable_get("@#{key}")
       end
 
