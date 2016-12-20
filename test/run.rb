@@ -9,14 +9,15 @@ include Futest::Helpers
 # Load tests. Comment out the ones you don't want to run.
 begin
   [
-    'connection',
-    'query',
-    'schema',
-    'attributes',
-    'save',
-    'find',
-    'scopes',
-    'associations',
+    # 'connection',
+    # 'query',
+    # 'schema',
+    # 'attributes',
+    # 'save',
+    # 'find',
+    # 'scopes',
+    # 'associations',
+    'sort',
     # 'validations'
     # 'cache'
     # 'counters'

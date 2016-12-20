@@ -8,12 +8,11 @@ module MongoCore
       cattr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults
 
       # Load schema from root/config/db/schema/model_name.yml
-      name = "#{self.to_s.downcase}.yml"
-      path = File.join(Dir.pwd, 'config', 'db', 'schema', name)
+      f = File.join(Dir.pwd, 'config', 'db', 'schema', "#{self.to_s.downcase}.yml")
       begin
-        @@schema = YAML.load(File.read(path)).deep_symbolize_keys
+        @@schema = YAML.load(File.read(f)).deep_symbolize_keys
       rescue
-        puts "Schema not found in #{path}, please add it."
+        puts "Schema file not found in #{f}, please add it."
         exit(0)
       end
 
@@ -112,14 +111,14 @@ module MongoCore
 
       private
 
-      # Set attribute
-      def write(key, val)
-        instance_variable_set("@#{key}", strict(key, val))
-      end
-
       # Get attribute
       def read(key)
         instance_variable_get("@#{key}")
+      end
+
+      # Set attribute
+      def write(key, val)
+        instance_variable_set("@#{key}", strict(key, val))
       end
 
       # Strict type if val and schema type is set
@@ -155,6 +154,21 @@ module MongoCore
       # First
       def first(q = {}, o = {})
         find(q, o).first
+      end
+
+      # All
+      def all(q = {}, o = {})
+        find(q, o).all
+      end
+
+      # Sort
+      def sort(o = {})
+        find({}, :sort => o)
+      end
+
+      # Limit
+      def limit(n = 1)
+        find({}, :limit => n)
       end
 
       # One

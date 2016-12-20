@@ -11,8 +11,7 @@ module MongoCore
       q[:_id] = oid(q.delete(:id)) if q[:id]
 
       # Storing model and db
-      @model = m
-      @db = MongoCore.db
+      @model = m; @db = MongoCore.db
 
       # The model name is singular, the collection name is plural
       @colname = "#{m.to_s.downcase}s".to_sym
@@ -20,9 +19,8 @@ module MongoCore
       # Storing the Mongo::Collection object
       @collection = @db[@colname]
 
-      # Storing query and options
-      @query = q
-      @options = o
+      # Storing query and options. Sort and limit is stored in options
+      @query = q; o[:sort] ||= {}; o[:limit] ||= 0; @options = o
     end
 
     # Convert string id into a BSON::ObjectId
@@ -54,15 +52,25 @@ module MongoCore
     end
 
     # Return first document
-    def first
-      d = collection.find(@query, @options).first
-      d ? @model.new(d.to_hash) : nil
+    def first(doc = nil)
+      doc ||= collection.find(@query, @options).first
+      doc ? @model.new(doc.to_hash) : nil
     end
 
     # Return all documents
     def all
-      docs = collection.find(@query, @options).to_a
-      docs.map{|d| d ? @model.new(d.to_hash) : nil}
+      collection.find(@query, @options).sort(@options[:sort] || {}).
+      limit(options[:limit] || 0).to_a.map{|d| first(d)}
+    end
+
+    # Sort
+    def sort(o = {})
+      @options[:sort].merge!(o); self
+    end
+
+    # Limit
+    def limit(n = 1)
+      @options[:limit] = n; self
     end
 
     # Method missing. Calling scopes.
