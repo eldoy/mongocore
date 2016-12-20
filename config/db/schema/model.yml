@@ -54,9 +54,9 @@ keys:
     write: dev
     tags:
     - badge
-
-belong:
-  parent:
+  parent_id:
+    desc: Parent id
+    type: object_id
     read: all
     write: dev
 

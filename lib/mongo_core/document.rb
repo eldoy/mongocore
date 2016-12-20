@@ -2,55 +2,10 @@ module MongoCore
   module Document
     extend ActiveSupport::Concern
 
-    # Class methods
-    class_methods do
-
-      # Find, takes an id or a hash
-      def find(query = {}, options = {})
-        MongoCore::Query.new(self, query, options)
-      end
-
-      # Count
-      def count(query = {}, options = {})
-        find(query, options).count
-      end
-
-      # First
-      def first(query = {}, options = {})
-        find(query, options).first
-      end
-
-
-      # Set up scope and insert it
-      def scope(name, data)
-        params = data.delete(:params) || []
-
-        # Define the scope method so we can call it
-        j = params.any? ? %{#{params.join(', ')},} : ''
-        t = %Q{
-          def #{name}(#{j} q = {}, o = {})
-            MongoCore::Query.new(self, q.merge(#{data}), o)
-          end
-        }
-
-        # Replace data if we are using parameters
-        params.each do |a|
-          t.scan(%r{(=>"(#{a})(\.[a-z0-9]{1,})?")}).each do |n|
-            t.gsub!(n[0], %{=>#{n[1]}#{n[2]}})
-          end
-        end
-
-        # puts t
-
-        # Add the method to the class
-        instance_eval t
-      end
-    end
-
     # Setup model
     included do
       # Accessors, everything is writable if you need something dynamic.
-      cattr_accessor :schema, :meta, :accessors, :keys, :belong, :many, :scopes, :defaults
+      cattr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults
 
       # Load schema from root/config/db/schema/model_name.yml
       name = "#{self.to_s.downcase}.yml"
@@ -62,24 +17,31 @@ module MongoCore
         exit(0)
       end
 
-      # Extract data
+      # Meta
       @@meta = @@schema[:meta] || {}
-      @@accessors = @@schema[:accessor] || []
+
+      # Keys
       @@keys = @@schema[:keys] || {}
-      @@belong = @@schema[:belong] || {}
-      @@many = @@schema[:many] || {}
 
       # Accessors
+      @@accessors = @@schema[:accessor] || []
       @@accessors.each{|a| attr_accessor a.to_sym}
+
+      # Many
+      @@many = @@schema[:many] || {}
+      @@many.each{|k, v| manys(k, v)}
 
       # Scopes
       @@scopes = @@schema[:scopes] || {}
-
       @@scopes.each{|k, v| scope(k, v)}
 
-      # Defaults
+      # Defaults and
       @@defaults = {}
-      @@keys.each{|k, v| @@defaults[k] = v[:default]}
+      @@keys.each do |k, v|
+        @@defaults[k] = v[:default]
+        # Set up accessor for keys that end with _id
+        one(k, v) if k.to_s.ends_with?('_id')
+      end
 
       # Instance variables
       attr_accessor :db, :_id
@@ -97,8 +59,10 @@ module MongoCore
         # Set the attributes
         a.each{|k, v| write(k, v)}
 
-        # Add IDs. The _id has the BSON object, the id has the string
+        # The _id has the BSON object
         write(:_id, BSON::ObjectId.new)
+
+        # The id has the string version
         write(:id, @_id.to_s)
       end
 
@@ -130,29 +94,19 @@ module MongoCore
         a = {};@@keys.keys.each{|k| a[k] = send(k)};a
       end
 
-      # Method missing. Here we set up variables
+      # Method missing. Here we set up variables.
       def method_missing(name, *arguments, &block)
-        # puts "\n\n!!!!!!!!!!!!!!!!!"
-        # puts name
-        # puts name.class
-        # puts arguments
-
-        # Extract name and mode
-        key = name.to_s
-        if key.ends_with?('=')
-          key = key[0..-2]
-          write = true
-        end
-        key = key.to_sym
-
-        # puts "MISSING: #{key} #{setter}"
+        # Extract name and write mode
+        name =~ /([a-z0-9_]+)(=)?/
+        key = $1.to_sym
 
         # Dynamically read or write the value
         if @@keys.has_key?(key)
-          return write(key, arguments.first) if write
+          return write(key, arguments.first) if $2
           return read(key)
         end
 
+        # Pass
         super
       end
 
@@ -175,14 +129,83 @@ module MongoCore
         return val if type.nil?
 
         # Convert to the same type as in the schema
-        case type
-        when :integer then val.to_i
-        when :float   then val.to_f
-        when :boolean then !!val
-        else val
+        return val.to_i if type == :integer and !val.is_a?(Integer)
+        return val.to_f if type == :float   and !val.is_a?(Float)
+        return !!val    if type == :boolean and !!val != val
+        if type == :object_id and !val.is_a?(BSON::ObjectId)
+          return (BSON::ObjectId.from_string(val) rescue nil)
         end
+        val
+      end
+    end
+
+    # Class methods
+    class_methods do
+
+      # Find, takes an id or a hash
+      def find(query = {}, options = {})
+        MongoCore::Query.new(self, query, options)
       end
 
+      # Count
+      def count(query = {}, options = {})
+        find(query, options).count
+      end
+
+      # First
+      def first(query = {}, options = {})
+        find(query, options).first
+      end
+
+      # One
+      def one(name, data)
+        s = name[0..-4]
+        t = %Q{
+          def #{s}
+            @#{s} ||= MongoCore::Query.new(#{s.capitalize}, :id => @#{name}).first
+          end
+
+          def #{s}=(m)
+            @#{name} = m._id
+            @#{s} = m
+          end
+        }
+        class_eval t
+      end
+
+      # Many
+      def manys(name, data)
+        t = %Q{
+          def #{name}
+            MongoCore::Query.new(self, :#{self.to_s.downcase}_id => @id)
+          end
+        }
+        instance_eval t
+      end
+
+      # Set up scope and insert it
+      def scope(name, data)
+        params = data.delete(:params) || []
+
+        # Define the scope method so we can call it
+        j = params.any? ? %{#{params.join(', ')},} : ''
+        t = %Q{
+          def #{name}(#{j} q = {}, o = {})
+            MongoCore::Query.new(self, q.merge(#{data}), o)
+          end
+        }
+
+        # Replace data if we are using parameters
+        params.each do |a|
+          t.scan(%r{(=>"(#{a})(\.[a-z0-9]{1,})?")}).each do |n|
+            t.gsub!(n[0], %{=>#{n[1]}#{n[2]}})
+          end
+        end
+
+        # Add the method to the class
+        instance_eval t
+      end
     end
+
   end
 end

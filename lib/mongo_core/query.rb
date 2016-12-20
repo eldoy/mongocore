@@ -55,22 +55,19 @@ module MongoCore
 
     # Return first document
     def first
-      doc = collection.find(@query, @options).first
-      doc ? @model.new(doc.to_hash) : nil
+      d = collection.find(@query, @options).first
+      d ? @model.new(d.to_hash) : nil
     end
 
     # Return all documents
     def all
       docs = collection.find(@query, @options).to_a
-      docs.map{|doc| doc ? @model.new(doc.to_hash) : nil}.compact
+      docs.map{|d| d ? @model.new(d.to_hash) : nil}
     end
 
     # Method missing. Calling scopes.
     def method_missing(name, *arguments, &block)
-      # puts "\n\n!!!!!!!!!!!!!!!!!"
-      # puts name
-      # puts name.class
-      # puts arguments
+      # Call and return the scope if it exists
       return @model.send(name, @query, @options) if @model.scopes.has_key?(name)
       super
     end
