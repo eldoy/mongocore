@@ -17,8 +17,9 @@ begin
     # 'find',
     # 'scopes',
     # 'associations',
-    'sort',
-    # 'validations'
+    # 'sort',
+    'validate',
+    'events',
     # 'cache'
     # 'counters'
   ].each{|t| require_relative "#{t}_test"}

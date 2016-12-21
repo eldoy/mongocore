@@ -36,7 +36,7 @@ module MongoCore
       @@keys.each{|k, v| foreign(k, v); @@defaults[k] = v[:default]}
 
       # Instance variables
-      attr_accessor :db, :_id
+      attr_accessor :db, :_id, :errors
 
       # The class initializer, called when you write Model.new
       # Pass in attributes you want to set: Model.new(:duration => 60)
@@ -56,6 +56,9 @@ module MongoCore
 
         # The id has the string version
         write(:id, @_id.to_s)
+
+        # The errors hash
+        @errors = Hash.new{|h, k| h[k] = []}
       end
 
       # Save attributes to db

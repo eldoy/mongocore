@@ -11,8 +11,8 @@ MODE = ENV['RACK_ENV'] || 'development'
 
 # DB Settings
 # Default:
-Mongo::Logger.logger.level = ::Logger::DEBUG
-# Mongo::Logger.logger.level = ::Logger::FATAL
+# Mongo::Logger.logger.level = ::Logger::DEBUG
+Mongo::Logger.logger.level = ::Logger::FATAL
 
 # To make the driver log to a logfile instead:
 # Mongo::Logger.logger       = ::Logger.new('mongo.log')
