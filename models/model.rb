@@ -8,12 +8,7 @@ class Model
     errors[:goal] << 'you need a higher goal' if goal and goal < 5
   end
 
-  def before_save
-
-  end
-
-  def after_save
-
-  end
+  # Save, update, delete
+  # event(:delete){ puts "Hello" }
 
 end

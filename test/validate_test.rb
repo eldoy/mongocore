@@ -7,7 +7,7 @@ is @model.duration, -1
 
 puts @model.errors.inspect
 
-# is @model.errors[:duration].include?('duration must be greater than 0'), :eq => true
+is @model.errors[:duration].include?('duration must be greater than 0'), :eq => true
 
 
 

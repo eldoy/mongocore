@@ -18,7 +18,7 @@ begin
     # 'scopes',
     # 'associations',
     # 'sort',
-    'validate',
+    #'validate',
     'events',
     # 'cache'
     # 'counters'

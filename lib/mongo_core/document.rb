@@ -4,8 +4,9 @@ module MongoCore
 
     # Setup model
     included do
+
       # Accessors, everything is writable if you need something dynamic.
-      cattr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults
+      cattr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :events
 
       # Load schema from root/config/db/schema/model_name.yml
       f = File.join(Dir.pwd, 'config', 'db', 'schema', "#{self.to_s.downcase}.yml")
@@ -35,6 +36,9 @@ module MongoCore
       @@defaults = {}
       @@keys.each{|k, v| foreign(k, v); @@defaults[k] = v[:default]}
 
+      # The events hash
+      @@events = Hash.new{|h, k| h[k] = []}
+
       # Instance variables
       attr_accessor :db, :_id, :errors
 
@@ -44,6 +48,9 @@ module MongoCore
       def initialize(a = {})
         # Short cut for db
         @db ||= MongoCore.db
+
+        # The errors hash
+        @errors = Hash.new{|h, k| h[k] = []}
 
         # Defaults
         @@defaults.each{|k, v| write(k, v)}
@@ -56,27 +63,24 @@ module MongoCore
 
         # The id has the string version
         write(:id, @_id.to_s)
-
-        # The errors hash
-        @errors = Hash.new{|h, k| h[k] = []}
       end
 
       # Save attributes to db
       def save(o = {})
         # Create a new query
         q = MongoCore::Query.new(self.class, {:id => @id}, o)
-        q.update(attributes)
+        q.update(attributes).tap{run(:save)}
       end
 
       # Update document in db
       def update(a = {})
         a.each{|k, v| write(k, v)}
-        MongoCore::Query.new(self.class, :id => @id).update(a)
+        MongoCore::Query.new(self.class, :id => @id).update(a).tap{run(:update)}
       end
 
       # Delete a document in db
       def delete
-        MongoCore::Query.new(self.class, :id => @id).delete
+        MongoCore::Query.new(self.class, :id => @id).delete.tap{run(:delete)}
       end
 
       # Reload the document from db
@@ -87,6 +91,11 @@ module MongoCore
       # Collect the attributes
       def attributes
         a = {}; @@keys.keys.each{|k| a[k] = send(k)}; a
+      end
+
+      # Run events, available events are :save, :update, :delete
+      def run(name)
+        self.events[name].each{|e| self.instance_eval(&e)}
       end
 
       # Dynamically read or write the value
@@ -127,7 +136,7 @@ module MongoCore
         return val.to_f if type == :float   and !val.is_a?(Float)
         return !!val    if type == :boolean and !!val != val
         if type == :object_id and !val.is_a?(BSON::ObjectId)
-          return (BSON::ObjectId.from_string(val) rescue nil)
+          return BSON::ObjectId.from_string(val) rescue nil
         end
         val
       end
@@ -214,6 +223,11 @@ module MongoCore
 
         # Add the method to the class
         instance_eval t
+      end
+
+      # Register events
+      def event(name, &block)
+        @@events[name] << block
       end
     end
 
