@@ -95,7 +95,7 @@ module MongoCore
 
       # Run events, available events are :save, :update, :delete
       def run(name)
-        self.events[name].each{|e| self.instance_eval(&e)}
+        self.events[name].each{|e| e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)}
       end
 
       # Dynamically read or write the value
@@ -225,9 +225,9 @@ module MongoCore
         instance_eval t
       end
 
-      # Register events
-      def event(name, &block)
-        @@events[name] << block
+      # Register events. Pass a method name as symbol or a block
+      def event(*args, &block)
+        @@events[args[0]] << (args[1] || block)
       end
     end
 
