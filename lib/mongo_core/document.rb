@@ -23,24 +23,17 @@ module MongoCore
       @@keys = @@schema[:keys] || {}
 
       # Accessors
-      @@accessors = @@schema[:accessor] || []
-      @@accessors.each{|a| attr_accessor a.to_sym}
+      (@@accessors = @@schema[:accessor] || []).each{|a| attr_accessor a.to_sym}
 
       # Many
-      @@many = @@schema[:many] || {}
-      @@many.each{|k, v| manys(k, v)}
+      (@@many = @@schema[:many] || {}).each{|k, v| mny(k, v)}
 
       # Scopes
-      @@scopes = @@schema[:scopes] || {}
-      @@scopes.each{|k, v| scope(k, v)}
+      (@@scopes = @@schema[:scopes] || {}).each{|k, v| scope(k, v)}
 
-      # Defaults and
+      # Defaults and foreign keys
       @@defaults = {}
-      @@keys.each do |k, v|
-        @@defaults[k] = v[:default]
-        # Set up accessor for keys that end with _id
-        one(k, v) if k.to_s.ends_with?('_id')
-      end
+      @@keys.each{|k, v| foreign(k, v); @@defaults[k] = v[:default]}
 
       # Instance variables
       attr_accessor :db, :_id
@@ -93,14 +86,13 @@ module MongoCore
         a = {}; @@keys.keys.each{|k| a[k] = send(k)}; a
       end
 
-      # Method missing. Here we set up variables.
+      # Dynamically read or write the value
       def method_missing(name, *arguments, &block)
         # Extract name and write mode
         name =~ /([^=]+)(=)?/
-        key = $1.to_sym
 
-        # Dynamically read or write the value
-        if @@keys.has_key?(key)
+        # Write or read
+        if @@keys.has_key?(key = $1.to_sym)
           return write(key, arguments.first) if $2
           return read(key)
         end
@@ -171,8 +163,9 @@ module MongoCore
         find({}, :limit => n)
       end
 
-      # One
-      def one(name, data)
+      # Foreign keys
+      def foreign(name, data)
+        return unless name.to_s.ends_with?('_id')
         s = name[0..-4]
         t = %Q{
           def #{s}
@@ -188,7 +181,7 @@ module MongoCore
       end
 
       # Many
-      def manys(name, data)
+      def mny(name, data)
         t = %Q{
           def #{name}
             MongoCore::Query.new(self, :#{self.to_s.downcase}_id => @id)

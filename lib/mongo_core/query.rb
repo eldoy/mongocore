@@ -73,9 +73,8 @@ module MongoCore
       @options[:limit] = n; self
     end
 
-    # Method missing. Calling scopes.
+    # Call and return the scope if it exists
     def method_missing(name, *arguments, &block)
-      # Call and return the scope if it exists
       return @model.send(name, @query, @options) if @model.scopes.has_key?(name)
       super
     end
