@@ -1,13 +1,13 @@
 require 'bundler/setup'
 Bundler.require(:default, :development)
 
+MODE = ENV['RACK_ENV'] || 'development'
+
 require 'yaml'
 
 require './lib/mongo_core.rb'
-require './models/parent.rb'
 require './models/model.rb'
-
-MODE = ENV['RACK_ENV'] || 'development'
+require './models/parent.rb'
 
 # DB Settings
 # Default:

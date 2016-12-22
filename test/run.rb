@@ -1,27 +1,24 @@
 #!/usr/bin/env ruby
 
 require './config/boot'
-require './models/parent.rb'
-require './models/model.rb'
 
 include Futest::Helpers
 
 # Load tests. Comment out the ones you don't want to run.
 begin
   [
-    # 'connection',
-    # 'query',
-    # 'schema',
-    # 'attributes',
-    # 'save',
-    # 'find',
+    'connection',
+    'query',
+    'schema',
+    'attributes',
+    'save',
+    'find',
     'scopes',
-    # 'associations',
-    # 'sort',
-    #'validate',
-    # 'events',
-    # 'cache'
-    # 'counters'
+    'associations',
+    'sort',
+    'validate',
+    'events',
+    'cache'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x
   e(x)

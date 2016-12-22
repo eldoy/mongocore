@@ -20,4 +20,5 @@ is @p, :eq => @parent
 
 @models = @parent.models.featured.all
 
-puts @models.inspect
+is @models, :a? => Array
+is @models.first, :a? => Model

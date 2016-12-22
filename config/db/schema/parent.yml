@@ -1,5 +1,6 @@
 ---
 meta:
+  name: parent
   type: document
 keys:
   id:
@@ -11,6 +12,24 @@ keys:
     read: all
     write: dev
     tags:
+  models_count:
+    desc: Models count
+    type: integer
+    default: 0
+    read: all
+    write: app
+  models_featured_count:
+    desc: Models featured count
+    type: integer
+    default: 0
+    read: all
+    write: app
+  models_featured_nested_count:
+    desc: Models nested featured count
+    type: integer
+    default: 0
+    read: all
+    write: app
 many:
   models:
     dependent: destroy

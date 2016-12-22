@@ -15,6 +15,7 @@ is @model.duration, :gt => 0
 
 # All
 @models = @query.all
+
 is @models, :a? => Array
 is @models.size, :gt => 0
 

@@ -1,27 +1,27 @@
 ---
 meta:
+  name: model
   type: document
-
 keys:
   id:
     desc: Unique id
     read: all
     write: app
   link:
-    desc: Campaign link
+    desc: Model link
     read: all
     write: dev
     tags:
     - badge
   goal:
-    desc: Campaign goal
+    desc: Model goal
     type: float
     read: all
     write: user
     tags:
     - badge
   duration:
-    desc: Campaign duration in days
+    desc: Model duration in days
     type: integer
     default: 60
     read: all
@@ -29,14 +29,14 @@ keys:
     tags:
     - badge
   expires_at:
-    desc: Campaign expiry date
+    desc: Model expiry date
     type: time
     read: all
     write: dev
     tags:
     - badge
   location_data:
-    desc: Campaign location data
+    desc: Model location data
     type: hash
     read: all
     write: user
@@ -59,7 +59,6 @@ keys:
     type: object_id
     read: all
     write: dev
-
 accessor:
 - submittable
 - update_expires_at
@@ -67,7 +66,6 @@ accessor:
 - owner
 - validate_campaign_fields
 - update_link
-
 scopes:
   featured:
     duration: 60

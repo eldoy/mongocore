@@ -6,38 +6,40 @@ module MongoCore
     included do
 
       # Accessors, everything is writable if you need something dynamic.
-      cattr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :events
+      class << self
+        attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :events, :test
+      end
 
       # Load schema from root/config/db/schema/model_name.yml
       f = File.join(Dir.pwd, 'config', 'db', 'schema', "#{self.to_s.downcase}.yml")
       begin
-        @@schema = YAML.load(File.read(f)).deep_symbolize_keys
+        @schema = YAML.load(File.read(f)).deep_symbolize_keys
       rescue
         puts "Schema file not found in #{f}, please add it."
         exit(0)
       end
 
       # Meta
-      @@meta = @@schema[:meta] || {}
+      @meta = @schema[:meta] || {}
 
       # Keys
-      @@keys = @@schema[:keys] || {}
+      @keys = @schema[:keys] || {}
 
       # Accessors
-      (@@accessors = @@schema[:accessor] || []).each{|a| attr_accessor a.to_sym}
+      (@accessors = @schema[:accessor] || []).each{|a| attr_accessor a.to_sym}
 
       # Many
-      (@@many = @@schema[:many] || {}).each{|k, v| mny(k, v)}
+      (@many = @schema[:many] || {}).each{|k, v| mny(k, v)}
 
       # Scopes
-      (@@scopes = @@schema[:scopes] || {}).each{|k, v| scope(k, v)}
+      (@scopes = @schema[:scopes] || {}).each{|k, v| scope(k, v)}
 
       # Defaults and foreign keys
-      @@defaults = {}
-      @@keys.each{|k, v| foreign(k, v); @@defaults[k] = v[:default]}
+      @defaults = {}
+      @keys.each{|k, v| foreign(k, v); @defaults[k] = v[:default]}
 
       # The events hash
-      @@events = Hash.new{|h, k| h[k] = []}
+      @events = Hash.new{|h, k| h[k] = []}
 
       # Instance variables
       attr_accessor :db, :_id, :errors
@@ -53,7 +55,7 @@ module MongoCore
         @errors = Hash.new{|h, k| h[k] = []}
 
         # Defaults
-        @@defaults.each{|k, v| write(k, v)}
+        self.class.defaults.each{|k, v| write(k, v)}
 
         # Set the attributes
         a.each{|k, v| write(k, v)}
@@ -90,12 +92,12 @@ module MongoCore
 
       # Collect the attributes
       def attributes
-        a = {}; @@keys.keys.each{|k| a[k] = send(k)}; a
+        a = {}; self.class.keys.keys.each{|k| a[k] = send(k)}; a
       end
 
       # Run events, available events are :save, :update, :delete
       def run(name)
-        self.events[name].each{|e| e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)}
+        self.class.events[name].each{|e| e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)}
       end
 
       # Dynamically read or write the value
@@ -104,7 +106,7 @@ module MongoCore
         name =~ /([^=]+)(=)?/
 
         # Write or read
-        if @@keys.has_key?(key = $1.to_sym)
+        if self.class.keys.has_key?(key = $1.to_sym)
           return write(key, arguments.first) if $2
           return read(key)
         end
@@ -128,7 +130,7 @@ module MongoCore
       # Strict type if val and schema type is set
       def strict(key, val)
         return nil if val.nil?
-        type = @@keys[key][:type].to_sym rescue nil
+        type = self.class.keys[key][:type].to_sym rescue nil
         return val if type.nil?
 
         # Convert to the same type as in the schema
@@ -175,6 +177,17 @@ module MongoCore
         find({}, :limit => n)
       end
 
+      # Register events. Pass a method name as symbol or a block
+      # Possible events are :save, :update, :delete
+      def event(*args, &block)
+        events[args[0]] << (args[1] || block)
+      end
+
+      # # # # #
+      # Templates for foreign key, many-associations and scopes.
+      # # # # #
+      private
+
       # Foreign keys
       def foreign(name, data)
         return unless name.to_s.ends_with?('_id')
@@ -199,7 +212,6 @@ module MongoCore
             MongoCore::Query.new(#{name[0..-2].capitalize}, :#{self.to_s.downcase}_id => @_id)
           end
         }
-
         class_eval t
       end
 
@@ -223,15 +235,7 @@ module MongoCore
             MongoCore::Query.new(self, q.merge(#{d}), {:scope => [:#{name}]}.merge(o))
           end
         }
-
-        # Add the method to the class
         instance_eval t
-      end
-
-      # Register events. Pass a method name as symbol or a block
-      # Possible events are save, update, delete
-      def event(*args, &block)
-        @@events[args[0]] << (args[1] || block)
       end
 
     end

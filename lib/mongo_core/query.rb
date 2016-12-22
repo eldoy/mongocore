@@ -3,6 +3,9 @@ module MongoCore
 
     attr_accessor :db, :model, :collection, :colname, :query, :options
 
+    # These will be deleted before doing the find
+    BAR = [:scope]
+
     def initialize(m, q = {}, o = {})
       # Support find passing a ID
       q = {:_id => oid(q)} if q.is_a?(String) or q.is_a?(BSON::ObjectId)
@@ -20,7 +23,9 @@ module MongoCore
       @collection = @db[@colname]
 
       # Storing query and options. Sort and limit is stored in options
-      @query = q; o[:sort] ||= {}; o[:limit] ||= 0; o[:scope] ||= []; @options = o
+      o[:sort] ||= {}; o[:limit] ||= 0; o[:scope] ||= []
+      @options = o
+      @query = q
     end
 
     # Convert string id into a BSON::ObjectId
@@ -58,20 +63,22 @@ module MongoCore
 
     # Return all documents
     def all
-      fetch(:to_a).map{|d| first(d)}
+      self.fetch(:to_a).map{|d| first(d)}
     end
 
     # Fetch docs
     def fetch(n)
-      # Clean options
-      [:scope].each{|k| @options.delete(k)}
-      s, l = [@options.delete(:sort), @options.delete(:limit)]
+      # Clean and extract options
+      BAR.each{|k| @options.delete(k)}
+      s, l = [@options.delete(:sort) || {}, @options.delete(:limit) || 0]
+
+      # Do the find
       collection.find(@query, @options).sort(s).limit(l).send(n)
     end
 
     # Sort
     def sort(o = {})
-      @options[:sort].merge!(o); self
+      @options[:sort] = (options[:sort] || {}).merge!(o); self
     end
 
     # Limit
