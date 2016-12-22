@@ -96,8 +96,8 @@ module MongoCore
       end
 
       # Run events, available events are :save, :update, :delete
-      def run(name)
-        self.class.events[name].each{|e| e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)}
+      def run(key)
+        self.class.events[key].each{|e| e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)}
       end
 
       # Dynamically read or write the value
@@ -153,18 +153,18 @@ module MongoCore
       end
 
       # Count
-      def count(q = {}, o = {})
-        find(q, o).count
+      def count(*args)
+        find(*args).count
       end
 
       # First
-      def first(q = {}, o = {})
-        find(q, o).first
+      def first(*args)
+        find(*args).first
       end
 
       # All
-      def all(q = {}, o = {})
-        find(q, o).all
+      def all(*args)
+        find(*args).all
       end
 
       # Sort
@@ -189,16 +189,16 @@ module MongoCore
       private
 
       # Foreign keys
-      def foreign(name, data)
-        return unless name.to_s.ends_with?('_id')
-        s = name[0..-4]
+      def foreign(key, data)
+        return unless key.to_s.ends_with?('_id')
+        s = key[0..-4]
         t = %Q{
           def #{s}
-            @#{s} ||= MongoCore::Query.new(#{s.capitalize}, :id => @#{name}).first
+            @#{s} ||= MongoCore::Query.new(#{s.capitalize}, :id => @#{key}).first
           end
 
           def #{s}=(m)
-            @#{name} = m._id
+            @#{key} = m._id
             @#{s} = m
           end
         }
@@ -206,17 +206,17 @@ module MongoCore
       end
 
       # Many
-      def mny(name, data)
+      def mny(key, data)
         t = %Q{
-          def #{name}
-            MongoCore::Query.new(#{name[0..-2].capitalize}, {:#{self.to_s.downcase}_id => @_id}, {}, :source => self)
+          def #{key}
+            MongoCore::Query.new(#{key[0..-2].capitalize}, {:#{self.to_s.downcase}_id => @_id}, {}, :source => self)
           end
         }
         class_eval t
       end
 
       # Set up scope and insert it
-      def scope(name, data)
+      def scope(key, data)
         # Extract the parameters
         pm = data.delete(:params) || []
 
@@ -231,8 +231,8 @@ module MongoCore
         # Define the scope method so we can call it
         j = pm.any? ? %{#{pm.join(', ')},} : ''
         t = %Q{
-          def #{name}(#{j} q = {}, o = {}, s = {})
-            MongoCore::Query.new(self, q.merge(#{d}), o, {:scope => [:#{name}]}.merge(s))
+          def #{key}(#{j} q = {}, o = {}, s = {})
+            MongoCore::Query.new(self, q.merge(#{d}), o, {:scope => [:#{key}]}.merge(s))
           end
         }
         instance_eval t

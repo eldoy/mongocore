@@ -34,8 +34,8 @@ module MongoCore
     end
 
     # Find. Returns a MongoCore::Query
-    def find(q = {}, o = {})
-      MongoCore::Query.new(@model, @query.merge(q), @options.merge(o))
+    def find(q = {}, o = {}, s = {})
+      MongoCore::Query.new(@model, @query.merge(q), @options.merge(o), @store.merge(s))
     end
 
     # Count. Returns the number of documents as an integer
@@ -77,12 +77,12 @@ module MongoCore
 
     # Sort
     def sort(o = {})
-      @store[:sort] = (store[:sort] || {}).merge!(o); self
+      find(@query, @options, @store.tap{@store[:sort].merge(o)})
     end
 
     # Limit
     def limit(n = 1)
-      @store[:limit] = n; self
+      find(@query, @options, @store.tap{@store[:limit] = n})
     end
 
     # Call and return the scope if it exists

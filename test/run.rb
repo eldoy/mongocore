@@ -18,6 +18,7 @@ begin
     'sort',
     'validate',
     'events',
+    'counter',
     'cache'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x
