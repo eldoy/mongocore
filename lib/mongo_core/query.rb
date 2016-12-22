@@ -53,14 +53,20 @@ module MongoCore
 
     # Return first document
     def first(doc = nil)
-      doc ||= collection.find(@query, @options).first
-      doc ? @model.new(doc.to_hash) : nil
+      (doc ||= fetch(:first)) ? @model.new(doc.to_hash) : nil
     end
 
     # Return all documents
     def all
-      collection.find(@query, @options).sort(@options[:sort] || {}).
-      limit(options[:limit] || 0).to_a.map{|d| first(d)}
+      fetch(:to_a).map{|d| first(d)}
+    end
+
+    # Fetch docs
+    def fetch(n)
+      # Clean options
+      [:scope].each{|k| @options.delete(k)}
+      s, l = [@options.delete(:sort), @options.delete(:limit)]
+      collection.find(@query, @options).sort(s).limit(l).send(n)
     end
 
     # Sort
@@ -75,7 +81,7 @@ module MongoCore
 
     # Call and return the scope if it exists
     def method_missing(name, *arguments, &block)
-      return @model.send(name, @query, @options) if @model.scopes.has_key?(name)
+      return @model.send(name, @query, @options.tap{@options[:scope] << name}) if @model.scopes.has_key?(name)
       super
     end
   end

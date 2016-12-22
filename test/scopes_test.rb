@@ -19,3 +19,14 @@ is @query.query, :eq => {:duration => 60, :goal => 10}
 @query = @query.find(:reminder_sent => false)
 
 is @query.query, :eq => {:duration => 60, :goal => 10, :reminder_sent => false}
+
+@parent = Parent.new
+@parent.save
+
+@model = Model.new(:parent_id => @parent.id)
+@model.save
+@model.clone.save
+
+# is @parent.models.all, :a? => Array
+
+# puts @query.count

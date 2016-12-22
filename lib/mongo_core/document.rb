@@ -109,7 +109,7 @@ module MongoCore
           return read(key)
         end
 
-        # Pass
+        # Pass if nothing found
         super
       end
 
@@ -204,28 +204,31 @@ module MongoCore
 
       # Set up scope and insert it
       def scope(name, data)
-        params = data.delete(:params) || []
-
-        # Define the scope method so we can call it
-        j = params.any? ? %{#{params.join(', ')},} : ''
-        t = %Q{
-          def #{name}(#{j} q = {}, o = {})
-            MongoCore::Query.new(self, q.merge(#{data}), o)
-          end
-        }
+        # Extract the parameters
+        pm = data.delete(:params) || []
 
         # Replace data if we are using parameters
-        params.each do |a|
-          t.scan(%r{(=>"(#{a})(\.[a-z0-9]+)?")}).each do |n|
-            t.gsub!(n[0], %{=>#{n[1]}#{n[2]}})
+        d = %{#{data}}
+        pm.each do |a|
+          d.scan(%r{(=>"(#{a})(\.[a-z0-9]+)?")}).each do |n|
+            d.gsub!(n[0], %{=>#{n[1]}#{n[2]}})
           end
         end
+
+        # Define the scope method so we can call it
+        j = pm.any? ? %{#{pm.join(', ')},} : ''
+        t = %Q{
+          def #{name}(#{j} q = {}, o = {})
+            MongoCore::Query.new(self, q.merge(#{d}), {:scope => [:#{name}]}.merge(o))
+          end
+        }
 
         # Add the method to the class
         instance_eval t
       end
 
       # Register events. Pass a method name as symbol or a block
+      # Possible events are save, update, delete
       def event(*args, &block)
         @@events[args[0]] << (args[1] || block)
       end

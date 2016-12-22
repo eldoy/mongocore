@@ -5,6 +5,8 @@ test 'Associations'
 is @query, :a? => MongoCore::Query
 @model = @query.first
 
+# is @model, :a? => Model
+
 # One
 @parent = Parent.new
 @parent.link = 'hello'

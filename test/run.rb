@@ -15,11 +15,11 @@ begin
     # 'attributes',
     # 'save',
     # 'find',
-    # 'scopes',
-    # 'associations',
+    'scopes',
+    'associations',
     # 'sort',
     #'validate',
-    'events',
+    # 'events',
     # 'cache'
     # 'counters'
   ].each{|t| require_relative "#{t}_test"}
