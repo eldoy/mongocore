@@ -20,7 +20,7 @@ module MongoCore
       @collection = @db[@colname]
 
       # Storing query and options. Sort and limit is stored in options
-      @query = q; o[:sort] ||= {}; o[:limit] ||= 0; @options = o
+      @query = q; o[:sort] ||= {}; o[:limit] ||= 0; o[:scope] ||= []; @options = o
     end
 
     # Convert string id into a BSON::ObjectId

@@ -15,7 +15,7 @@ begin
     # 'attributes',
     # 'save',
     # 'find',
-    'scopes',
+    # 'scopes',
     'associations',
     # 'sort',
     #'validate',

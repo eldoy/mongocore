@@ -196,10 +196,12 @@ module MongoCore
       def mny(name, data)
         t = %Q{
           def #{name}
-            MongoCore::Query.new(self, :#{self.to_s.downcase}_id => @id)
+            MongoCore::Query.new(#{name[0..-2].capitalize}, :#{self.to_s.downcase}_id => @_id)
           end
         }
-        instance_eval t
+
+        puts t
+        class_eval t
       end
 
       # Set up scope and insert it
@@ -231,6 +233,11 @@ module MongoCore
       # Possible events are save, update, delete
       def event(*args, &block)
         @@events[args[0]] << (args[1] || block)
+      end
+
+      # Method missing for class
+      def method_missing(name, *arguments, &block)
+
       end
     end
 
