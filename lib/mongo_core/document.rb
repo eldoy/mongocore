@@ -148,8 +148,8 @@ module MongoCore
     class_methods do
 
       # Find, takes an id or a hash
-      def find(q = {}, o = {})
-        MongoCore::Query.new(self, q, o)
+      def find(q = {}, o = {}, s = {})
+        MongoCore::Query.new(self, q, o, s)
       end
 
       # Count
@@ -169,12 +169,12 @@ module MongoCore
 
       # Sort
       def sort(o = {})
-        find({}, :sort => o)
+        find({}, {}, :sort => o)
       end
 
       # Limit
       def limit(n = 1)
-        find({}, :limit => n)
+        find({}, {}, :limit => n)
       end
 
       # Register events. Pass a method name as symbol or a block
@@ -209,7 +209,7 @@ module MongoCore
       def mny(name, data)
         t = %Q{
           def #{name}
-            MongoCore::Query.new(#{name[0..-2].capitalize}, :#{self.to_s.downcase}_id => @_id)
+            MongoCore::Query.new(#{name[0..-2].capitalize}, {:#{self.to_s.downcase}_id => @_id}, {}, :source => self)
           end
         }
         class_eval t
@@ -231,8 +231,8 @@ module MongoCore
         # Define the scope method so we can call it
         j = pm.any? ? %{#{pm.join(', ')},} : ''
         t = %Q{
-          def #{name}(#{j} q = {}, o = {})
-            MongoCore::Query.new(self, q.merge(#{d}), {:scope => [:#{name}]}.merge(o))
+          def #{name}(#{j} q = {}, o = {}, s = {})
+            MongoCore::Query.new(self, q.merge(#{d}), o, {:scope => [:#{name}]}.merge(s))
           end
         }
         instance_eval t

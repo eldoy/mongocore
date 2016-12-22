@@ -1,12 +1,10 @@
 module MongoCore
   class Query
 
-    attr_accessor :db, :model, :collection, :colname, :query, :options
+    attr_accessor :db, :model, :collection, :colname, :query, :options, :store
 
-    # These will be deleted before doing the find
-    BAR = [:scope]
-
-    def initialize(m, q = {}, o = {})
+    # These options will be deleted before doing the find
+    def initialize(m, q = {}, o = {}, s = {})
       # Support find passing a ID
       q = {:_id => oid(q)} if q.is_a?(String) or q.is_a?(BSON::ObjectId)
 
@@ -23,9 +21,8 @@ module MongoCore
       @collection = @db[@colname]
 
       # Storing query and options. Sort and limit is stored in options
-      o[:sort] ||= {}; o[:limit] ||= 0; o[:scope] ||= []
-      @options = o
-      @query = q
+      s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil
+      @options = o; @query = q; @store = s
     end
 
     # Convert string id into a BSON::ObjectId
@@ -43,7 +40,13 @@ module MongoCore
 
     # Count. Returns the number of documents as an integer
     def count
-      collection.find(@query, @options).count
+      chain || fetch(:count)
+    end
+
+    # Check if there's a corresponding counter for this count
+    def chain(s = @store[:source], c = @store[:chain])
+      r = s.send(%{#{@colname}#{c.present? ? "_#{c.join('_')}" : ''}_count}) rescue nil
+      return r if r and r > 0
     end
 
     # Update
@@ -68,27 +71,23 @@ module MongoCore
 
     # Fetch docs
     def fetch(n)
-      # Clean and extract options
-      BAR.each{|k| @options.delete(k)}
-      s, l = [@options.delete(:sort) || {}, @options.delete(:limit) || 0]
-
       # Do the find
-      collection.find(@query, @options).sort(s).limit(l).send(n)
+      collection.find(@query, @options).sort(@store[:sort] || {}).limit(@store[:limit] || 0).send(n)
     end
 
     # Sort
     def sort(o = {})
-      @options[:sort] = (options[:sort] || {}).merge!(o); self
+      @store[:sort] = (store[:sort] || {}).merge!(o); self
     end
 
     # Limit
     def limit(n = 1)
-      @options[:limit] = n; self
+      @store[:limit] = n; self
     end
 
     # Call and return the scope if it exists
     def method_missing(name, *arguments, &block)
-      return @model.send(name, @query, @options.tap{@options[:scope] << name}) if @model.scopes.has_key?(name)
+      return @model.send(name, @query, @options, @store.tap{@store[:chain] << name}) if @model.scopes.has_key?(name)
       super
     end
   end

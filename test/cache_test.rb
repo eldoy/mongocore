@@ -21,8 +21,9 @@ is @parent.models_count, 2
 
 is @parent.models.count, 2
 
-# TODO: FIX HERE LOOKUP ASSOCIATIONS
-
 @parent.models_count = 3
 is @parent.models.count, 3
+@parent.save
 
+c = @parent.models.featured.count
+is c, :a? => Integer
