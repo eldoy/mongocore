@@ -69,7 +69,7 @@ module MongoCore
       self.fetch(:to_a).map{|d| first(d)}
     end
 
-    # Fetch docs
+    # Fetch docs, pass :first, :to_a or :count
     def fetch(n)
       # Do the find
       collection.find(@query, @options).sort(@store[:sort] || {}).limit(@store[:limit] || 0).send(n)

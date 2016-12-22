@@ -10,8 +10,8 @@ module MongoCore
         attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :events, :test
       end
 
-      # Load schema from root/config/db/schema/model_name.yml
-      f = File.join(Dir.pwd, 'config', 'db', 'schema', "#{self.to_s.downcase}.yml")
+      # Load schema file
+      f = File.join(MongoCore.schema, "#{self.to_s.downcase}.yml")
       begin
         @schema = YAML.load(File.read(f)).deep_symbolize_keys
       rescue
