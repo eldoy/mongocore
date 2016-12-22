@@ -7,17 +7,17 @@ include Futest::Helpers
 # Load tests. Comment out the ones you don't want to run.
 begin
   [
-    'connection',
-    'query',
-    'schema',
-    'attributes',
-    'save',
-    'find',
-    'scopes',
-    'associations',
-    'sort',
-    'validate',
-    'events',
+    # 'connection',
+    # 'query',
+    # 'schema',
+    # 'attributes',
+    # 'save',
+    # 'find',
+    # 'scopes',
+    # 'associations',
+    # 'sort',
+    # 'validate',
+    # 'events',
     'cache'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x

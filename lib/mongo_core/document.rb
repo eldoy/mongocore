@@ -52,7 +52,7 @@ module MongoCore
         @db ||= MongoCore.db
 
         # The errors hash
-        @errors = Hash.new{|h, k| h[k] = []}
+        @errors ||= Hash.new{|h, k| h[k] = []}
 
         # Defaults
         self.class.defaults.each{|k, v| write(k, v)}
@@ -61,7 +61,7 @@ module MongoCore
         a.each{|k, v| write(k, v)}
 
         # The _id has the BSON object
-        write(:_id, BSON::ObjectId.new)
+        write(:_id, BSON::ObjectId.new) unless @_id
 
         # The id has the string version
         write(:id, @_id.to_s)
