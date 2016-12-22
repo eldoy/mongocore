@@ -28,9 +28,6 @@ is @model.goal, 10
 @update = @model.update(:goal => nil)
 is @model.goal, nil
 
-
-
-
 test 'Delete'
 
 @delete = @model.delete

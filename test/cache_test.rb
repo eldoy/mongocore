@@ -1,10 +1,8 @@
 test 'Cache'
 
-@model = Model.first
+@query = Model.find
 
-is @model, :a? => Model
-
-@model = Model.first
-
+@query.first
+@query.first
 
 
