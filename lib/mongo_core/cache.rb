@@ -25,15 +25,20 @@ module MongoCore
 
     # Update
     def self.update(q, a)
-      key = %{#{q.cache}-first}
-      RequestStore.store[:cache][key] = nil
+      clear(q)
       q.collection.update_one(q.query, {'$set' => a}, :upsert => true)
     end
 
     # Remove from cache
     def self.delete(q)
-      RequestStore.store[:cache] = {}
+      clear(q)
       q.collection.delete_one(q.query)
+    end
+
+    private
+    def self.clear(q)
+      key = %{#{q.cache}-first}
+      RequestStore.store[:cache][key] = nil
     end
 
   end
