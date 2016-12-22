@@ -200,7 +200,6 @@ module MongoCore
           end
         }
 
-        puts t
         class_eval t
       end
 
@@ -235,11 +234,6 @@ module MongoCore
         @@events[args[0]] << (args[1] || block)
       end
 
-      # Method missing for class
-      def method_missing(name, *arguments, &block)
-
-      end
     end
-
   end
 end

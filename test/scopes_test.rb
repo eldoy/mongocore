@@ -4,7 +4,7 @@ is Model.scopes, :a? => Hash
 
 is Model.featured, :a? => MongoCore::Query
 
-@models = Model.featured.finished.all
+@models = Model.featured.finished.nested.all
 
 is @models, :a? => Array
 
@@ -25,8 +25,12 @@ is @query.query, :eq => {:duration => 60, :goal => 10, :reminder_sent => false}
 
 @model = Model.new(:parent_id => @parent.id)
 @model.save
-@model.clone.save
 
-# is @parent.models.all, :a? => Array
+@model = Model.new
+@model.parent_id = @parent.id
+@model.save
 
-# puts @query.count
+@models = @parent.models.all
+is @models, :a? => Array
+is @models.count, 2
+is @models.first, :a? => Model
