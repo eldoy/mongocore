@@ -21,10 +21,7 @@ module MongoCore
     def find
       return cache[key] if (MongoCore.caching and cache.has_key?(key))
       .tap{|h| puts 'Cache ' + (h ? 'Hit!' : 'Miss') + ': ' + key if MongoCore.debug}
-      query.collection.find(query.query, query.options).
-      sort(query.store[:sort] || {}).
-      limit(query.store[:limit] || 0).send(type).
-      tap{|r| cache[key] = r if MongoCore.caching}
+      query.cursor.send(type).tap{|r| cache[key] = r if MongoCore.caching}
     end
 
     # Update

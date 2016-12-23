@@ -82,9 +82,9 @@ module MongoCore
       MongoCore::Cache.new(self, type).find
     end
 
-    # Cache key
-    def cac(type)
-      @ck ||= %{#{type}}
+    # Cursor
+    def cursor
+      collection.find(query, options).sort(store[:sort]).limit(store[:limit])
     end
 
     # Sort
