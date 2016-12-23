@@ -1,2 +1,0 @@
-test 'Many'
-@model = 'hello'

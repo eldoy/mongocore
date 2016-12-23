@@ -20,7 +20,9 @@ begin
     'validate',
     'events',
     'counter',
-    'cache'
+    'cache',
+    'dirty',
+    # 'access'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x
   e(x)

@@ -20,6 +20,8 @@ is @query.query, :eq => {:duration => 60, :goal => 10}
 
 is @query.query, :eq => {:duration => 60, :goal => 10, :reminder_sent => false}
 
+is @query.all, :a? => Array
+
 @parent = Parent.new
 @parent.save
 
