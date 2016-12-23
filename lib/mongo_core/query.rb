@@ -30,7 +30,7 @@ module MongoCore
 
     # Generate the cache key
     def generate
-       Digest::MD5.hexdigest(%{#{@model}#{@query.sort}#{@options.sort}#{@store[:sort]}#{@store[:limit]}})
+       Digest::MD5.hexdigest(%{#{@model}#{@query.sort}#{@options.sort}#{@store[:chain]}#{@store[:sort]}#{@store[:limit]}})
     end
 
     # Convert string id into a BSON::ObjectId
