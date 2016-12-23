@@ -3,9 +3,9 @@ module MongoCore
     # Init cache store
     RequestStore.store[:cache] = {}
 
-    # Type is :first, :to_a or :count
-    # Query is a MongoCore::Query
     # The main find method.
+    # @query is a MongoCore::Query
+    # @type is :first, :to_a or :count
     # Uses the MongoDB Ruby driver to query the DB.
     def self.find(q, type)
       if MongoCore.caching
@@ -29,13 +29,15 @@ module MongoCore
       q.collection.update_one(q.query, {'$set' => a}, :upsert => true)
     end
 
-    # Remove from cache
+    # Delete
     def self.delete(q)
       clear(q)
       q.collection.delete_one(q.query)
     end
 
     private
+
+    # Remove from cache
     def self.clear(q)
       key = %{#{q.cache}-first}
       RequestStore.store[:cache][key] = nil

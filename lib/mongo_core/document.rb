@@ -151,8 +151,8 @@ module MongoCore
     class_methods do
 
       # Find, takes an id or a hash
-      def find(q = {}, o = {}, s = {})
-        MongoCore::Query.new(self, q, o, s)
+      def find(*args)
+        MongoCore::Query.new(self, *args)
       end
 
       # Count
