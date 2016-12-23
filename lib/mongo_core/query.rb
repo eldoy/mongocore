@@ -26,7 +26,6 @@ module MongoCore
 
       # Generate cache key
       @cache ||= generate
-
     end
 
     # Generate the cache key

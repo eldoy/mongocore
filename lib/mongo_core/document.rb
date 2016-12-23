@@ -7,7 +7,7 @@ module MongoCore
 
       # Accessors, everything is writable if you need something dynamic.
       class << self
-        attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :events, :test
+        attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :befores, :afters
       end
 
       # Load schema file
@@ -38,8 +38,11 @@ module MongoCore
       @defaults = {}
       @keys.each{|k, v| foreign(k, v); @defaults[k] = v[:default]}
 
-      # The events hash
-      @events = Hash.new{|h, k| h[k] = []}
+      # The before filters
+      @befores = Hash.new{|h, k| h[k] = []}
+
+      # The after filters
+      @afters = Hash.new{|h, k| h[k] = []}
 
       # Instance variables
       attr_accessor :db, :_id, :errors
@@ -71,18 +74,18 @@ module MongoCore
       def save(o = {})
         # Create a new query
         q = MongoCore::Query.new(self.class, {:id => @id}, o)
-        q.update(attributes).tap{run(:save)}
+        q.update(attributes).tap{run(:after, :save)}
       end
 
       # Update document in db
       def update(a = {})
         a.each{|k, v| write(k, v)}
-        MongoCore::Query.new(self.class, :id => @id).update(a).tap{run(:update)}
+        MongoCore::Query.new(self.class, :id => @id).update(a).tap{run(:after, :update)}
       end
 
       # Delete a document in db
       def delete
-        MongoCore::Query.new(self.class, :id => @id).delete.tap{run(:delete)}
+        MongoCore::Query.new(self.class, :id => @id).delete.tap{run(:after, :delete)}
       end
 
       # Reload the document from db
@@ -95,9 +98,9 @@ module MongoCore
         a = {}; self.class.keys.keys.each{|k| a[k] = send(k)}; a
       end
 
-      # Run events, available events are :save, :update, :delete
-      def run(key)
-        self.class.events[key].each{|e| e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)}
+      # Available filters are :save, :update, :delete
+      def run(filter, key)
+        self.class.send(%{#{filter}s})[key].each{|e| e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)}
       end
 
       # Dynamically read or write the value
@@ -177,10 +180,14 @@ module MongoCore
         find({}, {}, :limit => n)
       end
 
-      # Register events. Pass a method name as symbol or a block
+      # Register afters and befores. Pass a method name as symbol or a block
       # Possible events are :save, :update, :delete
-      def event(*args, &block)
-        events[args[0]] << (args[1] || block)
+      def after(*args, &block)
+        afters[args[0]] << (args[1] || block)
+      end
+
+      def before(*args, &block)
+        befores[args[0]] << (args[1] || block)
       end
 
       # # # # #

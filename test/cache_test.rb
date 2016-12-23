@@ -4,16 +4,3 @@ test 'Cache'
 
 @query.first
 @query.first
-
-@models = Model.all
-@models = Model.all
-
-@models = Model.all
-@models = Model.all
-
-@models = Model.all
-@models = Model.all
-
-@models = Model.all
-@models = Model.all
-

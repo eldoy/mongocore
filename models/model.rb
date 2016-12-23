@@ -9,8 +9,8 @@ class Model
   end
 
   # Save, update, delete
-  # event(:delete){ puts "Hello" }
-  # event :delete, :hello
+  # before :delete, :hello
+  # after(:delete){ puts "Hello" }
 
   # def hello
   #   puts "HELLO"

@@ -2,4 +2,6 @@ test 'Events'
 
 @model = Model.first
 
-@model.run(:delete)
+@model.run(:after, :delete)
+
+@model.run(:before, :delete)
