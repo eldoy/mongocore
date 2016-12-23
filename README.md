@@ -12,6 +12,7 @@ We're using a YAML schema file, which supports default values, data types, and s
 ```
 gem install mongo_core
 ```
+or add to your Gemfile.
 
 Then in your model:
 ```ruby
@@ -21,8 +22,10 @@ end
 ```
 
 ### Status
-CRUD, querying, scopes and associations works.
+CRUD, querying, scopes, associations, validations, sorting, limit, cache, works.
 
-Working on validations, sorting, dirty, counters, limit and cache.
+Working on access control, dirty attributes and docs.
 
 Send us a message if you want to contribute.
+
+12/22/16

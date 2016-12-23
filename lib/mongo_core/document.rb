@@ -181,7 +181,7 @@ module MongoCore
       end
 
       # Register afters and befores. Pass a method name as symbol or a block
-      # Possible events are :save, :update, :delete
+      # Possible filters are :save, :update, :delete
       def after(*args, &block)
         afters[args[0]] << (args[1] || block)
       end
