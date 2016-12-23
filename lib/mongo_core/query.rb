@@ -59,12 +59,12 @@ module MongoCore
 
     # Update
     def update(a)
-      MongoCore::Cache.update(self, a)
+      MongoCore::Cache.new(self).update(a)
     end
 
     # Delete
     def delete
-      MongoCore::Cache.delete(self)
+      MongoCore::Cache.new(self).delete
     end
 
     # Return first document
@@ -79,7 +79,7 @@ module MongoCore
 
     # Fetch docs, pass type :first, :to_a or :count
     def fetch(type)
-      MongoCore::Cache.find(self, type)
+      MongoCore::Cache.new(self, type).find
     end
 
     # Cache key

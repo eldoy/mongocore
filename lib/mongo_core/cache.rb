@@ -1,46 +1,43 @@
 module MongoCore
   class Cache
-    # Init cache store
-    RequestStore.store[:cache] = {}
 
-    # The main find method.
-    # @query is a MongoCore::Query
-    # @type is :first, :to_a or :count
+    attr_accessor :query, :type, :key, :cache
+
     # Uses the MongoDB Ruby driver to query the DB.
-    def self.find(q, type)
-      if MongoCore.caching
-        key = %{#{q.cache}-#{type}}
-        cached = RequestStore.store[:cache][key]
-        if cached
-          puts "CACHED!: #{key}" if MongoCore.debug
-          return cached
-        else
-          puts "NOT CACHED: #{key}" if MongoCore.debug
-        end
-      end
-      r = q.collection.find(q.query, q.options).sort(q.store[:sort] || {}).limit(q.store[:limit] || 0).send(type)
-      RequestStore.store[:cache][key] = r if MongoCore.caching
-      r
+    # The cache is using RequestStore as backing
+    # @type is :first, :to_a or :count
+    # @query is a MongoCore::Query
+    def initialize(q, t = :first)
+      @query, @type = [q, t]
+      @key = %{#{q.cache}-#{t}}
+      @cache = (RequestStore[:cache] ||= {})
+
+      # Release this key if store[:cache] is false
+      clear if q.store[:cache] == false
+    end
+
+    # Find
+    def find
+      return cache[key] if (MongoCore.caching and cache.has_key?(key))
+      .tap{|h| puts (h ? 'Hit' : 'Miss') + ': ' + key if MongoCore.debug}
+      query.collection.find(query.query, query.options).sort(query.store[:sort] || {}).
+      limit(query.store[:limit] || 0).send(type).
+      tap{|r| cache[key] = r if MongoCore.caching}
     end
 
     # Update
-    def self.update(q, a)
-      clear(q)
-      q.collection.update_one(q.query, {'$set' => a}, :upsert => true)
+    def update(a)
+      query.collection.update_one(query.query, {'$set' => a}, :upsert => true)
     end
 
     # Delete
-    def self.delete(q)
-      clear(q)
-      q.collection.delete_one(q.query)
+    def delete
+      query.collection.delete_one(query.query)
     end
 
-    private
-
     # Remove from cache
-    def self.clear(q)
-      key = %{#{q.cache}-first}
-      RequestStore.store[:cache][key] = nil
+    def clear
+      cache.delete(key)
     end
 
   end

@@ -11,12 +11,12 @@ t = @model.save
 is t.n, :gt => 0
 is before_id.to_s, @model.id.to_s
 
-test 'Reload'
+test 'reload'
 
 @reload = @model.reload
 is @reload.goal, 15
 
-test 'Update'
+test 'update'
 
 @update = @model.update(:goal => 10)
 is @model.goal, 10
@@ -28,7 +28,7 @@ is @model.goal, 10
 @update = @model.update(:goal => nil)
 is @model.goal, nil
 
-test 'Delete'
+test 'delete'
 
 @delete = @model.delete
 is @delete.n, :gt => 0

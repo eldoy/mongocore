@@ -3,7 +3,7 @@ test 'Query'
 # TODO: Change this to models (plural) in engine layer
 @query = MongoCore::Query.new(Model)
 
-test 'Object ID'
+test 'objectid'
 
 # Object ID converter
 is @query.oid('test1234'), :a? => String
@@ -12,7 +12,7 @@ is @query.oid(nil), :a? => BSON::ObjectId
 is @query.oid(false), :a? => BSON::ObjectId
 is @query.oid, :a? => BSON::ObjectId
 
-test 'Cursor'
+test 'cursor'
 
 # Cursor
 is @query.db, MongoCore.db
@@ -25,7 +25,7 @@ is @query2.query, :eq => {:duration => 60}
 @query2 = @query2.find(:duration => 50, :goal => {'$ne' => nil})
 is @query2.query, :eq => {:duration => 50, :goal => {'$ne' => nil}}
 
-test 'First'
+test 'first'
 
 # First
 @model = @query.first

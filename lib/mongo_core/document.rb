@@ -74,24 +74,23 @@ module MongoCore
       def save(o = {})
         # Create a new query
         validate.tap{ return nil if errors.any?} if o[:validate] and self.respond_to?(:validate)
-        q = MongoCore::Query.new(self.class, {:id => @id})
-        q.update(attributes).tap{run(:after, :save)}
+        qq(self.class, {:id => @id}).update(attributes).tap{run(:after, :save)}
       end
 
       # Update document in db
       def update(a = {})
         a.each{|k, v| write(k, v)}
-        MongoCore::Query.new(self.class, :id => @id).update(a).tap{run(:after, :update)}
+        single.update(a).tap{run(:after, :update)}
       end
 
       # Delete a document in db
       def delete
-        MongoCore::Query.new(self.class, :id => @id).delete.tap{run(:after, :delete)}
+        single.delete.tap{run(:after, :delete)}
       end
 
       # Reload the document from db
       def reload
-        MongoCore::Query.new(self.class, :id => @id).first
+        single.first
       end
 
       # Collect the attributes
@@ -120,6 +119,16 @@ module MongoCore
       end
 
       private
+
+      # Short cut for setting up a MongoCore::Query object
+      def qq(*args)
+        MongoCore::Query.new(*args)
+      end
+
+      # Short cut for simple query with cache buster
+      def single(g = {:cache => false})
+        qq(self.class, {:id => @id}, {}, g)
+      end
 
       # Get attribute
       def read(key)
@@ -153,7 +162,7 @@ module MongoCore
 
       # Find, takes an id or a hash
       def find(*args)
-        MongoCore::Query.new(self, *args)
+        qq(self, *args)
       end
 
       # Count
@@ -191,10 +200,16 @@ module MongoCore
         befores[args[0]] << (args[1] || block)
       end
 
+      private
+
+      # Short cut for setting up a MongoCore::Query object
+      def qq(*args)
+        MongoCore::Query.new(*args)
+      end
+
       # # # # #
       # Templates for foreign key, many-associations and scopes.
       # # # # #
-      private
 
       # Foreign keys
       def foreign(key, data)
@@ -202,7 +217,7 @@ module MongoCore
         s = key[0..-4]
         t = %Q{
           def #{s}
-            @#{s} ||= MongoCore::Query.new(#{s.capitalize}, :id => @#{key}).first
+            @#{s} ||= qq(#{s.capitalize}, :id => @#{key}).first
           end
 
           def #{s}=(m)
@@ -217,7 +232,7 @@ module MongoCore
       def mny(key, data)
         t = %Q{
           def #{key}
-            MongoCore::Query.new(#{key[0..-2].capitalize}, {:#{self.to_s.downcase}_id => @_id}, {}, :source => self)
+            qq(#{key[0..-2].capitalize}, {:#{self.to_s.downcase}_id => @_id}, {}, :source => self)
           end
         }
         class_eval t
@@ -240,7 +255,7 @@ module MongoCore
         j = pm.any? ? %{#{pm.join(', ')},} : ''
         t = %Q{
           def #{key}(#{j} q = {}, o = {}, s = {})
-            MongoCore::Query.new(self, q.merge(#{d}), o, {:scope => [:#{key}]}.merge(s))
+            qq(self, q.merge(#{d}), o, {:scope => [:#{key}]}.merge(s))
           end
         }
         instance_eval t
