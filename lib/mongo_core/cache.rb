@@ -1,10 +1,11 @@
 module MongoCore
   class Cache
 
-    attr_accessor :query, :type, :key, :cache
-
     # Uses the MongoDB Ruby driver to query the DB.
     # The cache is using RequestStore as backing
+
+    attr_accessor :query, :type, :key, :cache
+
     # @type is :first, :to_a or :count
     # @query is a MongoCore::Query
     def initialize(q, t = :first)
@@ -19,8 +20,9 @@ module MongoCore
     # Find
     def find
       return cache[key] if (MongoCore.caching and cache.has_key?(key))
-      .tap{|h| puts (h ? 'Hit' : 'Miss') + ': ' + key if MongoCore.debug}
-      query.collection.find(query.query, query.options).sort(query.store[:sort] || {}).
+      .tap{|h| puts 'Cache ' + (h ? 'Hit!' : 'Miss') + ': ' + key if MongoCore.debug}
+      query.collection.find(query.query, query.options).
+      sort(query.store[:sort] || {}).
       limit(query.store[:limit] || 0).send(type).
       tap{|r| cache[key] = r if MongoCore.caching}
     end
