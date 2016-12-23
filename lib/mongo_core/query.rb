@@ -1,7 +1,7 @@
 module MongoCore
   class Query
 
-    attr_accessor :db, :model, :collection, :colname, :query, :options, :store, :cache
+    attr_accessor :db, :model, :collection, :colname, :query, :options, :store, :key, :cache
 
     # These options will be deleted before doing the find
     def initialize(m, q = {}, o = {}, s = {})
@@ -24,8 +24,9 @@ module MongoCore
       s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil
       @options = o; @query = q; @store = s
 
-      # Generate cache key
-      @cache ||= generate
+      # Generate cache key and set up cache
+      @key ||= generate
+      @cache = (RequestStore[:cache] ||= {})
     end
 
     # Generate the cache key
@@ -59,12 +60,12 @@ module MongoCore
 
     # Update
     def update(a)
-      MongoCore::Cache.new(self).update(a)
+      collection.update_one(query, {'$set' => a}, :upsert => true)
     end
 
     # Delete
     def delete
-      MongoCore::Cache.new(self).delete
+      collection.delete_one(query)
     end
 
     # Return first document
@@ -78,8 +79,16 @@ module MongoCore
     end
 
     # Fetch docs, pass type :first, :to_a or :count
-    def fetch(type)
-      MongoCore::Cache.new(self, type).find
+    def fetch(type, i = %{#{key}-#{type}})
+      # Delete entry if we are updating or deleting
+      cache.delete(i) if store[:cache] == false
+
+      # Return cached entry if it exists
+      return cache[i] if (MongoCore.caching and cache.has_key?(i))
+      .tap{|h| puts 'Cache ' + (h ? 'Hit!' : 'Miss') + ': ' + i if MongoCore.debug}
+
+      # Actually fetch the document from the DB
+      cursor.send(type).tap{|r| cache[i] = r if MongoCore.caching}
     end
 
     # Cursor
