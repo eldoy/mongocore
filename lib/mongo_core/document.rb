@@ -73,7 +73,8 @@ module MongoCore
       # Save attributes to db
       def save(o = {})
         # Create a new query
-        q = MongoCore::Query.new(self.class, {:id => @id}, o)
+        validate.tap{ return nil if errors.any?} if o[:validate] and self.respond_to?(:validate)
+        q = MongoCore::Query.new(self.class, {:id => @id})
         q.update(attributes).tap{run(:after, :save)}
       end
 
