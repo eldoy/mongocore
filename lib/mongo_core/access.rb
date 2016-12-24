@@ -53,11 +53,9 @@ module MongoCore
     # Check if level has access
     def check(level)
       # Just give full access if access level not set
-      cur = get || :app
-      return true if cur == :app
+      g = get || :app
       # Check if the intended level has access
-      level = level.to_sym
-      AL.index(level) <= AL.index(cur)
+      g == :app or AL.index(level.to_sym) <= AL.index(g)
     end
 
   end
