@@ -44,7 +44,11 @@ module MongoCore
         @afters = Hash.new{|h, k| h[k] = []}
 
         # Instance variables
-        attr_accessor :db, :errors, :changes
+        # @db holds the MongoCore.db
+        # @errors is used for validations
+        # @changes keeps track of object changes
+        # @saved indicates whether this is saved or not
+        attr_accessor :db, :errors, :changes, :saved
 
         # The class initializer, called when you write Model.new
         # Pass in attributes you want to set: Model.new(:duration => 60)
@@ -53,7 +57,7 @@ module MongoCore
           a = a.deep_symbolize_keys
 
           # The _id has the BSON object, create new unless it exists
-          a[:_id] = BSON::ObjectId.new unless a[:_id]
+          a[:_id] ? @saved = true : a[:_id] = BSON::ObjectId.new
 
           # Short cut for db
           @db ||= MongoCore.db
@@ -75,13 +79,13 @@ module MongoCore
         def save(o = {})
           # Create a new query
           validate.tap{ return nil if errors.any?} if o[:validate] and self.respond_to?(:validate)
-          qq(self.class, {:_id => @_id}).update(attributes).tap{run(:after, :save)}
+          qq(self.class, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
         end
 
         # Update document in db
         def update(a = {})
           a.each{|k, v| write(k, v)}
-          single.update(a).tap{run(:after, :update)}
+          single.update(a).tap{@saved = true; run(:after, :update)}
         end
 
         # Delete a document in db
@@ -104,10 +108,18 @@ module MongoCore
           a.each{|k, v| send(k, v)}
         end
 
-        # Pending changes
+        # Changed?
         def changed?
           changes.any?
         end
+
+        # Saved? Persisted?
+        def saved?; !!@saved; end
+        alias_method :persisted?, :saved?
+
+        # Unsaved? New record?
+        def unsaved?; !@saved; end
+        alias_method :new_record?, :unsaved?
 
         # Available filters are :save, :update, :delete
         def run(filter, key)

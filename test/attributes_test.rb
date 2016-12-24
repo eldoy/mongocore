@@ -28,3 +28,24 @@ is @model._id, :a? => BSON::ObjectId
 @model.goal = 15
 is @model.goal, 15
 
+@model = Model.new
+
+is @model.saved?, :eq => false
+is @model.unsaved?, :eq => true
+is @model.new_record?, :eq => true
+is @model.persisted?, :eq => false
+
+@model.save
+is @model.saved?, :eq => true
+
+@model = Model.new
+is @model.new_record?, :eq => true
+
+@model = Model.first
+is @model.saved?, :eq => true
+
+@model.duration = Time.now.to_i
+is @model.changed?, :eq => true
+@model.save
+is @model.changed?, :eq => true
+is @model.saved?, :eq => true
