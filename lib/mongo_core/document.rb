@@ -188,23 +188,23 @@ module MongoCore
     module ClassMethods
 
       # Find, takes an id or a hash
-      def find(q = {}, o = {}, s = {})
-        qq(self, q, o, s)
+      def find(*args)
+        qq(self, *args)
       end
 
       # Count
-      def count(q = {}, o = {}, s = {})
-        find(q, o, s).count
+      def count(*args)
+        find(*args).count
       end
 
       # First
-      def first(q = {}, o = {}, s = {})
-        find(q, o, s).first
+      def first(*args)
+        find(*args).first
       end
 
       # All
-      def all(q = {}, o = {}, s = {})
-        find(q, o, s).all
+      def all(*args)
+        find(*args).all
       end
 
       # Sort
