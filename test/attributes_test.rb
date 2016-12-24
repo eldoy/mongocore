@@ -5,7 +5,7 @@ test 'Attributes'
 # Defaults
 a = @model.attributes
 is a, :a? => Hash
-is a[:id], @model.id
+is a[:_id], @model._id
 is a[:submittable], nil
 is a[:duration], 60
 is a[:reminders_sent], false
@@ -22,7 +22,6 @@ is @model.attributes[:goal], -10
 is @model.duration, 60
 
 # id should be string, _id should be BSON::ObjectId
-is @model.id, :a? => String
 is @model._id, :a? => BSON::ObjectId
 
 # Mechanics

@@ -6,10 +6,7 @@ module MongoCore
     # These options will be deleted before doing the find
     def initialize(m, q = {}, o = {}, s = {})
       # Support find passing a ID
-      q = {:_id => oid(q)} if q.is_a?(String) or q.is_a?(BSON::ObjectId)
-
-      # Mongodb wants _id as BSON::ObjectId, not id as String
-      q[:_id] = oid(q.delete(:id)) if q[:id]
+      q = {:_id => oid(q)} unless q.is_a?(Hash)
 
       # Storing model and db
       @model = m; @db = MongoCore.db
@@ -80,7 +77,7 @@ module MongoCore
     # Fetch docs, pass type :first, :to_a or :count
     def fetch(type, i = %{#{key}-#{type}})
       # Delete entry if we are updating or deleting
-      cache.delete(i) if store[:cache] == false
+      cache.delete(i) if MongoCore.cache and store[:cache] == false
 
       # Return cached entry if it exists
       return cache[i] if (MongoCore.cache and cache.has_key?(i))

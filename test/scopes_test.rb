@@ -25,11 +25,11 @@ is @query.all, :a? => Array
 @parent = Parent.new
 @parent.save
 
-@model = Model.new(:parent_id => @parent.id)
+@model = Model.new(:parent_id => @parent._id)
 @model.save
 
 @model = Model.new
-@model.parent_id = @parent.id
+@model.parent_id = @parent._id
 @model.save
 
 @models = @parent.models.all

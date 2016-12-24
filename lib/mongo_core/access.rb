@@ -43,8 +43,6 @@ module MongoCore
 
     # Key writable?
     def write?(key)
-      # TODO: Get rid of _id
-      return true if key == :_id
       check(keys[key][:write])
     end
 

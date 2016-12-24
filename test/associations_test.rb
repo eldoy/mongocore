@@ -5,7 +5,7 @@ ts = "hello#{Time.now.to_s}"
 @parent.link = ts
 @parent.save
 
-@model = Model.new(:parent_id => @parent.id)
+@model = Model.new(:parent_id => @parent._id)
 is @model.parent_id, :a? => BSON::ObjectId
 @model.save
 

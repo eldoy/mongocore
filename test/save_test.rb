@@ -4,12 +4,12 @@ test 'Save'
 
 is @model.goal, nil
 
-before_id = @model.id
+before_id = @model._id
 @model.goal = 15
 
 t = @model.save
 is t.n, :gt => 0
-is before_id.to_s, @model.id.to_s
+is before_id.to_s, @model._id.to_s
 
 test 'reload'
 

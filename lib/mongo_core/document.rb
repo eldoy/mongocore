@@ -44,13 +44,16 @@ module MongoCore
         @afters = Hash.new{|h, k| h[k] = []}
 
         # Instance variables
-        attr_accessor :db, :_id, :errors, :changes
+        attr_accessor :db, :errors, :changes
 
         # The class initializer, called when you write Model.new
         # Pass in attributes you want to set: Model.new(:duration => 60)
         # Defaults are filled in automatically.
         def initialize(a = {})
           a = a.deep_symbolize_keys
+
+          # The _id has the BSON object, create new unless it exists
+          a[:_id] = BSON::ObjectId.new unless a[:_id]
 
           # Short cut for db
           @db ||= MongoCore.db
@@ -64,12 +67,6 @@ module MongoCore
           # Set the attributes
           a.each{|k, v| write(k, v)}
 
-          # The _id has the BSON object
-          write(:_id, BSON::ObjectId.new) unless @_id
-
-          # The id has the string version
-          write(:id, @_id.to_s)
-
           # The changes hash
           @changes ||= Hash.new{|h, k| h[k] = []}
         end
@@ -78,7 +75,7 @@ module MongoCore
         def save(o = {})
           # Create a new query
           validate.tap{ return nil if errors.any?} if o[:validate] and self.respond_to?(:validate)
-          qq(self.class, {:id => @id}).update(attributes).tap{run(:after, :save)}
+          qq(self.class, {:_id => @_id}).update(attributes).tap{run(:after, :save)}
         end
 
         # Update document in db
@@ -147,7 +144,7 @@ module MongoCore
 
         # Short cut for simple query with cache buster
         def single(g = {:cache => false})
-          qq(self.class, {:id => @id}, {}, g)
+          qq(self.class, {:_id => @_id}, {}, g)
         end
 
         # Get attribute
@@ -240,16 +237,15 @@ module MongoCore
 
       # Foreign keys
       def foreign(key, data)
-        return unless key[-3..-1] == '_id'
-        s = key[0..-4]
+        return if key !~ /(.+)_id/
         t = %Q{
-          def #{s}
-            @#{s} ||= qq(#{s.capitalize}, :id => @#{key}).first
+          def #{$1}
+            @#{$1} ||= qq(#{$1.capitalize}, :_id => @#{key}).first
           end
 
-          def #{s}=(m)
+          def #{$1}=(m)
             @#{key} = m._id
-            @#{s} = m
+            @#{$1} = m
           end
         }
         class_eval t

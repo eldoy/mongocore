@@ -3,8 +3,9 @@ meta:
   name: model
   type: document
 keys:
-  id:
+  _id:
     desc: Unique id
+    type: object_id
     read: all
     write: app
   link:

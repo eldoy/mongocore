@@ -1,7 +1,6 @@
 test 'Schema'
 @model = Model.new
 
-is @model.id, :a? => String
 is @model._id, :a? => BSON::ObjectId
 is @model.submittable, nil
 is @model.duration, 60

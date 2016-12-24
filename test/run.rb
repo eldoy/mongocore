@@ -25,8 +25,8 @@ begin
     'access'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x
-  e(x)
   puts x.message
+  e(x)
 ensure
   puts Time.now - start
 end
