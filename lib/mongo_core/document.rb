@@ -122,7 +122,7 @@ module MongoCore
 
         # Valid?
         def valid?
-          self.class.validates.each{|v| self.instance_eval(&v)}
+          self.class.validates.each{|k| call(k)}
           errors.any?
         end
 
@@ -134,9 +134,12 @@ module MongoCore
 
         # Available filters are :save, :update, :delete
         def run(filter, key = nil)
-          self.class.send(%{#{filter}s})[key].each do |e|
-            e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)
-          end
+          self.class.send(%{#{filter}s})[key].each{|k| call(k)}
+        end
+
+        # Execute a proc or a method
+        def call(k)
+          k.is_a?(Proc) ? self.instance_eval(&k) : self.send(k)
         end
 
         # Dynamically read or write attributes
@@ -270,8 +273,9 @@ module MongoCore
         befores[args[0]] << (args[1] || block)
       end
 
-      def validate(&block)
-        validates << block
+      # Register validate. Only takes a block
+      def validate(*args, &block)
+        validates << (args[0] || block)
       end
 
       private
