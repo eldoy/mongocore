@@ -152,13 +152,13 @@ module MongoCore
 
         # Get attribute
         def read(key)
-          return nil unless MongoCore::Access.new(self).read?(key)
+          return nil if MongoCore.access and !MongoCore::Access.new(self).read?(key)
           instance_variable_get("@#{key}")
         end
 
         # Set attribute
         def write(key, val)
-          return nil unless MongoCore::Access.new(self).write?(key)
+          return nil if MongoCore.access and !MongoCore::Access.new(self).write?(key)
 
           # Record change for dirty attributes
           w = strict(key, val)
