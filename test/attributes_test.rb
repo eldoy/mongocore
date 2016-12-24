@@ -32,14 +32,12 @@ is @model.goal, 15
 
 is @model.saved?, :eq => false
 is @model.unsaved?, :eq => true
-is @model.new_record?, :eq => true
-is @model.persisted?, :eq => false
 
 @model.save
 is @model.saved?, :eq => true
 
 @model = Model.new
-is @model.new_record?, :eq => true
+is @model.unsaved?, :eq => true
 
 @model = Model.first
 is @model.saved?, :eq => true
@@ -49,3 +47,17 @@ is @model.changed?, :eq => true
 @model.save
 is @model.changed?, :eq => true
 is @model.saved?, :eq => true
+
+test 'attributes'
+@model = Model.new
+
+is @model.attributes[:duration], 60
+@model.attributes = {:duration => 50}
+
+is @model.duration, 50
+
+
+
+
+
+

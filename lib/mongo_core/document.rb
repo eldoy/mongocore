@@ -100,12 +100,12 @@ module MongoCore
 
         # Collect the attributes
         def attributes
-          a = {}; self.class.keys.keys.each{|k| a[k] = send(k)}; a
+          a = {}; self.class.keys.keys.each{|k| a[k] = read!(k)}; a
         end
 
         # Set the attributes
         def attributes=(a)
-          a.each{|k, v| send(k, v)}
+          a.each{|k, v| write!(k, v)}
         end
 
         # Changed?
@@ -115,11 +115,9 @@ module MongoCore
 
         # Saved? Persisted?
         def saved?; !!@saved; end
-        alias_method :persisted?, :saved?
 
         # Unsaved? New record?
         def unsaved?; !@saved; end
-        alias_method :new_record?, :unsaved?
 
         # Available filters are :save, :update, :delete
         def run(filter, key)
@@ -159,24 +157,45 @@ module MongoCore
           qq(self.class, {:_id => @_id}, {}, g)
         end
 
-        # Get attribute
+        # Access?
+        def access?(mode, key)
+          return true unless MongoCore.access
+          case mode
+          when :read then MongoCore::Access.new(self).read?(key)
+          when :write then MongoCore::Access.new(self).write?(key)
+          end
+        end
+
+        # Get attribute if access
         def read(key)
-          return nil if MongoCore.access and !MongoCore::Access.new(self).read?(key)
+          access?(:read, key) ? read!(key) : nil
+        end
+
+        # Get attribute
+        def read!(key)
           instance_variable_get("@#{key}")
         end
 
-        # Set attribute
+        # Set attribute if access
         def write(key, val)
-          return nil if MongoCore.access and !MongoCore::Access.new(self).write?(key)
+          return nil unless access?(:write, key)
+          # Convert to type as in schema yml
+          v = convert(key, val)
 
           # Record change for dirty attributes
-          w = strict(key, val)
-          read(key).tap{|v| @changes[key] = v if w != v} if @changes
-          instance_variable_set("@#{key}", w)
+          read!(key).tap{|r| @changes[key] = r if v != r} if @changes
+
+          # Write attribute
+          write!(key, v)
         end
 
-        # Strict type if val and schema type is set
-        def strict(key, val)
+        # Set attribute
+        def write!(key, v)
+          instance_variable_set("@#{key}", v)
+        end
+
+        # Convert type if val and schema type is set
+        def convert(key, val)
           return nil if val.nil?
           type = self.class.keys[key][:type].to_sym rescue nil
           return val if type.nil?
