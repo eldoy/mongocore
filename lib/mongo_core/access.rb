@@ -11,7 +11,7 @@ module MongoCore
     # The access control class
     def initialize(d)
       @doc = d
-      @keys = d.class.keys.clone
+      @keys = d.class.keys
     end
 
     # Set the current access level
