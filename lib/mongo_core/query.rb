@@ -66,7 +66,7 @@ module MongoCore
 
     # Return first document
     def first(doc = nil)
-      (doc ||= fetch(:first)) ? @model.new(doc.to_hash) : nil
+      (doc ||= fetch :first) ? @model.new(doc.to_hash) : nil
     end
 
     # Return all documents
@@ -81,7 +81,12 @@ module MongoCore
 
       # Return cached entry if it exists
       return cache[i] if (MongoCore.cache and cache.has_key?(i))
-      .tap{|h| puts 'Cache ' + (h ? 'Hit!' : 'Miss') + ': ' + i if MongoCore.debug}
+      .tap do |h|
+        # Cache debug
+        puts 'Cache ' + (h ? 'Hit!' : 'Miss') + ': ' + i if MongoCore.debug
+        # Store hits and misses
+        RequestStore[h ? :h : :m] = (RequestStore[h ? :h : :m] || 0) + 1
+      end
 
       # Actually fetch the document from the DB
       cursor.send(type).tap{|r| cache[i] = r if MongoCore.cache}

@@ -148,8 +148,8 @@ module MongoCore
         private
 
         # Short cut for setting up a MongoCore::Query object
-        def qq(*args)
-          MongoCore::Query.new(*args)
+        def qq(m, q = {}, o = {}, s = {})
+          MongoCore::Query.new(m, q, o, {:source => self}.merge(s))
         end
 
         # Short cut for simple query with cache buster

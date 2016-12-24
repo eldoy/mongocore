@@ -29,6 +29,8 @@ rescue => x
   e(x)
 ensure
   puts Time.now - start
+  puts RequestStore[:h].to_s + ' hit!'
+  puts RequestStore[:m].to_s + ' miss'
 end
 
 # Info on MongoDB Driver
