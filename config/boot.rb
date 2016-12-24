@@ -13,9 +13,7 @@ MongoCore.schema = File.join(Dir.pwd, 'config', 'db', 'schema')
 require './models/parent.rb'
 require './models/model.rb'
 
-
-# DB Settings
-# Default:
+# Logging verbosity
 Mongo::Logger.logger.level = ::Logger::DEBUG
 Mongo::Logger.logger.level = ::Logger::FATAL
 

@@ -6,7 +6,7 @@ module MongoCore
       base.class_eval do
         # Accessors, everything is writable if you need something dynamic.
         class << self
-          attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :befores, :afters
+          attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :befores, :afters, :validates
         end
 
         # Load schema file
@@ -43,9 +43,12 @@ module MongoCore
         # The after filters
         @afters = Hash.new{|h, k| h[k] = []}
 
+        # The validates
+        @validates = []
+
         # Instance variables
         # @db holds the MongoCore.db
-        # @errors is used for validations
+        # @errors is used for validates
         # @changes keeps track of object changes
         # @saved indicates whether this is saved or not
         attr_accessor :db, :errors, :changes, :saved
@@ -77,9 +80,13 @@ module MongoCore
 
         # Save attributes to db
         def save(o = {})
+          # Send :validate => true to validate
+          return nil unless valid? if o[:validate]
+
           # Create a new query
-          validate.tap{ return nil if errors.any?} if o[:validate] and self.respond_to?(:validate)
-          qq(self.class, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
+          qq(self.class, {:_id => @_id}).update(attributes).tap do
+            @saved = true; run(:after, :save)
+          end
         end
 
         # Update document in db
@@ -113,6 +120,12 @@ module MongoCore
           changes.any?
         end
 
+        # Valid?
+        def valid?
+          self.class.validates.each{|v| self.instance_eval(&v)}
+          errors.any?
+        end
+
         # Saved? Persisted?
         def saved?; !!@saved; end
 
@@ -120,8 +133,10 @@ module MongoCore
         def unsaved?; !@saved; end
 
         # Available filters are :save, :update, :delete
-        def run(filter, key)
-          self.class.send(%{#{filter}s})[key].each{|e| e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)}
+        def run(filter, key = nil)
+          self.class.send(%{#{filter}s})[key].each do |e|
+            e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)
+          end
         end
 
         # Dynamically read or write attributes
@@ -253,6 +268,10 @@ module MongoCore
 
       def before(*args, &block)
         befores[args[0]] << (args[1] || block)
+      end
+
+      def validate(&block)
+        validates << block
       end
 
       private

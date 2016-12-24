@@ -22,15 +22,16 @@ begin
     'counter',
     'cache',
     'dirty',
-    'access'
+    'access',
+    'features'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x
   puts x.message
   e(x)
 ensure
   puts Time.now - start
-  puts RequestStore[:h].to_s + ' hit!'
-  puts RequestStore[:m].to_s + ' miss'
+  puts (RequestStore[:h] || 0).to_s + ' hit!'
+  puts (RequestStore[:m] || 0).to_s + ' miss'
 end
 
 # Info on MongoDB Driver

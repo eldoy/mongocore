@@ -13,7 +13,7 @@ module MongoCore
   @schema = File.join(Dir.pwd, 'config', 'db', 'schema')
   @cache = true
   @access = true
-  @debug = true
+  @debug = false
 end
 
 require_relative 'mongo_core/document'
