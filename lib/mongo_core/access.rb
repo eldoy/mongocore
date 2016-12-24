@@ -4,25 +4,21 @@ module MongoCore
     # Access levels (6)
     AL = [:all, :user, :dev, :admin, :super, :app]
 
-    # @query is a MongoCore::Query object
+    # @doc is a MongoCore::Document object
     # @keys are the keys from the model schema
-    attr_accessor :query, :keys
+    attr_accessor :doc, :keys
 
     # The access control class
-    def initialize(q)
-      @query = q
-      @keys = q.class.keys
-      # puts @query.inspect
-      # puts @keys.inspect
+    def initialize(d)
+      @doc = d
+      @keys = d.class.keys.clone
     end
 
     # Set the current access level
     def set(level = nil)
-      level = level.to_sym if level
-      level = :all unless AL.include?(level)
-      cur = get
-      cur = (RequestStore.store[:access] = level.to_sym) if !cur or AL.index(level) > AL.index(cur)
-      cur
+      level = :all unless AL.include?(level = level.to_sym); g = get
+      g = (RequestStore.store[:access] = level) if !g or AL.index(level) > AL.index(g)
+      g
     end
 
     # Get the current access level
@@ -47,13 +43,9 @@ module MongoCore
 
     # Key writable?
     def write?(key)
+      # TODO: Get rid of _id
+      return true if key == :_id
       check(keys[key][:write])
-      # begin
-
-      # rescue
-      #   puts key
-      #   exit
-      # end
     end
 
     private

@@ -7,13 +7,14 @@ module MongoCore
   # Default Options
   # # # # # #
 
-  class << self; attr_accessor :db, :schema, :caching, :debug; end
+  class << self; attr_accessor :db, :schema, :cache, :debug; end
 
   # Schema path is $app_root/config/db/schema/:model_name.yml
   @schema = File.join(Dir.pwd, 'config', 'db', 'schema')
-  @caching = true
-  @debug = true
+  @cache = true
+  @debug = false
 end
 
 require_relative 'mongo_core/document'
 require_relative 'mongo_core/query'
+require_relative 'mongo_core/access'

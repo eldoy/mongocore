@@ -6,8 +6,6 @@ is @model.duration, 60
 
 a = MongoCore::Access.new(@model)
 
-puts "GET: #{a.get}"
-
 is a.read?(:duration), :eq => true
 is a.write?(:duration), :eq => true
 
@@ -30,5 +28,5 @@ a.set(:all)
 
 m = (@model.duration = 20)
 
-is m, :eq => nil
-is @model.duration, :eq => nil
+is m, :eq => 20
+is @model.duration, :eq => 20

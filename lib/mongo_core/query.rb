@@ -29,17 +29,17 @@ module MongoCore
       @cache = (RequestStore[:cache] ||= {})
     end
 
-    # Generate the cache key
-    def generate
-       Digest::MD5.hexdigest(%{#{@model}#{@query.sort}#{@options.sort}#{@store[:chain]}#{@store[:sort]}#{@store[:limit]}})
-    end
-
     # Convert string id into a BSON::ObjectId
     # Pass nothing or nil to get a new ObjectId
     def oid(id = nil)
       return id if id.is_a?(BSON::ObjectId)
       return BSON::ObjectId.new if !id
       BSON::ObjectId.from_string(id) rescue id
+    end
+
+    # Generate the cache key
+    def generate
+       Digest::MD5.hexdigest("#{@model}#{@query.sort}#{@options.sort}#{@store[:chain]}#{@store[:sort]}#{@store[:limit]}")
     end
 
     # Find. Returns a MongoCore::Query
@@ -54,8 +54,7 @@ module MongoCore
 
     # Check if there's a corresponding counter for this count
     def counter(s = @store[:source], c = @store[:chain])
-      n = s.send(%{#{@colname}#{c.present? ? "_#{c.join('_')}" : ''}_count}) rescue nil
-      return n if n and n > 0
+      s.send(%{#{@colname}#{c.present? ? "_#{c.join('_')}" : ''}_count}.to_sym) rescue nil
     end
 
     # Update
@@ -84,11 +83,11 @@ module MongoCore
       cache.delete(i) if store[:cache] == false
 
       # Return cached entry if it exists
-      return cache[i] if (MongoCore.caching and cache.has_key?(i))
+      return cache[i] if (MongoCore.cache and cache.has_key?(i))
       .tap{|h| puts 'Cache ' + (h ? 'Hit!' : 'Miss') + ': ' + i if MongoCore.debug}
 
       # Actually fetch the document from the DB
-      cursor.send(type).tap{|r| cache[i] = r if MongoCore.caching}
+      cursor.send(type).tap{|r| cache[i] = r if MongoCore.cache}
     end
 
     # Cursor

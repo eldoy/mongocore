@@ -50,6 +50,8 @@ module MongoCore
         # Pass in attributes you want to set: Model.new(:duration => 60)
         # Defaults are filled in automatically.
         def initialize(a = {})
+          a = a.deep_symbolize_keys
+
           # Short cut for db
           @db ||= MongoCore.db
 
@@ -115,7 +117,7 @@ module MongoCore
           self.class.send(%{#{filter}s})[key].each{|e| e.is_a?(Proc) ? self.instance_eval(&e) : self.send(e)}
         end
 
-        # Dynamically read or write the value
+        # Dynamically read or write attributes
         def method_missing(name, *arguments, &block)
           # Extract name and write mode
           name =~ /([^=]+)(=)?/
@@ -126,10 +128,10 @@ module MongoCore
             return read(key)
           end
 
-          # Dirty attributes ending with _changed?
+          # Attributes changed?
           return changes.has_key?($1.to_sym) if key =~ /(.+)_changed\?/
 
-          # Dirty attributes ending with _changed?
+          # Attributes was
           return changes[$1.to_sym] if key =~ /(.+)_was/
 
           # Pass if nothing found
@@ -150,11 +152,14 @@ module MongoCore
 
         # Get attribute
         def read(key)
+          return nil unless MongoCore::Access.new(self).read?(key)
           instance_variable_get("@#{key}")
         end
 
         # Set attribute
         def write(key, val)
+          return nil unless MongoCore::Access.new(self).write?(key)
+
           # Record change for dirty attributes
           w = strict(key, val)
           read(key).tap{|v| @changes[key] = v if w != v} if @changes
@@ -183,23 +188,23 @@ module MongoCore
     module ClassMethods
 
       # Find, takes an id or a hash
-      def find(*args)
-        qq(self, *args)
+      def find(q = {}, o = {}, s = {})
+        qq(self, q, o, s)
       end
 
       # Count
-      def count(*args)
-        find(*args).count
+      def count(q = {}, o = {}, s = {})
+        find(q, o, s).count
       end
 
       # First
-      def first(*args)
-        find(*args).first
+      def first(q = {}, o = {}, s = {})
+        find(q, o, s).first
       end
 
       # All
-      def all(*args)
-        find(*args).all
+      def all(q = {}, o = {}, s = {})
+        find(q, o, s).all
       end
 
       # Sort

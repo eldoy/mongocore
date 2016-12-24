@@ -7,11 +7,6 @@ keys:
     desc: Unique id
     read: all
     write: app
-  link:
-    desc: Link
-    read: all
-    write: dev
-    tags:
   models_count:
     desc: Models count
     type: integer
@@ -30,6 +25,11 @@ keys:
     default: 0
     read: all
     write: app
+  link:
+    desc: Link
+    read: all
+    write: dev
+
 many:
   models:
     dependent: destroy

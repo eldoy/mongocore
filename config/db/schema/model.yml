@@ -24,7 +24,7 @@ keys:
     desc: Model duration in days
     type: integer
     default: 60
-    read: all
+    read: dev
     write: user
     tags:
     - badge

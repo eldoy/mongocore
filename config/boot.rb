@@ -10,8 +10,9 @@ require './lib/mongo_core.rb'
 # Add settings here
 MongoCore.schema = File.join(Dir.pwd, 'config', 'db', 'schema')
 
-require './models/model.rb'
 require './models/parent.rb'
+require './models/model.rb'
+
 
 # DB Settings
 # Default:

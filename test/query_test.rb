@@ -1,6 +1,5 @@
 test 'Query'
 
-# TODO: Change this to models (plural) in engine layer
 @query = MongoCore::Query.new(Model)
 
 test 'objectid'

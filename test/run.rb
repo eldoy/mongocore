@@ -22,10 +22,11 @@ begin
     'counter',
     'cache',
     'dirty',
-    # 'access'
+    'access'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x
   e(x)
+  puts x.message
 ensure
   puts Time.now - start
 end
