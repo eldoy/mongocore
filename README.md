@@ -243,6 +243,4 @@ Issues will be fixed, this library is actively maintained by [Fugroup Ltd.](http
 
 Thanks!
 
-```
-@authors: Vidar
-```
+`@authors: Vidar`
