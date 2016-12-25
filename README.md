@@ -111,7 +111,7 @@ end
 ### Schema
 For keys, defaults, description, counters, associations, scopes and accessors, use a schema file written in [YAML.](http://yaml.org)
 
-Here's the Parent example model definition:
+##### Parent example schema:
 ```yml
 
 # The meta is information about your model
@@ -167,7 +167,7 @@ many:
     dependent: destroy
 ```
 
-Here is the Model example class definition:
+##### Model example schema:
 
 ```yml
 meta:
