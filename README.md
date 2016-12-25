@@ -166,7 +166,7 @@ many:
   models:
     dependent: destroy
 ```
-<br>
+
 
 #### Model example schema:
 
