@@ -66,6 +66,20 @@ x = Model.last
 x.parent = p
 x.save
 
+# Track changes
+x.duration = 33
+x.changed?
+x.duration_changed?
+x.duration_was?
+x.changes
+x.saved?
+x.unsaved?
+
+# Validate
+x.valid?
+x.errors.any?
+x.errors
+
 # Delete
 x.delete
 
@@ -91,6 +105,7 @@ class Model
 
   # Validations
   validate do
+    # The errors hash can be used to collect error messages.
     errors[:duration] << 'duration must be greater than 0' if duration and duration < 1
     errors[:goal] << 'you need a higher goal' if goal and goal < 5
   end
