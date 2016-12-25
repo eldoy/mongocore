@@ -4,7 +4,10 @@ require 'active_support/core_ext'
 module MongoCore
 
   # # # # # #
-  # Default Options
+  # MongoCore Ruby Database Driver.
+  # @homepage: https://github.com/fugroup/mongocore
+  # @author:   Vidar <vidar@fugroup.net>, Fugroup Ltd.
+  # @license:  MIT, contributions are welcome.
   # # # # # #
 
   class << self; attr_accessor :db, :schema, :cache, :access, :debug; end
