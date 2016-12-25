@@ -252,7 +252,7 @@ scopes:
 ### Contribute
 Contributions and feedback are welcome! MIT Licensed.
 
-Issues will be fixed, this library is actively maintained by [Fugroup Ltd.](http://www.fugroup.net) We are the creators of [CrowdfundHQ,](https://crowdfundhq.com) come check us out.
+Issues will be fixed, this library is actively maintained by [Fugroup Ltd.](http://www.fugroup.net) We are the creators of [CrowdfundHQ.](https://crowdfundhq.com)
 
 Thanks!
 
