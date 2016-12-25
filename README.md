@@ -179,12 +179,6 @@ keys:
     type: hash
     read: all
     write: user
-  reminders_sent:
-    desc: Reminders sent?
-    type: boolean
-    default: false
-    read: user
-    write: dev
   votes_count:
     desc: Votes count
     type: integer
@@ -193,6 +187,10 @@ keys:
     write: dev
     tags:
     - badge
+
+  # If the key ends with _id, it is treated as a foreign key,
+  # and you can access it from the referencing model and set it too.
+  # Example: model.parent, model.parent = parent
   parent_id:
     desc: Parent id
     type: object_id
@@ -204,9 +202,6 @@ accessor:
 - submittable
 - update_expires_at
 - skip_before_save
-- owner
-- validate_campaign_fields
-- update_link
 
 # Define scopes that lets you do Models.featured.count
 # Each scope has a name, and a set of triggers
