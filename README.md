@@ -12,7 +12,7 @@ With MongoCore you can do:
 * Read and write access control for each key
 * Request cache, counter cache, track changes
 
-We're using a YAML schema file, which supports default values, data types, and security levels for each key.
+The schema is specified with a YAML file which supports default values, data types, and security levels for each key.
 
 ### Installation
 ```
@@ -85,13 +85,13 @@ class Model
     puts "Before save"
   end
 
-  after(:delete) do
+  after :delete do
     puts "After delete"
   end
 end
 ```
 
-### Schema file
+### Schema
 For keys, defaults, description, counters, associations, scopes and accessors, use a schema file written in [YAML.](http://yaml.org)
 
 Here's the Parent example model definition:
@@ -111,12 +111,14 @@ keys:
   # @read: access level for read: all, user, dev, admin, super, app
   # @write: access level for write. Returns nil if no access, as on read
 
+  # Object ID, usually added for each model
   _id:
     desc: Unique id
     type: object_id
     read: all
     write: app
 
+  # String key
   world:
     desc: Parent world
     type: string
@@ -148,14 +150,14 @@ many:
     dependent: destroy
 ```
 
-Here is the Model class definition:
+Here is the Model example class definition:
 
 ```yml
 meta:
   name: model
   type: document
 
-# Object ID, usually added for each model
+# Object ID
 keys:
   _id:
     desc: Unique id
