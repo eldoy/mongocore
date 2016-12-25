@@ -151,8 +151,8 @@ keys:
     read: all
     write: app
 
-  # This field will be called when you write models.featured.count
-  # If the field doesn't exist, the call will ask the database
+  # This field will be returned when you write models.featured.count
+  # Remember to create an after filter to keep it updated
   models_featured_count:
     desc: Models featured count
     type: integer
@@ -175,8 +175,8 @@ meta:
   name: model
   type: document
 
-# Object ID
 keys:
+  # Object ID
   _id:
     desc: Unique id
     type: object_id
