@@ -237,8 +237,9 @@ scopes:
 ```
 
 ### Contribute
+MIT Licensed, contributions and feedback are welcome!
 
-*MIT Licensed, contributions and feedback are welcome! Issues will be fixed, this library is actively maintained by [Fugroup Ltd](http://www.fugroup.net), the creators of [CrowdfundHQ](https://crowdfundhq.com)
+Issues will be fixed, this library is actively maintained by [Fugroup Ltd](http://www.fugroup.net), the creators of [CrowdfundHQ](https://crowdfundhq.com)
 
 @author: Vidar
 
