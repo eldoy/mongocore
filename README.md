@@ -123,7 +123,7 @@ keys:
 
   # Use the _id everywhere. The id can be used for whatever you want.
   # @desc: Describes the key, can be used for documentation.
-  # @type: object_id, string, integer, float, boolean, time, hash, array, converts automatically (strict typing)
+  # @type: object_id, string, integer, float, boolean, time, hash, array
   # @default: the default value for the key when you call .new
   # @read: access level for read: all, user, dev, admin, super, app
   # @write: access level for write. Returns nil if no access, as on read
@@ -166,7 +166,7 @@ many:
   models:
     dependent: destroy
 ```
-<br><br>
+<br>
 
 #### Model example schema:
 
