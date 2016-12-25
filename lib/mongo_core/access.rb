@@ -15,9 +15,7 @@ module MongoCore
 
     # Set the current access level
     def set(level = nil)
-      level = :all unless AL.include?(level = level.to_sym); g = get
-      g = (RequestStore.store[:access] = level) if !g or AL.index(level) > AL.index(g)
-      g
+      set?(level) ? RequestStore.store[:access] = level : get
     end
 
     # Get the current access level
@@ -30,29 +28,26 @@ module MongoCore
       RequestStore.store[:access] = nil
     end
 
-    # Is the current access level sufficient?
-    def ok?(level)
-      check(level)
-    end
-
     # Key readable?
     def read?(key)
-      check(keys[key][:read]) rescue false
+      ok?(keys[key][:read]) rescue false
     end
 
     # Key writable?
     def write?(key)
-      check(keys[key][:write]) rescue false
+      ok?(keys[key][:write]) rescue false
     end
 
     private
 
-    # Check if level has access
-    def check(level)
-      # Just give full access if access level not set
-      g = get || :app
-      # Check if the intended level has access
-      g == :app or AL.index(level.to_sym) <= AL.index(g)
+    # Set?
+    def set?(level)
+      AL.index(level) > AL.index(get || :all)
+    end
+
+    # Ok?
+    def ok?(level)
+      AL.index(level.to_sym) <= AL.index(get || :app)
     end
 
   end
