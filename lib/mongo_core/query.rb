@@ -80,21 +80,17 @@ module MongoCore
     end
 
     # Fetch docs, pass type :first, :to_a or :count
-    def fetch(type, i = %{#{key}-#{type}})
-      # Delete entry if we are updating or deleting
-      cache.delete(i) if MongoCore.cache and store[:cache] == false
+    def fetch(type, k = "#{key}-#{type}")
+      if MongoCore.cache
+        # Delete entry if store[:cache] => true
+        cache.delete(k) if store[:cache] == false
 
-      # Return cached entry if it exists
-      return cache[i] if (MongoCore.cache and cache.has_key?(i))
-      .tap do |h|
-        # Cache debug
-        puts 'Cache ' + (h ? 'Hit!' : 'Miss') + ': ' + i if MongoCore.debug
-        # Store hits and misses
-        RequestStore[h ? :h : :m] = (RequestStore[h ? :h : :m] || 0) + 1
+        # Return immediately if entry found
+        cache[k].tap{|d| stats(d, k); return d if d}
       end
 
-      # Actually fetch the document from the DB
-      cursor.send(type).tap{|r| cache[i] = r if MongoCore.cache}
+      # Fetch from mongodb and add to cache
+      cursor.send(type).tap{|r| cache[k] = r if MongoCore.cache and r}
     end
 
     # Cursor
@@ -117,5 +113,19 @@ module MongoCore
       return @model.send(name, @query, @options, @store.tap{@store[:chain] << name}) if @model.scopes.has_key?(name)
       super
     end
+
+    private
+
+    # Stats for debug and cache
+    def stats(d, k)
+      return unless MongoCore.debug
+
+      # Cache debug
+      puts('Cache ' + (d ? 'Hit!' : 'Miss') + ': ' + k)
+
+      # Store hits and misses
+      RequestStore[d ? :h : :m] = (RequestStore[d ? :h : :m] || 0) + 1
+    end
+
   end
 end
