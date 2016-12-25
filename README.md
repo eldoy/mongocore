@@ -4,7 +4,13 @@ MongoDB ORM implementation on top of the Ruby MongoDB driver. Very fast and ligh
 ### Features
 Thin layer on top of the [MongoDB Ruby driver.](https://docs.mongodb.com/ruby-driver/master/quick-start/)
 
-Does validations, associations, scopes, filters, counter cache, request cache, and nested queries.
+With MongoCore you can do:
+
+* Saving, updating, deleting
+* Querying, sorting, limit, defaults
+* Scopes, associations, validations
+* Read and write access control for each key
+* Request cache, counter cache, track changes
 
 We're using a YAML schema file, which supports default values, data types, and security levels for each key.
 
@@ -21,11 +27,36 @@ class Model
 end
 ```
 
-### Status
-CRUD, querying, scopes, associations, validations, sorting, limit, cache, works.
+### Usage
 
-Working on access control, dirty attributes and docs.
+```ruby
+# Create a new document
+m = Model.new
+m.duration = 59
+m.save
 
-Send us a message if you want to contribute.
+# Create another document
+p = Parent.new(:house => 'Nice')
+p.save
+p = p.reload
 
-12/22/16
+# Add the parent to the model
+m.parent = p
+m.save
+
+# Find the last model
+x = Model.last
+x.parent = p
+x.save
+
+# Many associations
+q = p.models.all
+m = p.models.first
+m = p.models.last
+```
+
+### Contribute
+
+*MIT Licensed, contributions are welcome!*
+
+[http://www.fugroup.net](http://www.fugroup.net)

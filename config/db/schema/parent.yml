@@ -8,6 +8,11 @@ keys:
     type: object_id
     read: all
     write: app
+  house:
+    desc: Parent house
+    type: string
+    read: all
+    write: user
   models_count:
     desc: Models count
     type: integer

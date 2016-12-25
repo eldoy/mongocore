@@ -248,6 +248,11 @@ module MongoCore
         find(*args).first
       end
 
+      # Last
+      def last
+        sort(:$natural => -1).first
+      end
+
       # All
       def all(*args)
         find(*args).all

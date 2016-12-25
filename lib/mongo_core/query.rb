@@ -66,7 +66,12 @@ module MongoCore
 
     # Return first document
     def first(doc = nil)
-      (doc ||= fetch :first) ? @model.new(doc.to_hash) : nil
+      (doc ||= fetch(:first)) ? @model.new(doc.to_hash) : nil
+    end
+
+    # Return last document
+    def last
+      sort(:$natural => -1).first
     end
 
     # Return all documents
