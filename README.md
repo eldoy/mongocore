@@ -92,7 +92,7 @@ end
 ```
 
 ### Schema file
-For keys, defaults, description, counters, associations, scopes and accessors, we use a schema file written in [YAML.](http://yaml.org)
+For keys, defaults, description, counters, associations, scopes and accessors, use a schema file written in [YAML.](http://yaml.org)
 
 Here's the Parent example model definition:
 ```yml
