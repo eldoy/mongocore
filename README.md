@@ -27,6 +27,23 @@ class Model
 end
 ```
 
+### Settings
+MongoCore has a few built in settings you can easily toggle:
+```ruby
+# Schema path is $app_root/config/db/schema/:model.yml
+# The yml files should have singular names
+MongoCore.schema = File.join(Dir.pwd, 'config', 'db', 'schema')
+
+# The cache stores documents in memory to avoid db round trips
+MongoCore.cache = true
+
+# The access enables the read / write access levels for the keys
+MongoCore.access = true
+
+# Enable debug to see caching information and help
+MongoCore.debug = false
+```
+
 ### Usage
 
 ```ruby
