@@ -6,12 +6,11 @@ module MongoCore
 
     # @doc is a MongoCore::Document object
     # @keys are the keys from the model schema
-    attr_accessor :doc, :keys
+    attr_accessor :keys
 
     # The access control class
-    def initialize(d)
-      @doc = d
-      @keys = d.class.keys
+    def initialize(model)
+      @keys = model.keys
     end
 
     # Set the current access level
@@ -38,12 +37,12 @@ module MongoCore
 
     # Key readable?
     def read?(key)
-      check(keys[key][:read])
+      check(keys[key][:read]) rescue false
     end
 
     # Key writable?
     def write?(key)
-      check(keys[key][:write])
+      check(keys[key][:write]) rescue false
     end
 
     private

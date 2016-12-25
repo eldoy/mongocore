@@ -6,7 +6,7 @@ module MongoCore
       base.class_eval do
         # Accessors, everything is writable if you need something dynamic.
         class << self
-          attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :befores, :afters, :validates
+          attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :befores, :afters, :validates, :access
         end
 
         # Load schema file
@@ -45,6 +45,9 @@ module MongoCore
 
         # The validates
         @validates = []
+
+        # Access
+        @access = MongoCore::Access.new(self)
 
         # Instance variables
         # @db holds the MongoCore.db
@@ -123,7 +126,7 @@ module MongoCore
         # Valid?
         def valid?
           self.class.validates.each{|k| call(k)}
-          errors.any?
+          errors.empty?
         end
 
         # Saved? Persisted?
@@ -171,17 +174,13 @@ module MongoCore
         end
 
         # Short cut for simple query with cache buster
-        def single(g = {:cache => false})
-          qq(self.class, {:_id => @_id}, {}, g)
+        def single(s = {:cache => false})
+          qq(self.class, {:_id => @_id}, {}, s)
         end
 
         # Access?
         def access?(mode, key)
-          return true unless MongoCore.access
-          case mode
-          when :read then MongoCore::Access.new(self).read?(key)
-          when :write then MongoCore::Access.new(self).write?(key)
-          end
+          MongoCore.access ? self.class.access.send("#{mode}?", key) : true
         end
 
         # Get attribute if access

@@ -61,34 +61,66 @@ p = p.reload
 m.parent = p
 m.save
 
-# Find the last model
-x = Model.last
-x.parent = p
-x.save
+# Finding
+query = Model.find
 
-# Track changes
-x.duration = 33
-x.changed?
-x.duration_changed?
-x.duration_was?
-x.changes
-x.saved?
-x.unsaved?
+# Query doesn't get executed until you call all, count, last or first
+m = query.all
+a = query.featured.all
+c = query.count
+l = query.last
+f = query.first
 
-# Validate
-x.valid?
-x.errors.any?
-x.errors
+# All
+m = Model.find.all
 
-# Delete
-x.delete
+# All of these can used:
+# https://docs.mongodb.com/manual/reference/operator/query-comparison
+m = Model.find(:house => {:$ne => nil, :$eq => 'Nice'}).last
+
+# Sorting, use -1 for descending, 1 for ascending
+m = Model.find({:duration => {:$gt => 40}}, {}, :sort => {:duration => -1}).all
+m = p.models.find(:duration => 10).sort(:duration => -1).first
+
+# Limit, pass as third option to find or chain, up to you
+p = Parent.find.sort(:duration => 1).limit(5).all
+p = Parent.limit(1).last
+m = p.models.find({}, {}, :sort => {:goal => 1}, :limit => 1).first
+m = Model.sort(:goal => 1, :duration => -1).limit(10).all
+
+# First
+m = Model.find(:_id => object_id).first
+m = Model.find(object_id).first
+m = Model.find(string).first
+m = Model.find(:duration => 60, :goal => {:$gt => 0}).first
+
+# Last
+m = Model.last
+m = p.models.last
 
 # Count
 c = Model.count
-c = parent.models.featured.count
+c = p.models.featured.count
+
+# Track changes
+m.duration = 33
+m.changed?
+m.duration_changed?
+m.duration_was
+m.changes
+m.saved?
+m.unsaved?
+
+# Validate
+m.valid?
+m.errors.any?
+m.errors
 
 # Update
-x.update(:duration => 60)
+m.update(:duration => 60)
+
+# Delete
+m.delete
 
 # Many associations
 q = p.models.all
@@ -98,12 +130,15 @@ m = p.models.last
 # Scopes
 q = p.models.featured.all
 q = p.models.featured.nested.all
+m = Model.featured.first
 
 # In your model
 class Model
   include MongoCore::Document
 
-  # Validations
+  # Validations will be run if you pass model.save(:validate => true)
+  # You can run them manually by calling model.valid?
+  # You can have multiple validate blocks if you want to
   validate do
     # The errors hash can be used to collect error messages.
     errors[:duration] << 'duration must be greater than 0' if duration and duration < 1
@@ -111,6 +146,7 @@ class Model
   end
 
   # Before and after, filters: :save, :update, :delete
+  # You can have multiple blocks for each filter if needed
   before :save, :setup
 
   def setup

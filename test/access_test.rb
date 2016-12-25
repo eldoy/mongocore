@@ -4,7 +4,7 @@ test 'Access'
 
 is @model.duration, 60
 
-a = MongoCore::Access.new(@model)
+a = MongoCore::Access.new(Model)
 
 is a.read?(:duration), :eq => true
 is a.write?(:duration), :eq => true

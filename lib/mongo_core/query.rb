@@ -104,12 +104,12 @@ module MongoCore
 
     # Sort
     def sort(o = {})
-      find(@query, @options, @store.tap{@store[:sort].merge(o)})
+      find(query, options, store.tap{store[:sort].merge!(o)})
     end
 
     # Limit
     def limit(n = 1)
-      find(@query, @options, @store.tap{@store[:limit] = n})
+      find(query, options, store.tap{store[:limit] = n})
     end
 
     # Call and return the scope if it exists
