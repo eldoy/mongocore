@@ -116,6 +116,7 @@ keys:
     type: object_id
     read: all
     write: app
+
   world:
     desc: Parent world
     type: string
@@ -153,12 +154,16 @@ Here is the Model class definition:
 meta:
   name: model
   type: document
+
+# Object ID, usually added for each model
 keys:
   _id:
     desc: Unique id
     type: object_id
     read: all
     write: app
+
+  # Integer key with default
   duration:
     desc: Model duration in days
     type: integer
@@ -167,6 +172,8 @@ keys:
     write: user
     tags:
     - badge
+
+  # Time key
   expires_at:
     desc: Model expiry date
     type: time
@@ -174,11 +181,15 @@ keys:
     write: dev
     tags:
     - badge
+
+  # Hash key
   location_data:
     desc: Model location data
     type: hash
     read: all
     write: user
+
+  # Counter key
   votes_count:
     desc: Votes count
     type: integer
@@ -210,6 +221,7 @@ scopes:
   # This will create a .featured scope, and add :duration => 60 to the query.
   featured:
     duration: 60
+
   nested:
     goal: 10
 
@@ -218,6 +230,7 @@ scopes:
     duration: 60
     goal:
       $gt: 10
+
   active:
     params:
       - duration
@@ -239,7 +252,7 @@ scopes:
 ### Contribute
 Contributions and feedback are welcome! MIT Licensed.
 
-Issues will be fixed, this library is actively maintained by [Fugroup Ltd.](http://www.fugroup.net) We are the creators of [CrowdfundHQ.](https://crowdfundhq.com)
+Issues will be fixed, this library is actively maintained by [Fugroup Ltd.](http://www.fugroup.net) We are the creators of [CrowdfundHQ,](https://crowdfundhq.com) come check us out.
 
 Thanks!
 
