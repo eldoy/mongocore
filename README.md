@@ -1,5 +1,5 @@
-# MongoCore
-MongoDB ORM implementation on top of the [MongoDB Ruby driver.](https://docs.mongodb.com/ruby-driver/master/quick-start/) Very fast and light weight.
+# MongoCore Ruby Database Driver
+A new MongoDB ORM implementation on top of the [MongoDB Ruby driver.](https://docs.mongodb.com/ruby-driver/master/quick-start/) Very fast and light weight.
 
 The perfect companion for Sinatra or other Rack-based web frameworks.
 
