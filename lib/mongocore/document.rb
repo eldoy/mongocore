@@ -1,4 +1,4 @@
-module MongoCore
+module Mongocore
   module Document
 
     def self.included(base)
@@ -10,7 +10,7 @@ module MongoCore
         end
 
         # Load schema file
-        f = File.join(MongoCore.schema, "#{self.to_s.downcase}.yml")
+        f = File.join(Mongocore.schema, "#{self.to_s.downcase}.yml")
         begin
           @schema = YAML.load(File.read(f)).deep_symbolize_keys
         rescue => e
@@ -47,10 +47,10 @@ module MongoCore
         @validates = []
 
         # Access
-        @access = MongoCore::Access.new(self)
+        @access = Mongocore::Access.new(self)
 
         # Instance variables
-        # @db holds the MongoCore.db
+        # @db holds the Mongocore.db
         # @errors is used for validates
         # @changes keeps track of object changes
         # @saved indicates whether this is saved or not
@@ -66,7 +66,7 @@ module MongoCore
           a[:_id] ? @saved = true : a[:_id] = BSON::ObjectId.new
 
           # Short cut for db
-          @db ||= MongoCore.db
+          @db ||= Mongocore.db
 
           # The errors hash
           @errors ||= Hash.new{|h, k| h[k] = []}
@@ -168,9 +168,9 @@ module MongoCore
 
         private
 
-        # Short cut for setting up a MongoCore::Query object
+        # Short cut for setting up a Mongocore::Query object
         def qq(m, q = {}, o = {}, s = {})
-          MongoCore::Query.new(m, q, o, {:source => self}.merge(s))
+          Mongocore::Query.new(m, q, o, {:source => self}.merge(s))
         end
 
         # Short cut for simple query with cache buster
@@ -180,7 +180,7 @@ module MongoCore
 
         # Access?
         def access?(mode, key)
-          MongoCore.access ? self.class.access.send("#{mode}?", key) : true
+          Mongocore.access ? self.class.access.send("#{mode}?", key) : true
         end
 
         # Get attribute if access
@@ -284,9 +284,9 @@ module MongoCore
 
       private
 
-      # Short cut for setting up a MongoCore::Query object
+      # Short cut for setting up a Mongocore::Query object
       def qq(*args)
-        MongoCore::Query.new(*args)
+        Mongocore::Query.new(*args)
       end
 
       # # # # #

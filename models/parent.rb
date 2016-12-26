@@ -1,4 +1,4 @@
 class Parent
-  include MongoCore::Document
+  include Mongocore::Document
 
 end

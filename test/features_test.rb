@@ -27,7 +27,7 @@ l = p.models.last
 test 'find'
 
 @query = Model.find
-is @query, :a? => MongoCore::Query
+is @query, :a? => Mongocore::Query
 
 m = @query.all
 x = @query.featured.all

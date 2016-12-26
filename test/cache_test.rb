@@ -1,6 +1,6 @@
 test 'Cache'
 
-if MongoCore.cache
+if Mongocore.cache
 
   @cache = (RequestStore[:cache] ||= {})
   @ids = (RequestStore[:ids] ||= Hash.new{|h, k| h[k] = []})

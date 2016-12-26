@@ -1,10 +1,10 @@
 require 'active_support'
 require 'active_support/core_ext'
 
-module MongoCore
+module Mongocore
 
   # # # # # #
-  # MongoCore Ruby Database Driver.
+  # Mongocore Ruby Database Driver.
   # @homepage: https://github.com/fugroup/mongocore
   # @author:   Vidar <vidar@fugroup.net>, Fugroup Ltd.
   # @license:  MIT, contributions are welcome.
@@ -19,6 +19,6 @@ module MongoCore
   @debug = false
 end
 
-require_relative 'mongo_core/document'
-require_relative 'mongo_core/query'
-require_relative 'mongo_core/access'
+require_relative 'mongocore/document'
+require_relative 'mongocore/query'
+require_relative 'mongocore/access'

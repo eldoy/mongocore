@@ -1,10 +1,10 @@
-module MongoCore
+module Mongocore
   class Access
 
     # Access levels (6)
     AL = [:all, :user, :dev, :admin, :super, :app]
 
-    # @doc is a MongoCore::Document object
+    # @doc is a Mongocore::Document object
     # @keys are the keys from the model schema
     attr_accessor :keys
 

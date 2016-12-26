@@ -5,10 +5,10 @@ MODE = ENV['RACK_ENV'] || 'development'
 
 require 'yaml'
 
-require './lib/mongo_core.rb'
+require './lib/mongocore.rb'
 
 # Add settings here
-MongoCore.schema = File.join(Dir.pwd, 'config', 'db', 'schema')
+Mongocore.schema = File.join(Dir.pwd, 'config', 'db', 'schema')
 
 require './models/parent.rb'
 require './models/model.rb'
@@ -22,4 +22,4 @@ Mongo::Logger.logger.level = ::Logger::FATAL
 # Mongo::Logger.logger.level = ::Logger::INFO
 
 # Connect to DB
-MongoCore.db = Mongo::Client.new(['127.0.0.1:27017'], :database => "mongocore_#{MODE}")
+Mongocore.db = Mongo::Client.new(['127.0.0.1:27017'], :database => "mongocore_#{MODE}")

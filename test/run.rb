@@ -30,7 +30,7 @@ rescue => x
   e(x)
 ensure
   puts Time.now - start
-  if MongoCore.cache
+  if Mongocore.cache
     puts (RequestStore[:h] || 0).to_s + ' hit!'
     puts (RequestStore[:m] || 0).to_s + ' miss'
   end

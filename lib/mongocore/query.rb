@@ -1,4 +1,4 @@
-module MongoCore
+module Mongocore
   class Query
 
     attr_accessor :db, :model, :collection, :colname, :query, :options, :store, :key, :cache
@@ -9,7 +9,7 @@ module MongoCore
       q = {:_id => oid(q)} unless q.is_a?(Hash)
 
       # Storing model and db
-      @model = m; @db = MongoCore.db
+      @model = m; @db = Mongocore.db
 
       # The model name is singular, the collection name is plural
       @colname = "#{m.to_s.downcase}s".to_sym
@@ -39,9 +39,9 @@ module MongoCore
        Digest::MD5.hexdigest("#{@model}#{@query.sort}#{@options.sort}#{@store[:chain]}#{@store[:sort]}#{@store[:limit]}")
     end
 
-    # Find. Returns a MongoCore::Query
+    # Find. Returns a Mongocore::Query
     def find(q = {}, o = {}, s = {})
-      MongoCore::Query.new(@model, @query.merge(q), @options.merge(o), @store.merge(s))
+      Mongocore::Query.new(@model, @query.merge(q), @options.merge(o), @store.merge(s))
     end
 
     # Count. Returns the number of documents as an integer
@@ -81,7 +81,7 @@ module MongoCore
 
     # Fetch docs, pass type :first, :to_a or :count
     def fetch(type, k = "#{key}-#{type}")
-      if MongoCore.cache
+      if Mongocore.cache
         # Delete entry if store[:cache] => true
         cache.delete(k) if store[:cache] == false
 
@@ -90,7 +90,7 @@ module MongoCore
       end
 
       # Fetch from mongodb and add to cache
-      cursor.send(type).tap{|r| cache[k] = r if MongoCore.cache and r}
+      cursor.send(type).tap{|r| cache[k] = r if Mongocore.cache and r}
     end
 
     # Cursor
@@ -118,7 +118,7 @@ module MongoCore
 
     # Stats for debug and cache
     def stats(d, k)
-      return unless MongoCore.debug
+      return unless Mongocore.debug
 
       # Cache debug
       puts('Cache ' + (d ? 'Hit!' : 'Miss') + ': ' + k)

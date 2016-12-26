@@ -1,6 +1,6 @@
 test 'Query'
 
-@query = MongoCore::Query.new(Model)
+@query = Mongocore::Query.new(Model)
 
 test 'objectid'
 
@@ -14,7 +14,7 @@ is @query.oid, :a? => BSON::ObjectId
 test 'cursor'
 
 # Cursor
-is @query.db, MongoCore.db
+is @query.db, Mongocore.db
 is @query.query, :eq => {}
 is @query.colname, :models
 

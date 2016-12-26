@@ -1,2 +1,2 @@
 test 'Connect'
-is MongoCore.db, :a? => Mongo::Client
+is Mongocore.db, :a? => Mongo::Client

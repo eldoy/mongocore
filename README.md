@@ -1,10 +1,10 @@
-# MongoCore Ruby Database Driver
+# Mongocore Ruby Database Driver
 A new MongoDB ORM implementation on top of the [MongoDB Ruby driver.](https://docs.mongodb.com/ruby-driver/master/quick-start/) Very fast and light weight.
 
 The perfect companion for Sinatra or other Rack-based web frameworks.
 
 ### Features
-With MongoCore you can do:
+With Mongocore you can do:
 
 * Saving, updating, deleting
 * Querying, sorting, limit, defaults
@@ -16,32 +16,32 @@ The schema is specified with a YAML file which supports default values, data typ
 
 ### Installation
 ```
-gem install mongo_core
+gem install mongocore
 ```
 or add to your Gemfile.
 
 Then in your model:
 ```ruby
 class Model
-  include MongoCore::Document
+  include Mongocore::Document
 end
 ```
 
 ### Settings
-MongoCore has a few built in settings you can easily toggle:
+Mongocore has a few built in settings you can easily toggle:
 ```ruby
 # Schema path is $app_root/config/db/schema/:model.yml
 # The yml files should have singular names
-MongoCore.schema = File.join(Dir.pwd, 'config', 'db', 'schema')
+Mongocore.schema = File.join(Dir.pwd, 'config', 'db', 'schema')
 
 # The cache stores documents in memory to avoid db round trips
-MongoCore.cache = true
+Mongocore.cache = true
 
 # The access enables the read / write access levels for the keys
-MongoCore.access = true
+Mongocore.access = true
 
 # Enable debug to see caching information and help
-MongoCore.debug = false
+Mongocore.debug = false
 ```
 
 ### Usage
@@ -74,7 +74,7 @@ f = query.first
 # All
 m = Model.find.all
 
-# All of these can used:
+# All of these can be used:
 # https://docs.mongodb.com/manual/reference/operator/query-comparison
 m = Model.find(:house => {:$ne => nil, :$eq => 'Nice'}).last
 
@@ -134,7 +134,7 @@ m = Model.featured.first
 
 # In your model
 class Model
-  include MongoCore::Document
+  include Mongocore::Document
 
   # Validations will be run if you pass model.save(:validate => true)
   # You can run them manually by calling model.valid?

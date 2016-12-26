@@ -1,5 +1,5 @@
 class Model
-  include MongoCore::Document
+  include Mongocore::Document
 
   # Just define a validate method and call it when needed
   # Use the errors hash to add your errors to it

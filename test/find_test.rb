@@ -2,7 +2,7 @@ test 'Find'
 
 # Query
 @query = Model.find
-is @query, :a? => MongoCore::Query
+is @query, :a? => Mongocore::Query
 
 # Count
 is Model.count, :a? => Integer

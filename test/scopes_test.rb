@@ -2,7 +2,7 @@ test 'Scopes'
 
 is Model.scopes, :a? => Hash
 
-is Model.featured, :a? => MongoCore::Query
+is Model.featured, :a? => Mongocore::Query
 
 @models = Model.featured.finished.nested.all
 
