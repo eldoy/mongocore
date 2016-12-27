@@ -22,7 +22,7 @@ Please read [the source code](https://github.com/fugroup/mongocore/tree/master/l
 | [MongoMapper](http://mongomapper.com)  | 91    | 200     | 4070          |
 | [Mongocore](http://mongocore.com)      | 4     | 170     | 309           |
 
-If you are looking for something even lighter, we also [have Minimongo.](https://github.com/fugroup/minimongo)
+If you are looking for something even lighter, we also [have Minimongo.](https://github.com/fugroup/minimongo) The tests are written [using Futest,](https://github.com/fugroup/futest) try it out if you haven't.
 
 ### Installation
 ```
