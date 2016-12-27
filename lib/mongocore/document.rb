@@ -1,9 +1,26 @@
 module Mongocore
   module Document
 
+    # # # # # # # # #
+    # The Document module holds data and methods for your models:
+    #
+    # class Model
+    #   include Mongocore::Document
+    # end
+    #
+    # Then after that create a model with m = Model.new
+    #
+    # The Model class, accessible from Model or m.class, holds the data
+    # for your models like the schema and the keys.
+    #
+    # The model instance, m, lets you do operations on a single model
+    # like m.save, m.update, m.delete
+    #
+
     def self.included(base)
       base.extend ClassMethods
       base.class_eval do
+
         # Accessors, everything is writable if you need something dynamic.
         class << self
           attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :befores, :afters, :validates, :access
@@ -43,22 +60,29 @@ module Mongocore
         # The after filters
         @afters = Hash.new{|h, k| h[k] = []}
 
-        # The validates
+        # The validators
         @validates = []
 
         # Access
         @access = Mongocore::Access.new(self)
 
+        # # # # # # # # # # #
         # Instance variables
         # @db holds the Mongocore.db
         # @errors is used for validates
         # @changes keeps track of object changes
         # @saved indicates whether this is saved or not
+        #
+
         attr_accessor :db, :errors, :changes, :saved
 
+
+        # # # # # # # # # # #
         # The class initializer, called when you write Model.new
         # Pass in attributes you want to set: Model.new(:duration => 60)
         # Defaults are filled in automatically.
+        #
+
         def initialize(a = {})
           a = a.deep_symbolize_keys
 
@@ -80,6 +104,12 @@ module Mongocore
           # The changes hash
           @changes = Hash.new{|h, k| h[k] = []}
         end
+
+
+        # # # # # # # # # # # # # # # # # #
+        # Instance methods. These can be called with
+        # first m = Model.new and then m.method_name
+        #
 
         # Save attributes to db
         def save(o = {})
@@ -143,27 +173,6 @@ module Mongocore
           k.is_a?(Proc) ? self.instance_eval(&k) : self.send(k)
         end
 
-        # Dynamically read or write attributes
-        def method_missing(name, *arguments, &block)
-          # Extract name and write mode
-          name =~ /([^=]+)(=)?/
-
-          # Write or read
-          if self.class.keys.has_key?(key = $1.to_sym)
-            return write(key, arguments.first) if $2
-            return read(key)
-          end
-
-          # Attributes changed?
-          return changes.has_key?($1.to_sym) if key =~ /(.+)_changed\?/
-
-          # Attributes was
-          return changes[$1.to_sym] if key =~ /(.+)_was/
-
-          # Pass if nothing found
-          super
-        end
-
         # Short cut for setting up a Mongocore::Query object
         def qq(m, q = {}, o = {}, s = {})
           Mongocore::Query.new(m, q, o, {:source => self}.merge(s))
@@ -222,10 +231,36 @@ module Mongocore
           end
           val
         end
+
+        # Dynamically read or write attributes
+        def method_missing(name, *arguments, &block)
+          # Extract name and write mode
+          name =~ /([^=]+)(=)?/
+
+          # Write or read
+          if self.class.keys.has_key?(key = $1.to_sym)
+            return write(key, arguments.first) if $2
+            return read(key)
+          end
+
+          # Attributes changed?
+          return changes.has_key?($1.to_sym) if key =~ /(.+)_changed\?/
+
+          # Attributes was
+          return changes[$1.to_sym] if key =~ /(.+)_was/
+
+          # Pass if nothing found
+          super
+        end
+
       end
     end
 
+
+    # # # # # # # # # # # # # # #
     # Class methods
+    #
+
     module ClassMethods
 
       # Find, takes an id or a hash
@@ -283,9 +318,9 @@ module Mongocore
         Mongocore::Query.new(*args)
       end
 
-      # # # # #
+      # # # # # # # # #
       # Templates for foreign key, many-associations and scopes.
-      # # # # #
+      #
 
       # Foreign keys
       def foreign(key, data)

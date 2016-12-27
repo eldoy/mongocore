@@ -1,6 +1,18 @@
 module Mongocore
   class Query
 
+    # # # # # # # #
+    # The Query class keeps the cursor and handles the connection with the
+    # underlying MongoDB database. A new query is created every time you call
+    # find, sort, limit, count, update, scopes and associations.
+    #
+    # Every query can be chained, but only one find is ever done to the database,
+    # it's only the parameters that change.
+    #
+    # Every query is also cached, used the state as the cache key. This is a
+    # very aggressive strategy, where arrays won't get update on update or delete.
+    #
+
     attr_accessor :db, :model, :collection, :colname, :query, :options, :store, :key, :cache
 
     # These options will be deleted before doing the find

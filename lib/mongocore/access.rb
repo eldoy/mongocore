@@ -1,6 +1,16 @@
 module Mongocore
   class Access
 
+    # # # # # # # #
+    # The Access class is responsible for checking if an attribute
+    # can be read or written. It uses 6 access levels and the
+    # read and write attributes in the schema yml file for the model.
+    #
+    # If your current access level is above the key level, then you
+    # can read or write, if you get nil. This is very useful for APIs
+    # where f.ex. you want to show the email to logged in users, but not to all.
+    #
+
     # Access levels (6)
     AL = [:all, :user, :dev, :admin, :super, :app]
 
