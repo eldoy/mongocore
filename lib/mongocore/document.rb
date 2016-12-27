@@ -66,10 +66,10 @@ module Mongocore
           a[:_id] ? @saved = true : a[:_id] = BSON::ObjectId.new
 
           # Short cut for db
-          @db ||= Mongocore.db
+          @db = Mongocore.db
 
           # The errors hash
-          @errors ||= Hash.new{|h, k| h[k] = []}
+          @errors = Hash.new{|h, k| h[k] = []}
 
           # Defaults
           self.class.defaults.each{|k, v| write(k, v)}
@@ -78,7 +78,7 @@ module Mongocore
           a.each{|k, v| write(k, v)}
 
           # The changes hash
-          @changes ||= Hash.new{|h, k| h[k] = []}
+          @changes = Hash.new{|h, k| h[k] = []}
         end
 
         # Save attributes to db
@@ -87,9 +87,7 @@ module Mongocore
           return nil unless valid? if o[:validate]
 
           # Create a new query
-          qq(self.class, {:_id => @_id}).update(attributes).tap do
-            @saved = true; run(:after, :save)
-          end
+          qq(self.class, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
         end
 
         # Update document in db
@@ -165,8 +163,6 @@ module Mongocore
           # Pass if nothing found
           super
         end
-
-        private
 
         # Short cut for setting up a Mongocore::Query object
         def qq(m, q = {}, o = {}, s = {})
@@ -281,8 +277,6 @@ module Mongocore
       def validate(*args, &block)
         validates << (args[0] || block)
       end
-
-      private
 
       # Short cut for setting up a Mongocore::Query object
       def qq(*args)
