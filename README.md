@@ -14,7 +14,7 @@ With Mongocore you can do:
 
 The schema is specified with a YAML file which supports default values, data types, and security levels for each key.
 
-Please read the source code to learn how it works, it's fully commented and very small, only 4 files, and 309 lines of fully test driven code.
+Please read [the source code](https://github.com/fugroup/mongocore/tree/master/lib/mongocore) to see how it works, it's fully commented and very small, only 4 files, and 309 lines of fully test driven code.
 
 | Library                                | Files | Comment | Lines of code |
 | -------------------------------------- | ----- | ------- | ------------- |
