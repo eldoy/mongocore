@@ -23,7 +23,7 @@ Please read [the source code](https://github.com/fugroup/mongocore/tree/master/l
 | [Mongocore](http://mongocore.com)      | 4     | 170     | 309           |
 
 <br>
-If you are looking for something even lighter, we also [have Minimongo.](https://github.com/fugroup/minimongo) it's the worlds tinyest MongoDB library.
+If you are looking for something even lighter, we also [have Minimongo,](https://github.com/fugroup/minimongo) the world's tinyest MongoDB library.
 
 The tests are written [using Futest,](https://github.com/fugroup/futest) try it out if you haven't.
 
