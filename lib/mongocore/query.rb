@@ -9,11 +9,8 @@ module Mongocore
     # Every query can be chained, but only one find is ever done to the database,
     # it's only the parameters that change.
     #
-    # Every query is also cached, used the state as the cache key. This is a
-    # very aggressive strategy, where arrays won't get update on update or delete.
-    #
 
-    attr_accessor :db, :model, :collection, :colname, :query, :options, :store, :key, :cache
+    attr_accessor :db, :model, :collection, :colname, :query, :options, :store, :cache
 
     # These options will be deleted before doing the find
     def initialize(m, q = {}, o = {}, s = {})
@@ -33,9 +30,8 @@ module Mongocore
       s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil
       @options = o; @query = q; @store = s
 
-      # Generate cache key and set up cache
-      @key ||= generate
-      @cache = (RequestStore[:cache] ||= {})
+      # Set up cache
+      @cache = Mongocore::Cache.new(self)
     end
 
     # Convert string id into a BSON::ObjectId
@@ -44,11 +40,6 @@ module Mongocore
       return id if id.is_a?(BSON::ObjectId)
       return BSON::ObjectId.new if !id
       BSON::ObjectId.from_string(id) rescue id
-    end
-
-    # Generate the cache key
-    def generate
-       Digest::MD5.hexdigest("#{@model}#{@query.sort}#{@options.sort}#{@store[:chain]}#{@store[:sort]}#{@store[:limit]}")
     end
 
     # Find. Returns a Mongocore::Query
@@ -92,17 +83,11 @@ module Mongocore
     end
 
     # Fetch docs, pass type :first, :to_a or :count
-    def fetch(type, k = "#{key}-#{type}")
-      if Mongocore.cache
-        # Delete entry if store[:cache] => true
-        cache.delete(k) if store[:cache] == false
-
-        # Return immediately if entry found
-        cache[k].tap{|d| stats(d, k); return d if d}
-      end
+    def fetch(t)
+      cache.get(t) if Mongocore.cache
 
       # Fetch from mongodb and add to cache
-      cursor.send(type).tap{|r| cache[k] = r if Mongocore.cache and r}
+      cursor.send(t).tap{|r| cache.set(t, r) if Mongocore.cache}
     end
 
     # Cursor
@@ -124,19 +109,6 @@ module Mongocore
     def method_missing(name, *arguments, &block)
       return @model.send(name, @query, @options, @store.tap{@store[:chain] << name}) if @model.scopes.has_key?(name)
       super
-    end
-
-    private
-
-    # Stats for debug and cache
-    def stats(d, k)
-      return unless Mongocore.debug
-
-      # Cache debug
-      puts('Cache ' + (d ? 'Hit!' : 'Miss') + ': ' + k)
-
-      # Store hits and misses
-      RequestStore[d ? :h : :m] = (RequestStore[d ? :h : :m] || 0) + 1
     end
 
   end
