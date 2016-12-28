@@ -107,7 +107,7 @@ module Mongocore
 
     # Call and return the scope if it exists
     def method_missing(name, *arguments, &block)
-      return @model.send(name, @query, @options, @store.tap{@store[:chain] << name}) if @model.scopes.has_key?(name)
+      return @model.send(name, @query, @options, @store.tap{@store[:chain] << name}) if @model.schema.scopes.has_key?(name)
       super
     end
 

@@ -23,36 +23,14 @@ module Mongocore
 
         # Accessors, everything is writable if you need something dynamic.
         class << self
-          attr_accessor :schema, :meta, :accessors, :keys, :many, :scopes, :defaults, :befores, :afters, :validates, :access
+          attr_accessor :schema, :access, :befores, :afters, :validates
         end
 
-        # Load schema file
-        f = File.join(Mongocore.schema, "#{self.to_s.downcase}.yml")
-        begin
-          @schema = YAML.load(File.read(f)).deep_symbolize_keys
-        rescue => e
-          puts "Schema file not found in #{f}, please add it."
-          exit(0)
-        end
+        # Schema
+        @schema = Mongocore::Schema.new(self)
 
-        # Meta
-        @meta = @schema[:meta] || {}
-
-        # Keys
-        @keys = @schema[:keys] || {}
-
-        # Accessors
-        (@accessors = @schema[:accessor] || []).each{|a| attr_accessor(a.to_sym)}
-
-        # Many
-        (@many = @schema[:many] || {}).each{|k, v| mny(k, v)}
-
-        # Scopes
-        (@scopes = @schema[:scopes] || {}).each{|k, v| scope(k, v)}
-
-        # Defaults and foreign keys
-        @defaults = {}
-        @keys.each{|k, v| foreign(k, v); @defaults[k] = v[:default]}
+        # Access
+        @access = Mongocore::Access.new(@schema)
 
         # The before filters
         @befores = Hash.new{|h, k| h[k] = []}
@@ -63,9 +41,6 @@ module Mongocore
         # The validators
         @validates = []
 
-        # Access
-        @access = Mongocore::Access.new(self)
-
         # # # # # # # # # # #
         # Instance variables
         # @db holds the Mongocore.db
@@ -74,7 +49,7 @@ module Mongocore
         # @saved indicates whether this is saved or not
         #
 
-        attr_accessor :db, :errors, :changes, :saved
+        attr_accessor :db, :schema, :errors, :changes, :saved
 
 
         # # # # # # # # # # #
@@ -95,8 +70,11 @@ module Mongocore
           # The errors hash
           @errors = Hash.new{|h, k| h[k] = []}
 
+          # The schema
+          @schema = self.class.schema
+
           # Defaults
-          self.class.defaults.each{|k, v| write(k, v)}
+          @schema.defaults.each{|k, v| write(k, v)}
 
           # Set the attributes
           a.each{|k, v| write(k, v)}
@@ -138,7 +116,7 @@ module Mongocore
 
         # Collect the attributes
         def attributes
-          a = {}; self.class.keys.keys.each{|k| a[k] = read!(k)}; a
+          a = {}; schema.keys.keys.each{|k| a[k] = read!(k)}; a
         end
 
         # Set the attributes
@@ -219,7 +197,7 @@ module Mongocore
         # Convert type if val and schema type is set
         def convert(key, val)
           return nil if val.nil?
-          type = self.class.keys[key][:type].to_sym rescue nil
+          type = schema.keys[key][:type].to_sym rescue nil
           return val if type.nil?
 
           # Convert to the same type as in the schema
@@ -238,7 +216,7 @@ module Mongocore
           name =~ /([^=]+)(=)?/
 
           # Write or read
-          if self.class.keys.has_key?(key = $1.to_sym)
+          if schema.keys.has_key?(key = $1.to_sym)
             return write(key, arguments.first) if $2
             return read(key)
           end
@@ -316,59 +294,6 @@ module Mongocore
       # Short cut for setting up a Mongocore::Query object
       def qq(*args)
         Mongocore::Query.new(*args)
-      end
-
-      # # # # # # # # #
-      # Templates for foreign key, many-associations and scopes.
-      #
-
-      # Foreign keys
-      def foreign(key, data)
-        return if key !~ /(.+)_id/
-        t = %Q{
-          def #{$1}
-            @#{$1} ||= qq(#{$1.capitalize}, :_id => @#{key}).first
-          end
-
-          def #{$1}=(m)
-            @#{key} = m._id
-            @#{$1} = m
-          end
-        }
-        class_eval t
-      end
-
-      # Many
-      def mny(key, data)
-        t = %Q{
-          def #{key}
-            qq(#{key[0..-2].capitalize}, {:#{self.to_s.downcase}_id => @_id}, {}, :source => self)
-          end
-        }
-        class_eval t
-      end
-
-      # Set up scope and insert it
-      def scope(key, data)
-        # Extract the parameters
-        pm = data.delete(:params) || []
-
-        # Replace data if we are using parameters
-        d = %{#{data}}
-        pm.each do |a|
-          d.scan(%r{(=>"(#{a})(\.[a-z0-9]+)?")}).each do |n|
-            d.gsub!(n[0], %{=>#{n[1]}#{n[2]}})
-          end
-        end
-
-        # Define the scope method so we can call it
-        j = pm.any? ? %{#{pm.join(', ')},} : ''
-        t = %Q{
-          def #{key}(#{j} q = {}, o = {}, s = {})
-            qq(self, q.merge(#{d}), o, {:scope => [:#{key}]}.merge(s))
-          end
-        }
-        instance_eval t
       end
 
     end

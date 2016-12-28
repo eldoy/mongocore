@@ -16,10 +16,12 @@ module Mongocore
   @schema = File.join(Dir.pwd, 'config', 'db', 'schema')
   @cache = true
   @access = true
-  @debug = true
+  @debug = false
 end
 
 require_relative 'mongocore/document'
 require_relative 'mongocore/query'
+require_relative 'mongocore/schema'
 require_relative 'mongocore/access'
 require_relative 'mongocore/cache'
+

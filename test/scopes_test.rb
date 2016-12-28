@@ -1,6 +1,6 @@
 test 'Scopes'
 
-is Model.scopes, :a? => Hash
+is Model.schema.scopes, :a? => Hash
 
 is Model.featured, :a? => Mongocore::Query
 

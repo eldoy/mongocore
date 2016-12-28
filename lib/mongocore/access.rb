@@ -18,8 +18,8 @@ module Mongocore
     attr_accessor :keys
 
     # The access control class
-    def initialize(model)
-      @keys = model.keys
+    def initialize(schema)
+      @keys = schema.keys
     end
 
     # Set the current access level
