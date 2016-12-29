@@ -8,21 +8,21 @@ include Futest::Helpers
 begin
   start = Time.now
   [
-    # 'connection',
-    # 'query',
-    # 'schema',
-    # 'attributes',
-    # 'save',
-    # 'find',
-    # 'scopes',
-    # 'associations',
-    # 'sort',
-    # 'validate',
-    # 'filters',
-    # 'counter',
-    # 'cache',
-    # 'dirty',
-    # 'access',
+    'connection',
+    'query',
+    'schema',
+    'attributes',
+    'save',
+    'find',
+    'scopes',
+    'associations',
+    'sort',
+    'validate',
+    'filters',
+    'counter',
+    'cache',
+    'dirty',
+    'access',
     'features'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x

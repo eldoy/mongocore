@@ -18,8 +18,6 @@ module Mongocore
 
       # The validators
       @validate = []
-
-
     end
 
   end

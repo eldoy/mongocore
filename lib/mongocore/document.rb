@@ -82,7 +82,7 @@ module Mongocore
 
       # # # # # # # # # # # # # # # # # #
       # Instance methods. These can be called with
-      # first m = Model.new and then m.method_name
+      # m = Model.new and then m.method_name
       #
 
       # Save attributes to db
@@ -110,6 +110,11 @@ module Mongocore
         single.first
       end
 
+
+      # # # # # # # # # # # # # # # #
+      # Attributes
+      #
+
       # Collect the attributes
       def attributes
         a = {}; schema.keys.keys.each{|k| a[k] = read!(k)}; a
@@ -125,17 +130,16 @@ module Mongocore
         changes.any?
       end
 
+
+      # # # # # # # # # # # # # # # #
+      # Validations
+      #
+
       # Valid?
       def valid?
         @klass.filters.validate.each{|k| call(k)}
         errors.empty?
       end
-
-      # Saved? Persisted?
-      def saved?; !!@saved; end
-
-      # Unsaved? New record?
-      def unsaved?; !@saved; end
 
       # Available filters are :save, :update, :delete
       def run(filter, key = nil)
@@ -147,6 +151,17 @@ module Mongocore
         k.is_a?(Proc) ? self.instance_eval(&k) : self.send(k)
       end
 
+
+      # # # # # # # # # # # # # # # #
+      # Convenience
+      #
+
+      # Saved? Persisted?
+      def saved?; !!@saved; end
+
+      # Unsaved? New record?
+      def unsaved?; !@saved; end
+
       # Short cut for setting up a Mongocore::Query object
       def qq(m, q = {}, o = {}, s = {})
         Mongocore::Query.new(m, q, o, {:source => self}.merge(s))
@@ -156,6 +171,11 @@ module Mongocore
       def single(s = {:cache => false})
         qq(@klass, {:_id => @_id}, {}, s)
       end
+
+
+      # # # # # # # # # # # # # # # #
+      # Read, write, access and convert
+      #
 
       # Access?
       def access?(mode, key)
