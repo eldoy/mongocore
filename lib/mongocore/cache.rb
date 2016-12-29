@@ -21,30 +21,25 @@ module Mongocore
 
     # Get the cache key
     def get(t)
-      @type = t; @cache[f].tap{|d| stat(d)}
+      @cache[(t = key + t.to_s)].tap{|d| stat(d, t)}
     end
 
     # Set the cache key
     def set(t, v = nil)
-      @type = t; v ? @cache[f] = v : @cache.delete(f)
+      t = key + t.to_s; v ? cache[t] = v : cache.delete(t)
     end
 
     private
 
     # Stats for debug and cache
-    def stat(d)
+    def stat(d, t)
       return unless Mongocore.debug
 
       # Cache debug
-      puts('Cache ' + (d ? 'Hit!' : 'Miss') + ': ' + f)
+      puts('Cache ' + (d ? 'Hit!' : 'Miss') + ': ' + t)
 
       # Store hits and misses
       RequestStore[d ? :h : :m] = (RequestStore[d ? :h : :m] || 0) + 1
-    end
-
-    # Short cut for full cache key
-    def f
-      @f ||= "#{@key}-#{@type}"
     end
 
   end
