@@ -32,7 +32,7 @@ module Mongocore
       @access = Mongocore::Access.new(@schema)
 
       # Filters
-      @filters = Mongocore::Filters.new(self)
+      @filters = Mongocore::Filters.new
 
       # # # # # # # # # # #
       # Instance variables

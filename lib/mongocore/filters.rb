@@ -6,10 +6,10 @@ module Mongocore
     #
 
     # Accessors
-    attr_accessor :klass, :before, :after, :validate
+    attr_accessor :before, :after, :validate
 
     # Init
-    def initialize(klass)
+    def initialize
       # The before filters
       @before = Hash.new{|h, k| h[k] = []}
 
