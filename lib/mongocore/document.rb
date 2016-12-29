@@ -32,7 +32,7 @@ module Mongocore
       @access = Mongocore::Access.new(@schema)
 
       # Filters
-      @filters = Mongocore::Filters.new
+      @filters = Mongocore::Filters.new(self)
 
       # # # # # # # # # # #
       # Instance variables
@@ -137,18 +137,12 @@ module Mongocore
 
       # Valid?
       def valid?
-        @klass.filters.validate.each{|k| call(k)}
-        errors.empty?
+        @klass.filters.valid?(self)
       end
 
       # Available filters are :save, :update, :delete
       def run(filter, key = nil)
-        @klass.filters.send(filter)[key].each{|k| call(k)}
-      end
-
-      # Execute a proc or a method
-      def call(k)
-        k.is_a?(Proc) ? self.instance_eval(&k) : self.send(k)
+        @klass.filters.run(self, filter, key)
       end
 
 
@@ -174,7 +168,7 @@ module Mongocore
 
 
       # # # # # # # # # # # # # # # #
-      # Read, write, access and convert
+      # Read, write instance variables
       #
 
       # Access?
@@ -195,8 +189,9 @@ module Mongocore
       # Set attribute if access
       def write(key, val)
         return nil unless access?(:write, key)
+
         # Convert to type as in schema yml
-        v = convert(key, val)
+        v = @schema.convert(key, val)
 
         # Record change for dirty attributes
         read!(key).tap{|r| @changes[key] = r if v != r} if @changes
@@ -208,22 +203,6 @@ module Mongocore
       # Set attribute
       def write!(key, v)
         instance_variable_set("@#{key}", v)
-      end
-
-      # Convert type if val and schema type is set
-      def convert(key, val)
-        return nil if val.nil?
-        type = schema.keys[key][:type].to_sym rescue nil
-        return val if type.nil?
-
-        # Convert to the same type as in the schema
-        return val.to_i if type == :integer
-        return val.to_f if type == :float
-        return !!val    if type == :boolean
-        if type == :object_id and !val.is_a?(BSON::ObjectId)
-          return BSON::ObjectId.from_string(val) rescue nil
-        end
-        val
       end
 
       # Dynamically read or write attributes
