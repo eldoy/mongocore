@@ -24,4 +24,5 @@ require_relative 'mongocore/query'
 require_relative 'mongocore/schema'
 require_relative 'mongocore/access'
 require_relative 'mongocore/cache'
+require_relative 'mongocore/filters'
 

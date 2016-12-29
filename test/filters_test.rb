@@ -1,4 +1,4 @@
-test 'Events'
+test 'Filters'
 
 @model = Model.first
 

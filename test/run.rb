@@ -18,7 +18,7 @@ begin
     'associations',
     'sort',
     'validate',
-    'events',
+    'filters',
     'counter',
     'cache',
     'dirty',

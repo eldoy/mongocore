@@ -42,9 +42,11 @@ is @model.unsaved?, :eq => true
 @model = Model.first
 is @model.saved?, :eq => true
 
+@model = Model.new
 @model.duration = Time.now.to_i
 is @model.changed?, :eq => true
 @model.save
+
 is @model.changed?, :eq => true
 is @model.saved?, :eq => true
 

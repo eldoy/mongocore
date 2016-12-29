@@ -23,7 +23,7 @@ module Mongocore
 
         # Accessors, everything is writable if you need something dynamic.
         class << self
-          attr_accessor :schema, :access, :befores, :afters, :validates
+          attr_accessor :schema, :access, :filters
         end
 
         # Schema
@@ -32,14 +32,8 @@ module Mongocore
         # Access
         @access = Mongocore::Access.new(@schema)
 
-        # The before filters
-        @befores = Hash.new{|h, k| h[k] = []}
-
-        # The after filters
-        @afters = Hash.new{|h, k| h[k] = []}
-
-        # The validators
-        @validates = []
+        # Filters
+        @filters = Mongocore::Filters.new(self)
 
         # # # # # # # # # # #
         # Instance variables
@@ -49,7 +43,7 @@ module Mongocore
         # @saved indicates whether this is saved or not
         #
 
-        attr_accessor :db, :schema, :errors, :changes, :saved
+        attr_accessor :klass, :db, :schema, :errors, :changes, :saved
 
 
         # # # # # # # # # # #
@@ -64,6 +58,9 @@ module Mongocore
           # The _id has the BSON object, create new unless it exists
           a[:_id] ? @saved = true : a[:_id] = BSON::ObjectId.new
 
+          # Short cut for self.class
+          @klass = self.class
+
           # Short cut for db
           @db = Mongocore.db
 
@@ -71,7 +68,7 @@ module Mongocore
           @errors = Hash.new{|h, k| h[k] = []}
 
           # The schema
-          @schema = self.class.schema
+          @schema = @klass.schema
 
           # Defaults
           @schema.defaults.each{|k, v| write(k, v)}
@@ -95,7 +92,7 @@ module Mongocore
           return nil unless valid? if o[:validate]
 
           # Create a new query
-          qq(self.class, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
+          qq(@klass, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
         end
 
         # Update document in db
@@ -131,7 +128,7 @@ module Mongocore
 
         # Valid?
         def valid?
-          self.class.validates.each{|k| call(k)}
+          @klass.filters.validate.each{|k| call(k)}
           errors.empty?
         end
 
@@ -143,7 +140,7 @@ module Mongocore
 
         # Available filters are :save, :update, :delete
         def run(filter, key = nil)
-          self.class.send(%{#{filter}s})[key].each{|k| call(k)}
+          @klass.filters.send(filter)[key].each{|k| call(k)}
         end
 
         # Execute a proc or a method
@@ -158,12 +155,12 @@ module Mongocore
 
         # Short cut for simple query with cache buster
         def single(s = {:cache => false})
-          qq(self.class, {:_id => @_id}, {}, s)
+          qq(@klass, {:_id => @_id}, {}, s)
         end
 
         # Access?
         def access?(mode, key)
-          Mongocore.access ? self.class.access.send("#{mode}?", key) : true
+          Mongocore.access ? @klass.access.send("#{mode}?", key) : true
         end
 
         # Get attribute if access
@@ -276,19 +273,19 @@ module Mongocore
         find({}, {}, :limit => n)
       end
 
-      # Register afters and befores. Pass a method name as symbol or a block
+      # Register after and before. Pass a method name as symbol or a block
       # Possible filters are :save, :update, :delete
       def after(*args, &block)
-        afters[args[0]] << (args[1] || block)
+        filters.after[args[0]] << (args[1] || block)
       end
 
       def before(*args, &block)
-        befores[args[0]] << (args[1] || block)
+        filters.before[args[0]] << (args[1] || block)
       end
 
       # Register validate. Only takes a block
       def validate(*args, &block)
-        validates << (args[0] || block)
+        filters.validate << (args[0] || block)
       end
 
       # Short cut for setting up a Mongocore::Query object
