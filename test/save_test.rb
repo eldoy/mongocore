@@ -32,5 +32,3 @@ test 'delete'
 
 @delete = @model.delete
 is @delete.n, :gt => 0
-
-# MAYBE: Model.insert, Model.update for insert_many and update_many

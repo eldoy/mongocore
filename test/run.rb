@@ -35,12 +35,3 @@ ensure
     puts (RequestStore[:m] || 0).to_s + ' miss'
   end
 end
-
-# Info on MongoDB Driver
-# https://docs.mongodb.com/ruby-driver/master/quick-start/
-# http://zetcode.com/db/mongodbruby/
-# http://recipes.sinatrarb.com/p/databases/mongo
-# https://github.com/steveren/ruby-driver-sample-app/blob/master/lib/neighborhood.rb
-
-# Indexing
-# $db[:profiles].indexes.create_one({:key => 1}, :unique => true)

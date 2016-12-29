@@ -1,4 +1,5 @@
 test 'Schema'
+
 @model = Model.new
 
 is @model._id, :a? => BSON::ObjectId

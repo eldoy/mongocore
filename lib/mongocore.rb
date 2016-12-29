@@ -26,3 +26,11 @@ require_relative 'mongocore/access'
 require_relative 'mongocore/cache'
 require_relative 'mongocore/filters'
 
+# Info on MongoDB Driver
+# https://docs.mongodb.com/ruby-driver/master/quick-start/
+# http://zetcode.com/db/mongodbruby/
+# http://recipes.sinatrarb.com/p/databases/mongo
+# https://github.com/steveren/ruby-driver-sample-app/blob/master/lib/neighborhood.rb
+
+# Indexing
+# $db[:profiles].indexes.create_one({:key => 1}, :unique => true)

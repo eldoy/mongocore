@@ -57,9 +57,3 @@ is @model.attributes[:duration], 60
 @model.attributes = {:duration => 50}
 
 is @model.duration, 50
-
-
-
-
-
-
