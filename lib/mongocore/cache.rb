@@ -21,7 +21,7 @@ module Mongocore
 
     # Get the cache key
     def get(t)
-      @cache[t = key + t.to_s].tap{|d| stat(d, t)}
+      @cache[t = key + t.to_s].tap{|d| stat(d, t) if Mongocore.debug}
     end
 
     # Set the cache key
@@ -33,12 +33,7 @@ module Mongocore
 
     # Stats for debug and cache
     def stat(d, t)
-      return unless Mongocore.debug
-
-      # Cache debug
       puts('Cache ' + (d ? 'Hit!' : 'Miss') + ': ' + t)
-
-      # Store hits and misses
       RequestStore[d ? :h : :m] = (RequestStore[d ? :h : :m] || 0) + 1
     end
 
