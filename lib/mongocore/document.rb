@@ -79,10 +79,11 @@ module Mongocore
         @changes = Hash.new{|h, k| h[k] = []}
       end
 
-
+      # # # # # # # # # # # #
+      # Model methods are called with m = Model.new, m.method_name
       # # # # # # # # # # # # # # # # # #
-      # Instance methods. These can be called with
-      # m = Model.new and then m.method_name
+      #
+      # Database methods
       #
 
       # Save attributes to db
@@ -112,7 +113,7 @@ module Mongocore
 
 
       # # # # # # # # # # # # # # # #
-      # Attributes
+      # Attribute methods
       #
 
       # Collect the attributes
@@ -132,7 +133,7 @@ module Mongocore
 
 
       # # # # # # # # # # # # # # # #
-      # Validations
+      # Validation methods
       #
 
       # Valid?
@@ -147,7 +148,7 @@ module Mongocore
 
 
       # # # # # # # # # # # # # # # #
-      # Convenience
+      # Convenience methods
       #
 
       # Saved? Persisted?
@@ -168,7 +169,7 @@ module Mongocore
 
 
       # # # # # # # # # # # # # # # #
-      # Read, write instance variables
+      # Read and write instance variables
       #
 
       # Access?
@@ -230,7 +231,7 @@ module Mongocore
 
 
     # # # # # # # # # # # # # # #
-    # Class methods
+    # Class methods are called on the model class, i.e. Model.find
     #
 
     class_methods do
