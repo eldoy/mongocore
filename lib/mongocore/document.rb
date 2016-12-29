@@ -231,7 +231,7 @@ module Mongocore
 
 
     # # # # # # # # # # # # # # #
-    # Class methods are mostly for database lookups
+    # Class methods are mostly for database lookups and filters
     #
 
     class_methods do
@@ -271,9 +271,14 @@ module Mongocore
         find({}, {}, :limit => n)
       end
 
-      # Register after and before.
+      # # # # # # # # #
+      # After, before and validation filters
       # Pass a method name as symbol or a block
-      # Possible filters are :save, :update, :delete
+      #
+      # Possible events for after and before are :save, :update, :delete
+      #
+
+      # After
       def after(*args, &block)
         filters.after[args[0]] << (args[1] || block)
       end
@@ -283,7 +288,7 @@ module Mongocore
         filters.before[args[0]] << (args[1] || block)
       end
 
-      # Register validate. Only takes a block
+      # Validate
       def validate(*args, &block)
         filters.validate << (args[0] || block)
       end
