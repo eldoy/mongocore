@@ -16,7 +16,7 @@ module Mongocore
     def initialize(q)
       @query = q
       @cache = (RequestStore[:cache] ||= {})
-      @key = gen(q)
+      @key = Digest::MD5.hexdigest(@query.key)
     end
 
     # Get the cache key
@@ -30,11 +30,6 @@ module Mongocore
     end
 
     private
-
-    # Cache key
-    def gen(q)
-      Digest::MD5.hexdigest("#{q.model}#{q.query.sort}#{q.options.sort}#{q.store[:chain]}#{q.store[:sort]}#{q.store[:cache]}#{q.store[:limit]}")
-    end
 
     # Stats for debug and cache
     def stat(d)
