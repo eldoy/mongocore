@@ -172,14 +172,9 @@ module Mongocore
       # Read and write instance variables
       #
 
-      # Access?
-      def access?(mode, key)
-        Mongocore.access ? @klass.access.send("#{mode}?", key) : true
-      end
-
       # Get attribute if access
       def read(key)
-        access?(:read, key) ? read!(key) : nil
+        @klass.access.read?(key) ? read!(key) : nil
       end
 
       # Get attribute
@@ -189,7 +184,7 @@ module Mongocore
 
       # Set attribute if access
       def write(key, val)
-        return nil unless access?(:write, key)
+        return nil unless @klass.access.write?(key)
 
         # Convert to type as in schema yml
         v = @schema.convert(key, val)

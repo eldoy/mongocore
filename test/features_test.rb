@@ -77,7 +77,7 @@ is m._id.to_s, :eq => id.to_s
 m = Model.find(id.to_s).first
 is m._id.to_s, :eq => id.to_s
 
-m = Model.find(:duration => 60, :goal => {:$gt => 0}).first
+m = Model.find({}, :goal => {:$gt => 0}).first
 is m, :a? => Model
 
 test 'last'
@@ -160,4 +160,4 @@ q = Model.featured.nested.all
 is q.first, :a? => Model
 
 m = Model.featured.first
-is q.first, :a? => Model
+is m, :a? => Model

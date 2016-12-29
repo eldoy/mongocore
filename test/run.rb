@@ -4,6 +4,26 @@ require './config/boot'
 
 include Futest::Helpers
 
+# TODO: Move to Futest
+def seed(*args, &block)
+  case args[0]
+  when :ask
+    puts "Seed DB? y / n"; r = STDIN.gets.chomp
+    yield if r.downcase != 'n'
+  when :no
+  else
+    yield
+  end
+end
+
+seed :no do
+  puts "Deleting"
+  Model.find.all.each{|m| m.delete}
+  Parent.find.all.each{|p| p.delete}
+  Model.new(:duration => 60).save
+  Model.new(:goal => 10).save
+end
+
 # Load tests. Comment out the ones you don't want to run.
 begin
   start = Time.now

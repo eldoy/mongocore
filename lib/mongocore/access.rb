@@ -56,7 +56,7 @@ module Mongocore
 
     # Ok?
     def ok?(level)
-      AL.index(level.to_sym) <= AL.index(get || :app)
+      !Mongocore.access || AL.index(level.to_sym) <= AL.index(get || :app)
     end
 
   end

@@ -1,7 +1,7 @@
 require 'bundler/setup'
-Bundler.require(:default, :development)
+Bundler.require(:default, :development, :test)
 
-MODE = ENV['RACK_ENV'] || 'development'
+MODE = ENV['RACK_ENV'] || 'test'
 
 require 'yaml'
 
