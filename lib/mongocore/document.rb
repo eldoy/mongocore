@@ -92,7 +92,7 @@ module Mongocore
         return nil unless valid? if o[:validate]
 
         # Create a new query
-        qq(@klass, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
+        mq(@klass, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
       end
 
       # Update document in db
@@ -158,13 +158,13 @@ module Mongocore
       def unsaved?; !@saved; end
 
       # Short cut for setting up a Mongocore::Query object
-      def qq(m, q = {}, o = {}, s = {})
+      def mq(m, q = {}, o = {}, s = {})
         Mongocore::Query.new(m, q, o, {:source => self}.merge(s))
       end
 
       # Short cut for simple query with cache buster
       def single(s = {:cache => false})
-        qq(@klass, {:_id => @_id}, {}, s)
+        mq(@klass, {:_id => @_id}, {}, s)
       end
 
 
@@ -238,7 +238,7 @@ module Mongocore
 
       # Find, takes an id or a hash
       def find(*args)
-        qq(self, *args)
+        mq(self, *args)
       end
 
       # Count
@@ -289,7 +289,7 @@ module Mongocore
       end
 
       # Short cut for setting up a Mongocore::Query object
-      def qq(*args)
+      def mq(*args)
         Mongocore::Query.new(*args)
       end
 

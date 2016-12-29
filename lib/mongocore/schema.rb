@@ -69,7 +69,7 @@ module Mongocore
       return if key !~ /(.+)_id/
       t = %Q{
         def #{$1}
-          @#{$1} ||= qq(#{$1.capitalize}, :_id => @#{key}).first
+          @#{$1} ||= mq(#{$1.capitalize}, :_id => @#{key}).first
         end
 
         def #{$1}=(m)
@@ -84,7 +84,7 @@ module Mongocore
     def many(key, data)
       t = %Q{
         def #{key}
-          qq(#{key[0..-2].capitalize}, {:#{@klass.to_s.downcase}_id => @_id}, {}, :source => self)
+          mq(#{key[0..-2].capitalize}, {:#{@klass.to_s.downcase}_id => @_id}, {}, :source => self)
         end
       }
       @klass.class_eval t
@@ -107,7 +107,7 @@ module Mongocore
       j = pm.any? ? %{#{pm.join(', ')},} : ''
       t = %Q{
         def #{key}(#{j} q = {}, o = {}, s = {})
-          qq(self, q.merge(#{d}), o, {:scope => [:#{key}]}.merge(s))
+          mq(self, q.merge(#{d}), o, {:scope => [:#{key}]}.merge(s))
         end
       }
       @klass.instance_eval t

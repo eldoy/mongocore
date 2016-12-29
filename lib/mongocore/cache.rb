@@ -4,7 +4,7 @@ module Mongocore
   # The Cache class keeps track of cache entries.
   #
   # Every query is cached, used the state as the cache key. This is a
-  # very aggressive strategy, where arrays won't get update on update or delete.
+  # very aggressive strategy, where arrays won't get updated on update or delete.
   #
 
   class Cache
@@ -21,7 +21,7 @@ module Mongocore
 
     # Get the cache key
     def get(t)
-      @cache[(t = key + t.to_s)].tap{|d| stat(d, t)}
+      @cache[t = key + t.to_s].tap{|d| stat(d, t)}
     end
 
     # Set the cache key
