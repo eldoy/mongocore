@@ -20,7 +20,7 @@ Please read [the source code](https://github.com/fugroup/mongocore/tree/master/l
 | -------------------------------------- | ----- | ------- | ------------- |
 | [Mongoid](http://mongoid.com)          | 256   | 14371   | 10590         |
 | [MongoMapper](http://mongomapper.com)  | 91    | 200     | 4070          |
-| [Mongocore](http://mongocore.com)      | 5     | 176     | 325           |
+| [Mongocore](http://mongocore.com)      | 7     | 211     | 350           |
 
 <br>
 If you are looking for something even lighter, we also [have Minimongo,](https://github.com/fugroup/minimongo) the world's tinyest MongoDB library.
