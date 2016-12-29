@@ -231,7 +231,7 @@ module Mongocore
 
 
     # # # # # # # # # # # # # # #
-    # Class methods are called on the model class, i.e. Model.find
+    # Class methods are mostly for database lookups
     #
 
     class_methods do
@@ -271,12 +271,14 @@ module Mongocore
         find({}, {}, :limit => n)
       end
 
-      # Register after and before. Pass a method name as symbol or a block
+      # Register after and before.
+      # Pass a method name as symbol or a block
       # Possible filters are :save, :update, :delete
       def after(*args, &block)
         filters.after[args[0]] << (args[1] || block)
       end
 
+      # Before
       def before(*args, &block)
         filters.before[args[0]] << (args[1] || block)
       end
