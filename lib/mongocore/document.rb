@@ -60,10 +60,10 @@ module Mongocore
         @errors = Hash.new{|h, k| h[k] = []}
 
         # Defaults
-        self.class.schema.defaults.each{|k, v| write(k, v) if !v.nil?}
+        self.class.schema.defaults.each{|k, v| write(k, v)}
 
         # Set the attributes
-        a.each{|k, v| write(k, v) if !v.nil?}
+        a.each{|k, v| write(k, v)}
 
         # The changes hash
         @changes = Hash.new{|h, k| h[k] = []}
