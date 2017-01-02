@@ -248,7 +248,7 @@ module Mongocore
 
       # Last
       def last
-        sort(:$natural => -1).first
+        sort(:_id => -1).limit(1).first
       end
 
       # All
