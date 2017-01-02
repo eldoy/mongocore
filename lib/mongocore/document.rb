@@ -36,13 +36,12 @@ module Mongocore
 
       # # # # # # # # # # #
       # Instance variables
-      # @db holds the Mongocore.db
       # @errors is used for validates
       # @changes keeps track of object changes
       # @saved indicates whether this is saved or not
       #
 
-      attr_accessor :klass, :db, :schema, :errors, :changes, :saved
+      attr_accessor :errors, :changes, :saved
 
 
       # # # # # # # # # # #
@@ -57,23 +56,14 @@ module Mongocore
         # The _id has the BSON object, create new unless it exists
         a[:_id] ? @saved = true : a[:_id] = BSON::ObjectId.new
 
-        # Short cut for self.class
-        @klass = self.class
-
-        # Short cut for db
-        @db = Mongocore.db
-
         # The errors hash
         @errors = Hash.new{|h, k| h[k] = []}
 
-        # The schema
-        @schema = @klass.schema
-
         # Defaults
-        @schema.defaults.each{|k, v| write(k, v)}
+        self.class.schema.defaults.each{|k, v| write(k, v) if !v.nil?}
 
         # Set the attributes
-        a.each{|k, v| write(k, v)}
+        a.each{|k, v| write(k, v) if !v.nil?}
 
         # The changes hash
         @changes = Hash.new{|h, k| h[k] = []}
@@ -92,7 +82,7 @@ module Mongocore
         return nil unless valid? if o[:validate]
 
         # Create a new query
-        mq(@klass, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
+        mq(self.class, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
       end
 
       # Update document in db
@@ -118,7 +108,7 @@ module Mongocore
 
       # Collect the attributes
       def attributes
-        a = {}; schema.keys.keys.each{|k| a[k] = read!(k)}; a
+        a = {}; self.class.schema.keys.keys.each{|k| a[k] = read!(k)}; a
       end
 
       # Set the attributes
@@ -138,12 +128,12 @@ module Mongocore
 
       # Valid?
       def valid?
-        @klass.filters.valid?(self)
+        self.class.filters.valid?(self)
       end
 
       # Available filters are :save, :update, :delete
       def run(filter, key = nil)
-        @klass.filters.run(self, filter, key)
+        self.class.filters.run(self, filter, key)
       end
 
 
@@ -164,7 +154,7 @@ module Mongocore
 
       # Short cut for simple query with cache buster
       def single(s = {:cache => false})
-        mq(@klass, {:_id => @_id}, {}, s)
+        mq(self.class, {:_id => @_id}, {}, s)
       end
 
 
@@ -174,7 +164,7 @@ module Mongocore
 
       # Get attribute if access
       def read(key)
-        @klass.access.read?(key) ? read!(key) : nil
+        self.class.access.read?(key) ? read!(key) : nil
       end
 
       # Get attribute
@@ -184,10 +174,10 @@ module Mongocore
 
       # Set attribute if access
       def write(key, val)
-        return nil unless @klass.access.write?(key)
+        return nil unless self.class.access.write?(key)
 
         # Convert to type as in schema yml
-        v = @schema.convert(key, val)
+        v = self.class.schema.convert(key, val)
 
         # Record change for dirty attributes
         read!(key).tap{|r| @changes[key] = r if v != r} if @changes
@@ -207,7 +197,7 @@ module Mongocore
         name =~ /([^=]+)(=)?/
 
         # Write or read
-        if schema.keys.has_key?(key = $1.to_sym)
+        if self.class.schema.keys.has_key?(key = $1.to_sym)
           return write(key, arguments.first) if $2
           return read(key)
         end

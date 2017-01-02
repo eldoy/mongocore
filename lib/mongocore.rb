@@ -14,7 +14,7 @@ module Mongocore
 
   # Schema path is $app_root/config/db/schema/:model_name.yml
   @schema = File.join(Dir.pwd, 'config', 'db', 'schema')
-  @cache = true
+  @cache = false
   @access = true
   @debug = false
 end

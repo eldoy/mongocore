@@ -59,7 +59,15 @@ module Mongocore
 
     # Update
     def update(a)
-      collection.update_one(query, {'$set' => a}, :upsert => true)
+      # We do $set on non nil, $unset on nil
+      atts = {
+        :$set => a.select{|k, v| !v.nil?},
+        :$unset => a.select{|k, v| v.nil?}
+      }.delete_if{|k, v| v.empty?}
+
+      puts "UPDATE: #{atts.inspect}" if Mongocore.debug
+
+      collection.update_one(query, atts, :upsert => true)
     end
 
     # Delete
@@ -74,7 +82,7 @@ module Mongocore
 
     # Return last document
     def last
-      sort(:$natural => -1).first
+      sort(:_id => -1).limit(1).first
     end
 
     # Return all documents

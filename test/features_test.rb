@@ -15,7 +15,7 @@ m.parent = p
 m.save
 
 x = Model.last
-is x._id.to_s, m._id.to_s
+is x._id, :a? => BSON::ObjectId
 
 x.parent = p
 x.save
