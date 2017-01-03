@@ -28,7 +28,7 @@ module Mongocore
 
       # Storing query and options. Sort and limit is stored in options
       s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil
-      @options = o; @query = q; @store = s
+      @query, @options, @store = q, o, s
 
       # Set up cache
       @cache = Mongocore::Cache.new(self)
@@ -54,25 +54,22 @@ module Mongocore
 
     # Check if there's a corresponding counter for this count
     def counter(s = @store[:source], c = @store[:chain])
-      s.send(%{#{@colname}#{c.present? ? "_#{c.join('_')}" : ''}_count}.to_sym) rescue nil
+      s.send(%{#{@colname}#{c.present? ? "_#{c.join('_')}" : ''}_count}) rescue nil
     end
 
     # Update
     def update(a)
       # We do $set on non nil, $unset on nil
-      atts = {
-        :$set => a.select{|k, v| !v.nil?},
-        :$unset => a.select{|k, v| v.nil?}
+      u = {
+        :$set => a.select{|k, v| !v.nil?}, :$unset => a.select{|k, v| v.nil?}
       }.delete_if{|k, v| v.empty?}
 
-      puts "UPDATE: #{atts.inspect}" if Mongocore.debug
-
-      collection.update_one(query, atts, :upsert => true)
+      collection.update_one(@query, u, :upsert => true)
     end
 
     # Delete
     def delete
-      collection.delete_one(query)
+      collection.delete_one(@query)
     end
 
     # Return first document
@@ -87,7 +84,7 @@ module Mongocore
 
     # Return all documents
     def all
-      self.fetch(:to_a).map{|d| first(d)}
+      fetch(:to_a).map{|d| first(d)}
     end
 
     # Fetch docs, pass type :first, :to_a or :count
@@ -100,22 +97,22 @@ module Mongocore
 
     # Cursor
     def cursor
-      collection.find(query, options).sort(store[:sort]).limit(store[:limit])
+      collection.find(@query, @options).sort(@store[:sort]).limit(@store[:limit])
     end
 
     # Sort
     def sort(o = {})
-      find(query, options, store.tap{store[:sort].merge!(o)})
+      find(@query, options, @store.tap{store[:sort].merge!(o)})
     end
 
     # Limit
     def limit(n = 1)
-      find(query, options, store.tap{store[:limit] = n})
+      find(@query, @options, @store.tap{store[:limit] = n})
     end
 
     # Cache key
     def key
-      @key ||= "#{model}#{query.sort}#{options.sort}#{store.values}"
+      @key ||= "#{@model}#{@query.sort}#{@options.sort}#{@store.values}"
     end
 
     # Call and return the scope if it exists
