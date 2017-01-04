@@ -32,3 +32,13 @@ test 'delete'
 
 @delete = @model.delete
 is @delete.n, :gt => 0
+
+
+test 'upsert'
+
+@model = Model.new
+@model.duration = 40
+id = @model._id.to_s
+@model.save
+
+is @model._id.to_s, id

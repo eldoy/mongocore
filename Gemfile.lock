@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/fugroup/futest.git
-  revision: 0dfe41630d395f2286127fbfb4a0d13aea553bd6
+  revision: 28d37dceb618f8321cbad4a3d6bcb209c7361ff4
   specs:
-    futest (0.0.4)
+    futest (0.1.0)
       rest-client (>= 2.0)
 
 GEM

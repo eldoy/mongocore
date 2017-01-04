@@ -64,6 +64,7 @@ module Mongocore
         :$set => a.select{|k, v| !v.nil?}, :$unset => a.select{|k, v| v.nil?}
       }.delete_if{|k, v| v.empty?}
 
+      # Update the collection
       collection.update_one(@query, u, :upsert => true)
     end
 

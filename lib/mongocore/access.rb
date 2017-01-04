@@ -7,7 +7,7 @@ module Mongocore
     # read and write attributes in the schema yml file for the model.
     #
     # If your current access level is above the key level, then you
-    # can read or write, if you get nil. This is very useful for APIs
+    # can read or write, if not you get nil. This is very useful for APIs
     # where f.ex. you want to show the email to logged in users, but not to all.
     #
 

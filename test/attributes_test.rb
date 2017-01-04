@@ -1,5 +1,9 @@
 test 'Attributes'
 
+@model = Model.first
+is @model.to_json, :a? => String
+is @model.to_s, :a? => String
+
 @model = Model.new
 
 # Defaults

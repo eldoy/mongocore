@@ -21,7 +21,6 @@ module Mongocore
         @schema = YAML.load(File.read(@path)).deep_symbolize_keys
       rescue => e
         puts "Schema file not found in #{f}, please add it."
-        exit(0)
       end
 
       # Meta

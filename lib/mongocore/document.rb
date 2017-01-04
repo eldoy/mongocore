@@ -82,18 +82,22 @@ module Mongocore
         return nil unless valid? if o[:validate]
 
         # Create a new query
-        mq(self.class, {:_id => @_id}).update(attributes).tap{@saved = true; run(:after, :save)}
+        connect(:save){mq(self.class, {:_id => @_id}).update(attributes)}
       end
 
       # Update document in db
       def update(a = {})
-        a.each{|k, v| write(k, v)}
-        single.update(a).tap{@saved = true; run(:after, :update)}
+        a.each{|k, v| write(k, v)}; connect(:update){single.update(a)}
       end
 
       # Delete a document in db
       def delete
-        single.delete.tap{run(:after, :delete)}
+        connect(:delete, false){single.delete}
+      end
+
+      # Run filters before and after accessing the db
+      def connect(cmd, saved = true, &block)
+        run(:before, cmd); yield.tap{@saved = saved; run(:after, cmd)}
       end
 
       # Reload the document from db and update attributes
