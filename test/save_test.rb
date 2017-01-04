@@ -13,8 +13,8 @@ is before_id.to_s, @model._id.to_s
 
 test 'reload'
 
-@reload = @model.reload
-is @reload.goal, 15
+@model.reload
+is @model.goal, 15
 
 test 'update'
 

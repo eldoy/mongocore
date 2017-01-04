@@ -68,7 +68,9 @@ m.save
 # Create another document
 p = Parent.new(:house => 'Nice')
 p.save
-p = p.reload
+
+# Reload the model attributes from the database
+p.reload
 
 # Add the parent to the model
 m.parent = p

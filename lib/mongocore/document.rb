@@ -96,9 +96,9 @@ module Mongocore
         single.delete.tap{run(:after, :delete)}
       end
 
-      # Reload the document from db
+      # Reload the document from db and update attributes
       def reload
-        single.first
+        self.attributes = single.first.attributes; self
       end
 
 
