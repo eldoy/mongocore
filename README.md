@@ -171,7 +171,7 @@ class Model
   end
 end
 
-# Drop down to pure Ruby driver
+# Use pure Ruby driver, returns BSON::Document objects
 Mongocore.db[:models].find.to_a
 Mongocore.db[:models].find({:_id => m._id}).first
 
