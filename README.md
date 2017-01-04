@@ -145,6 +145,10 @@ q = p.models.featured.all
 q = p.models.featured.nested.all
 m = Model.featured.first
 
+# Indexing
+Mongocore.db[:profiles].indexes.create_one({:key => 1})
+Mongocore.db[:profiles].indexes.create_one({:key => 1}, :unique => true)
+
 # In your model
 class Model
   include Mongocore::Document

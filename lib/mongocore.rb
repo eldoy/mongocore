@@ -33,4 +33,4 @@ require_relative 'mongocore/filters'
 # https://github.com/steveren/ruby-driver-sample-app/blob/master/lib/neighborhood.rb
 
 # Indexing
-# Mongocore[:profiles].indexes.create_one({:key => 1}, :unique => true)
+# Mongocore.db[:profiles].indexes.create_one({:key => 1}, :unique => true)
