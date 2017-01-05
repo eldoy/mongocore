@@ -26,7 +26,7 @@ module Mongocore
       @keys = @schema[:keys] || {}
 
       # Accessors
-      (@accessors = @schema[:accessor] || []).each{|a| @klass.send(:attr_accessor, a.to_sym)}
+      (@accessors = @schema[:accessor] || []).each{|a| @klass.send(:attr_accessor, a)}
 
       # Many
       (@many = @schema[:many] || {}).each{|k, v| many(k, v)}
