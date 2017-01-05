@@ -17,11 +17,7 @@ module Mongocore
       @path = File.join(Mongocore.schema, "#{@klass.to_s.downcase}.yml")
 
       # Load schema
-      begin
-        @schema = YAML.load(File.read(@path)).deep_symbolize_keys
-      rescue => e
-        puts "Schema file not found in #{f}, please add it."
-      end
+      @schema = YAML.load(File.read(@path)).deep_symbolize_keys
 
       # Meta
       @meta = @schema[:meta] || {}
