@@ -3,10 +3,10 @@ require 'active_support/core_ext'
 require 'yaml'
 require 'json'
 require 'mongo'
-require 'bson_ext'
 require 'request_store'
 
 module Mongocore
+  VERSION = '0.1.1'
 
   # # # # # #
   # Mongocore Ruby Database Driver.
