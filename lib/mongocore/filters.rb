@@ -16,6 +16,9 @@ module Mongocore
       # The before filters
       @before = Hash.new{|h, k| h[k] = []}
 
+      # Add timestamp filters if enabled
+      [:save, :update].each{|f| @before[f] << :timestamps} if Mongocore.timestamps
+
       # The after filters
       @after = Hash.new{|h, k| h[k] = []}
 

@@ -10,12 +10,22 @@ module Mongocore
   # @license:  MIT, contributions are welcome.
   # # # # # #
 
-  class << self; attr_accessor :db, :schema, :cache, :access, :debug; end
+  class << self; attr_accessor :db, :schema, :cache, :access, :timestamps, :debug; end
 
   # Schema path is $app_root/config/db/schema/:model_name.yml
   @schema = File.join(Dir.pwd, 'config', 'db', 'schema')
+
+  # Enable the query cache
   @cache = false
+
+  # Enabled the access control for keys
   @access = true
+
+  # Enable timestamps, adds created_at and updated fields to your model
+  # The fields are automatically updated when you save your model
+  @timestamps = true
+
+  # Debug option
   @debug = false
 end
 

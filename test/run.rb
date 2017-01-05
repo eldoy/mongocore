@@ -19,6 +19,7 @@ begin
     'sort',
     'validate',
     'filters',
+    'timestamps',
     'counter',
     'cache',
     'dirty',

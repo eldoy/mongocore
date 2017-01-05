@@ -60,6 +60,17 @@ keys:
     type: object_id
     read: all
     write: dev
+  created_at:
+    desc: Created at
+    type: time
+    read: all
+    write: dev
+  updated_at:
+    desc: Updated at
+    type: time
+    read: all
+    write: dev
+
 accessor:
 - submittable
 - update_expires_at

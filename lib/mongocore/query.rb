@@ -34,27 +34,14 @@ module Mongocore
       @cache = Mongocore::Cache.new(self)
     end
 
-    # Convert string id into a BSON::ObjectId
-    # Pass nothing or nil to get a new ObjectId
-    def oid(id = nil)
-      return id if id.is_a?(BSON::ObjectId)
-      return BSON::ObjectId.new if !id
-      BSON::ObjectId.from_string(id) rescue id
-    end
-
     # Find. Returns a Mongocore::Query
     def find(q = {}, o = {}, s = {})
       Mongocore::Query.new(@model, @query.merge(q), @options.merge(o), @store.merge(s))
     end
 
-    # Count. Returns the number of documents as an integer
-    def count
-      counter || fetch(:count)
-    end
-
-    # Check if there's a corresponding counter for this count
-    def counter(s = @store[:source], c = @store[:chain])
-      s.send(%{#{@colname}#{c.present? ? "_#{c.join('_')}" : ''}_count}) rescue nil
+    # Cursor
+    def cursor
+      @collection.find(@query, @options).sort(@store[:sort]).limit(@store[:limit])
     end
 
     # Update
@@ -65,12 +52,22 @@ module Mongocore
       }.delete_if{|k, v| v.empty?}
 
       # Update the collection
-      collection.update_one(@query, u, :upsert => true)
+      @collection.update_one(@query, u, :upsert => true)
     end
 
     # Delete
     def delete
-      collection.delete_one(@query)
+      @collection.delete_one(@query)
+    end
+
+    # Count. Returns the number of documents as an integer
+    def count
+      counter || fetch(:count)
+    end
+
+    # Check if there's a corresponding counter for this count
+    def counter(s = @store[:source], c = @store[:chain])
+      s.send(%{#{@colname}#{c.present? ? "_#{c.join('_')}" : ''}_count}) rescue nil
     end
 
     # Return first document
@@ -96,11 +93,6 @@ module Mongocore
       cursor.send(t).tap{|r| cache.set(t, r) if Mongocore.cache}
     end
 
-    # Cursor
-    def cursor
-      collection.find(@query, @options).sort(@store[:sort]).limit(@store[:limit])
-    end
-
     # Sort
     def sort(o = {})
       find(@query, options, @store.tap{store[:sort].merge!(o)})
@@ -114,6 +106,13 @@ module Mongocore
     # Cache key
     def key
       @key ||= "#{@model}#{@query.sort}#{@options.sort}#{@store.values}"
+    end
+
+    # String id to BSON::ObjectId, or create a new by passing nothing or nil
+    def oid(id = nil)
+      return id if id.is_a?(BSON::ObjectId)
+      return BSON::ObjectId.new if !id
+      BSON::ObjectId.from_string(id) rescue id
     end
 
     # Call and return the scope if it exists

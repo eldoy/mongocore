@@ -102,7 +102,12 @@ module Mongocore
 
       # Reload the document from db and update attributes
       def reload
-        self.attributes = single.first.attributes; self
+        single.first{|m| attributes = m.attributes}
+      end
+
+      # Set the timestamps if enabled
+      def timestamps
+        t = Time.now.utc; @updated_at = t; @created_at = t if unsaved?
       end
 
 
