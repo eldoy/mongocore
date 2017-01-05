@@ -125,6 +125,7 @@ c = p.models.featured.count
 m = Model.first
 m.attributes             # => All attributes
 m.attributes(:badge)     # => Attributes with the badge tag only
+m.to_json                # => All attributes as json
 m.to_json(:badge, :test) # => Pass multiple tags if needed
 
 # Track changes
@@ -274,6 +275,7 @@ keys:
     default: 60
     read: dev
     write: user
+    # Add tags for keys for use with attributes and to_json
     tags:
     - badge
 
@@ -283,8 +285,10 @@ keys:
     type: time
     read: all
     write: dev
+    # Multiple tags possible: to_json(:badge, :campaigns)
     tags:
     - badge
+    - campaigns
 
   # Hash key
   location_data:
