@@ -14,7 +14,6 @@ is @query.oid, :a? => BSON::ObjectId
 test 'cursor'
 
 # Cursor
-is @query.db, Mongocore.db
 is @query.query, :eq => {}
 is @query.colname, :models
 

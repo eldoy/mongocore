@@ -26,7 +26,7 @@ begin
     'features'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x
-  err(x, :v)
+  err(x, :vv)
 ensure
   puts Time.now - start
   if Mongocore.cache

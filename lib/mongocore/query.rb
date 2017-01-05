@@ -10,21 +10,21 @@ module Mongocore
     # it's only the parameters that change.
     #
 
-    attr_accessor :db, :model, :collection, :colname, :query, :options, :store, :cache
+    attr_accessor :model, :collection, :colname, :query, :options, :store, :cache
 
     # These options will be deleted before doing the find
     def initialize(m, q = {}, o = {}, s = {})
       # Support find passing a ID
       q = {:_id => oid(q)} unless q.is_a?(Hash)
 
-      # Storing model and db
-      @model = m; @db = Mongocore.db
+      # Storing model class. The instance can be found in store[:source]
+      @model = m
 
       # The model name is singular, the collection name is plural
       @colname = "#{m.to_s.downcase}s".to_sym
 
       # Storing the Mongo::Collection object
-      @collection = @db[@colname]
+      @collection = Mongocore.db[@colname]
 
       # Storing query and options. Sort and limit is stored in options
       s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil
