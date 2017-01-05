@@ -53,7 +53,7 @@ Mongocore.cache = true
 # The access enables the read / write access levels for the keys
 Mongocore.access = true
 
-# Enable timestamps, auto-save created_at and updated_at fields
+# Enable timestamps, auto-save created_at and updated_at keys
 Mongocore.timestamps = true
 
 # Enable debug to see caching information and help
