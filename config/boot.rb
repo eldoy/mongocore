@@ -3,8 +3,6 @@ Bundler.require(:default, :development, :test)
 
 MODE = ENV['RACK_ENV'] || 'test'
 
-require 'yaml'
-
 require './lib/mongocore.rb'
 
 # Add settings here
