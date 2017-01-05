@@ -40,7 +40,7 @@ module Mongocore
 
     # Get attributes that has these tags
     def attributes(tags)
-      (tags[0] ? @keys.select{|k, v| v[:tags] & tags} : @keys).map{|k, v| k.to_sym}
+      (tags[0] ? @keys.select{|k, v| v[:tags] & tags} : @keys).keys
     end
 
     # Convert type if val and schema type is set
