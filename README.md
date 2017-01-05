@@ -11,21 +11,22 @@ With Mongocore you can do:
 * Scopes, associations, validations
 * Read and write access control for each key
 * Request cache, counter cache, track changes
+* Automatic timestamps, tagged keys
 
 The schema is specified with a YAML file which supports default values, data types, and security levels for each key.
 
-Please read [the source code](https://github.com/fugroup/mongocore/tree/master/lib/mongocore) to see how it works, it's fully commented and very small, only 7 files, and 343 lines of fully test driven code.
+Please read [the source code](https://github.com/fugroup/mongocore/tree/master/lib/mongocore) to see how it works, it's fully commented and very small, only 7 files, and 354 lines of fully test driven code.
 
 | Library                                | Files | Comment | Lines of code |
 | -------------------------------------- | ----- | ------- | ------------- |
 | [Mongoid](http://mongoid.com)          | 256   | 14371   | 10590         |
 | [MongoMapper](http://mongomapper.com)  | 91    | 200     | 4070          |
-| [Mongocore](http://mongocore.com)      | 7     | 218     | 343           |
+| [Mongocore](http://mongocore.com)      | 7     | 224     | 354           |
 
 <br>
 If you are looking for something even lighter, we also [have Minimongo,](https://github.com/fugroup/minimongo) the world's tinyest MongoDB library.
 
-The tests are written [using Futest,](https://github.com/fugroup/futest) try it out if you haven't, it makes testing fun.
+The tests are written [using Futest,](https://github.com/fugroup/futest) try it out if you haven't, it makes testing so much fun.
 
 ### Installation
 ```
@@ -119,6 +120,12 @@ m = p.models.last
 # Count
 c = Model.count
 c = p.models.featured.count
+
+# Tagged keys for attributes and to_json
+m = Model.first
+m.attributes             # => All attributes
+m.attributes(:badge)     # => Attributes with the badge tag only
+m.to_json(:badge, :test) # => Pass multiple tags if needed
 
 # Track changes
 m.duration = 33
