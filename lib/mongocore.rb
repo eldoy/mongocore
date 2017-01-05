@@ -21,8 +21,7 @@ module Mongocore
   # Enabled the access control for keys
   @access = true
 
-  # Enable timestamps, adds created_at and updated fields to your model
-  # The fields are automatically updated when you save your model
+  # Enable timestamps, auto-save created_at and updated_at fields
   @timestamps = true
 
   # Debug option
