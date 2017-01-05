@@ -39,8 +39,12 @@ module Mongocore
       (@scopes = @schema[:scopes] || {}).each{|k, v| scope(k, v)}
 
       # Defaults and foreign keys
-      @defaults = {}
-      @keys.each{|k, v| foreign(k, v); @defaults[k] = v[:default]}
+      @defaults = {}; @keys.each{|k, v| foreign(k, v); @defaults[k] = v[:default]}
+    end
+
+    # Get attributes that has these tags
+    def attributes(tags)
+      (tags[0] ? @keys.select{|k, v| v[:tags] & tags} : @keys).map{|k, v| k.to_sym}
     end
 
     # Convert type if val and schema type is set
