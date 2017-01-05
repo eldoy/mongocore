@@ -82,21 +82,21 @@ module Mongocore
         return nil unless valid? if o[:validate]
 
         # Create a new query
-        connect(:save){mq(self.class, {:_id => @_id}).update(attributes)}
+        filter(:save){mq(self.class, {:_id => @_id}).update(attributes)}
       end
 
       # Update document in db
       def update(a = {})
-        a.each{|k, v| write(k, v)}; connect(:update){single.update(a)}
+        a.each{|k, v| write(k, v)}; filter(:update){single.update(a)}
       end
 
       # Delete a document in db
       def delete
-        connect(:delete, false){single.delete}
+        filter(:delete, false){single.delete}
       end
 
       # Run filters before and after accessing the db
-      def connect(cmd, saved = true, &block)
+      def filter(cmd, saved = true, &block)
         run(:before, cmd); yield.tap{@saved = saved; run(:after, cmd)}
       end
 
@@ -196,13 +196,13 @@ module Mongocore
       end
 
       # Dynamically read or write attributes
-      def method_missing(name, *arguments, &block)
+      def method_missing(name, *args, &block)
         # Extract name and write mode
         name =~ /([^=]+)(=)?/
 
         # Write or read
         if self.class.schema.keys.has_key?(key = $1.to_sym)
-          return write(key, arguments.first) if $2
+          return write(key, args.first) if $2
           return read(key)
         end
 
@@ -220,7 +220,7 @@ module Mongocore
 
 
     # # # # # # # # # # # # # # #
-    # Class methods are mostly for database lookups and filters
+    # Class methods are mostly database lookups and filters
     #
 
     class_methods do
