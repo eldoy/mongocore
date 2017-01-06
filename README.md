@@ -196,8 +196,15 @@ Mongocore.db[:models].indexes.create_one({:key => 1})
 Mongocore.db[:models].indexes.create_one({:key => 1}, :unique => true)
 ```
 
-### Schema
-For keys, defaults, description, counters, associations, scopes and accessors, use a schema file written in [YAML.](http://yaml.org)
+### Schema and models
+Each model defined using a [YAML.](http://yaml.org) schema file. This is where you define keys, defaults, description, counters, associations, access, tags, scopes and accessors.
+
+The default schema file location is `APP_ROOT/config/db/schema/*.yml`, so if you have a model called Parent, create a yml file called parent.yml.
+
+You can change the shema file location like this:
+```ruby
+Mongocore.schema = File.join(Dir.pwd, 'your', 'schema', 'path')
+```
 
 #### Parent example schema
 ```yml
