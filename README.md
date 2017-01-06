@@ -206,7 +206,7 @@ You can change the shema file location like this:
 Mongocore.schema = File.join(Dir.pwd, 'your', 'schema', 'path')
 ```
 
-#### Parent example schema
+#### Parent example schema, has many Models
 ```yml
 
 # The meta is information about your model
@@ -263,7 +263,7 @@ many:
 ```
 
 
-#### Model example schema
+#### Model example schema, belongs to Parent
 
 ```yml
 meta:
