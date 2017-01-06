@@ -64,6 +64,9 @@ Mongocore.debug = false
 ### Usage
 
 ```ruby
+# Set up connection to database engine
+Mongocore.db = Mongo::Client.new(['127.0.0.1:27017'], :database => "mongocore_#{ENV['RACK_ENV']}")
+
 # Create a new document
 m = Model.new
 m.duration = 59
