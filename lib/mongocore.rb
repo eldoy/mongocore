@@ -33,6 +33,7 @@ module Mongocore
   @debug = false
 end
 
+require_relative 'mongocore/errors'
 require_relative 'mongocore/document'
 require_relative 'mongocore/query'
 require_relative 'mongocore/schema'

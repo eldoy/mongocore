@@ -25,6 +25,7 @@ begin
     'cache',
     'dirty',
     'access',
+    'errors',
     'features'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x

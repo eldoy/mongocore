@@ -57,7 +57,7 @@ module Mongocore
         a[:_id] ? @saved = true : a[:_id] = BSON::ObjectId.new
 
         # The errors hash
-        @errors = Hash.new{|h, k| h[k] = []}
+        @errors = Mongocore::Errors.new{|h, k| h[k] = []}
 
         # Defaults
         self.class.schema.defaults.each{|k, v| write(k, v)}
