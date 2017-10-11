@@ -132,8 +132,9 @@ module Mongocore
 
       # JSON format, pass tags as symbols: to_json(:badge, :gun)
       def to_json(*args)
-        attributes(*args).to_json
+        a = attributes(*args); a.delete(:_id); {:id => id}.merge(a).to_json
       end
+
 
       # # # # # # # # # # # # # # # #
       # Validation methods

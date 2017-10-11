@@ -21,5 +21,3 @@ is m.id, id
 m = Model.first(id)
 
 is m.id, id
-
-puts m.to_json
