@@ -132,6 +132,11 @@ module Mongocore
       find(@query, @options, @store.tap{store[:limit] = n})
     end
 
+    # Skip
+    def skip(n = 0)
+      find(@query, @options, @store.tap{store[:skip] = n})
+    end
+
     # Fields (projection)
     def fields(o = {})
       find(@query, @options, @store.tap{store[:fields].merge!(o)})

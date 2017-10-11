@@ -29,6 +29,7 @@ begin
     'id',
     'json',
     'projection',
+    'skip',
     'pagination',
     'features'
   ].each{|t| require_relative "#{t}_test"}

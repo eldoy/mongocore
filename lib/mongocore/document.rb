@@ -275,6 +275,11 @@ module Mongocore
         find({}, {}, :limit => n)
       end
 
+      # Skip
+      def skip(n = 0)
+        find({}, {}, :skip => n)
+      end
+
       # Fields (projection)
       def fields(o = {})
         find({}, {}, :fields => o)
