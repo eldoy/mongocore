@@ -21,10 +21,9 @@ Please read [the source code](https://github.com/fugroup/mongocore/tree/master/l
 | -------------------------------------- | ----- | ------- | ------------- |
 | [Mongoid](http://mongoid.com)          | 256   | 14371   | 10590         |
 | [MongoMapper](http://mongomapper.com)  | 91    | 200     | 4070          |
-| [Mongocore](http://mongocore.com)      | 7     | 224     | 354           |
+| [Mongocore](http://mongocore.com)      | 8     | 224     | 354           |
 
 <br>
-If you are looking for something even lighter, we also [have Minimongo,](https://github.com/fugroup/minimongo) the world's tiniest MongoDB library.
 
 The tests are written [using Futest,](https://github.com/fugroup/futest) try it out if you haven't, it makes testing so much fun.
 
@@ -216,7 +215,8 @@ meta:
 
 keys:
 
-  # Use the _id everywhere. The id can be used for whatever you want.
+  # Define the _id field for all your models. The id field (without _)
+  # is an alias to _id, but always returns a string instead of a BSON::ObjectId
   # @desc: Describes the key, can be used for documentation.
   # @type: object_id, string, integer, float, boolean, time, hash, array
   # @default: the default value for the key when you call .new
