@@ -131,6 +131,9 @@ m = p.models.last
 c = Model.count
 c = p.models.featured.count
 
+# Skip
+m = Model.find.skip(2).first
+
 # Tagged keys for attributes and to_json
 m = Model.first
 m.attributes             # => All attributes
