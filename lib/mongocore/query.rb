@@ -12,10 +12,17 @@ module Mongocore
 
     attr_accessor :model, :collection, :colname, :query, :options, :store, :cache
 
-    # These options will be deleted before doing the find
+    # Mongocore query initializer
     def initialize(m, q = {}, o = {}, s = {})
-      # Support find passing a ID
+
+      # Support find passing an ID
       q = {:_id => oid(q)} unless q.is_a?(Hash)
+
+      # Support passing :id as :_id
+      q[:_id] = q.delete(:id) if q[:id]
+
+      # Support passing _id as a string
+      q[:_id] = oid(q[:_id]) if q[:_id].is_a?(String)
 
       # Storing model class. The instance can be found in store[:source]
       @model = m

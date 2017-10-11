@@ -225,6 +225,11 @@ module Mongocore
         super
       end
 
+      # Alias for _id but returns string
+      def id
+        @_id ? @_id.to_s : nil
+      end
+
     end
 
 
