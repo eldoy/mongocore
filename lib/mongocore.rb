@@ -15,7 +15,7 @@ module Mongocore
   # @license:  MIT, contributions are welcome.
   # # # # # #
 
-  class << self; attr_accessor :db, :schema, :cache, :access, :timestamps, :debug; end
+  class << self; attr_accessor :db, :schema, :cache, :access, :timestamps, :per_page, :debug; end
 
   # Schema path is $app_root/config/db/schema/:model_name.yml
   @schema = File.join(Dir.pwd, 'config', 'db', 'schema')
@@ -29,10 +29,14 @@ module Mongocore
   # Enable timestamps, auto-save created_at and updated_at fields
   @timestamps = true
 
+  # Pagination results per page
+  @per_page = 20
+
   # Debug option
   @debug = false
 end
 
+require_relative 'mongocore/ext'
 require_relative 'mongocore/errors'
 require_relative 'mongocore/document'
 require_relative 'mongocore/query'

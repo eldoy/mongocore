@@ -34,7 +34,7 @@ module Mongocore
       @collection = Mongocore.db[@colname]
 
       # Storing query and options. Sort and limit is stored in options
-      s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil; s[:fields] ||= {}
+      s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil; s[:fields] ||= {}; s[:skip] ||= 0
       @query, @options, @store = q, o, s
 
       # Set up cache
@@ -48,7 +48,7 @@ module Mongocore
 
     # Cursor
     def cursor
-      @collection.find(@query, @options).projection(@store[:fields]).sort(@store[:sort]).limit(@store[:limit])
+      @collection.find(@query, @options).projection(@store[:fields]).skip(@store[:skip]).sort(@store[:sort]).limit(@store[:limit])
     end
 
     # Update
@@ -90,6 +90,28 @@ module Mongocore
     # Return all documents
     def all
       fetch(:to_a).map{|d| first(d)}
+    end
+
+    # Paginate
+    def paginate(o = {})
+
+      # Get total count before applying pagination
+      total = fetch(:count)
+
+      # Set page, defaults to 1
+      o[:page] = o[:page].to_i; o[:page] = 1 if o[:page] < 1
+
+      # Set results per page, defaults to 20 in Mongocore.per_page setting
+      o[:per_page] = o[:per_page].to_i; o[:per_page] = Mongocore.per_page if o[:per_page] < 1
+
+      # Skip results
+      store[:skip] = o[:per_page] * (o[:page] - 1)
+
+      # Apply limit
+      store[:limit] = o[:per_page]
+
+      # Fetch the result as array
+      fetch(:to_a).map{|d| first(d)}.tap{|r| r.total = total}
     end
 
     # Fetch docs, pass type :first, :to_a or :count
