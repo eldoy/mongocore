@@ -8,8 +8,14 @@ before_id = @model._id
 @model.goal = 15
 
 t = @model.save
-is t.n, :gt => 0
+is t, true
 is before_id.to_s, @model._id.to_s
+
+model = Model.new
+
+model.duration = -1
+t = model.save(:validate => true)
+is t, false
 
 test 'reload'
 
@@ -20,7 +26,7 @@ test 'update'
 
 @update = @model.update(:goal => 10)
 is @model.goal, 10
-is @update.n, :gt => 0
+is @update, true
 
 @model = @model.reload
 is @model.goal, 10

@@ -7,11 +7,11 @@ The perfect companion for Sinatra or other Rack-based web frameworks.
 With Mongocore you can do:
 
 * Insert, update and delete
-* Finding, sorting, limit, defaults
-* Scopes, associations, validations
+* Finding, sorting, limit, skip, defaults
+* Scopes, associations, validations, pagination
 * Read and write access control for each key
 * Request cache, counter cache, track changes
-* Automatic timestamps, tagged keys
+* Automatic timestamps, tagged keys, json
 
 The schema is specified with a YAML file which supports default values, data types, and security levels for each key.
 
@@ -56,6 +56,9 @@ Mongocore.access = true
 # Enable timestamps, auto-save created_at and updated_at keys
 Mongocore.timestamps = true
 
+# Pagination results per page
+Mogocore.per_page = 20
+
 # Enable debug to see caching information and help
 Mongocore.debug = false
 ```
@@ -94,6 +97,11 @@ f = query.first
 
 # All
 m = Model.find.all
+
+# Pagination returns an array
+m = Model.find.paginate
+m = Model.find.paginate(:per_page => 10, :page => 5)
+m.total # => Total number of results
 
 # All of these can be used:
 # https://docs.mongodb.com/manual/reference/operator/query-comparison

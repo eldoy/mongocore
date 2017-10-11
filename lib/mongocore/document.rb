@@ -79,15 +79,15 @@ module Mongocore
       # Save attributes to db
       def save(o = {})
         # Send :validate => true to validate
-        return nil unless valid? if o[:validate]
+        return false unless valid? if o[:validate]
 
         # Create a new query
-        filter(:save){mq(self.class, {:_id => @_id}).update(attributes)}
+        filter(:save){mq(self.class, {:_id => @_id}).update(attributes).ok?}
       end
 
       # Update document in db
       def update(a = {})
-        a.each{|k, v| write(k, v)}; filter(:update){single.update(a)}
+        a.each{|k, v| write(k, v)}; filter(:update){single.update(a).ok?}
       end
 
       # Delete a document in db
@@ -284,6 +284,7 @@ module Mongocore
       def fields(o = {})
         find({}, {}, :fields => o)
       end
+
 
       # # # # # # # # #
       # After, before and validation filters
