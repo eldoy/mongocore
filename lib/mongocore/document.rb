@@ -275,6 +275,11 @@ module Mongocore
         find({}, {}, :limit => n)
       end
 
+      # Fields (projection)
+      def fields(o = {})
+        find({}, {}, :fields => o)
+      end
+
       # # # # # # # # #
       # After, before and validation filters
       # Pass a method name as symbol or a block

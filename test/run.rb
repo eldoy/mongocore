@@ -28,6 +28,7 @@ begin
     'errors',
     'id',
     'json',
+    'projection',
     'features'
   ].each{|t| require_relative "#{t}_test"}
 rescue => x

@@ -34,7 +34,7 @@ module Mongocore
       @collection = Mongocore.db[@colname]
 
       # Storing query and options. Sort and limit is stored in options
-      s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil
+      s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil; s[:fields] ||= {}
       @query, @options, @store = q, o, s
 
       # Set up cache
@@ -48,7 +48,7 @@ module Mongocore
 
     # Cursor
     def cursor
-      @collection.find(@query, @options).sort(@store[:sort]).limit(@store[:limit])
+      @collection.find(@query, @options).projection(@store[:fields]).sort(@store[:sort]).limit(@store[:limit])
     end
 
     # Update
@@ -102,12 +102,17 @@ module Mongocore
 
     # Sort
     def sort(o = {})
-      find(@query, options, @store.tap{store[:sort].merge!(o)})
+      find(@query, @options, @store.tap{store[:sort].merge!(o)})
     end
 
     # Limit
     def limit(n = 1)
       find(@query, @options, @store.tap{store[:limit] = n})
+    end
+
+    # Fields (projection)
+    def fields(o = {})
+      find(@query, @options, @store.tap{store[:fields].merge!(o)})
     end
 
     # Cache key
