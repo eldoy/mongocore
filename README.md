@@ -15,13 +15,13 @@ With Mongocore you can do:
 
 The schema is specified with a YAML file which supports default values, data types, and security levels for each key.
 
-Please read [the source code](https://github.com/fugroup/mongocore/tree/master/lib/mongocore) to see how it works, it's fully commented and very small, only 7 files, and 354 lines of fully test driven code.
+Please read [the source code](https://github.com/fugroup/mongocore/tree/master/lib/mongocore) to see how it works, it's fully commented and very small, only 8 files, and 360 lines of fully test driven code.
 
 | Library                                | Files | Comment | Lines of code |
 | -------------------------------------- | ----- | ------- | ------------- |
 | [Mongoid](http://mongoid.com)          | 256   | 14371   | 10590         |
 | [MongoMapper](http://mongomapper.com)  | 91    | 200     | 4070          |
-| [Mongocore](http://mongocore.com)      | 8     | 224     | 354           |
+| [Mongocore](http://mongocore.com)      | 8     | 230     | 360           |
 
 <br>
 
