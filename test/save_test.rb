@@ -37,7 +37,7 @@ is @model.goal, nil
 test 'delete'
 
 @delete = @model.delete
-is @delete.n, :gt => 0
+is @delete, :eq => true
 
 
 test 'upsert'

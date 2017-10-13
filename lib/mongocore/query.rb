@@ -64,7 +64,7 @@ module Mongocore
 
     # Delete
     def delete
-      @collection.delete_one(@query)
+      @collection.delete_one(@query).ok?
     end
 
     # Count. Returns the number of documents as an integer
