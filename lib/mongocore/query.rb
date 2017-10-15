@@ -28,7 +28,7 @@ module Mongocore
       @model = m
 
       # The model name is singular, the collection name is plural
-      @colname = "#{m.to_s.downcase}s".to_sym
+      @colname = m.to_s.downcase.pluralize.to_sym
 
       # Storing the Mongo::Collection object
       @collection = Mongocore.db[@colname]
