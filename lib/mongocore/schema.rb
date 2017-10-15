@@ -83,7 +83,7 @@ module Mongocore
     def many(key, data)
       t = %Q{
         def #{key}
-          mq(#{key[0..-2].capitalize}, {:#{@klass.to_s.downcase}_id => @_id}, {}, :source => self)
+          mq(#{key.to_s.singularize.capitalize}, {:#{@klass.to_s.downcase}_id => @_id}, {}, :source => self)
         end
       }
       @klass.class_eval t
