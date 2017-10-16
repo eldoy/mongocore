@@ -49,7 +49,6 @@ module Mongocore
       # Pass in attributes you want to set: Model.new(:duration => 60)
       # Defaults are filled in automatically.
       #
-
       def initialize(a = {})
         a = a.deep_symbolize_keys
 
@@ -117,7 +116,7 @@ module Mongocore
 
       # Collect the attributes, pass tags like defined in your model yml
       def attributes(*tags)
-        a = {}; self.class.schema.attributes(tags.map(&:to_s)).each{|k| a[k] = read!(k)}; a
+        a = {}; self.class.schema.attributes(tags.map(&:to_s)).each{|k| a[k] = read!(k)}; string_id(a)
       end
 
       # Set the attributes
@@ -130,9 +129,9 @@ module Mongocore
         changes.any?
       end
 
-      # JSON format, pass tags as symbols: to_json(:badge, :gun)
-      def to_json(*args)
-        a = attributes(*args); a.delete(:_id); {:id => id}.merge(a).to_json
+      # JSON format
+      def as_json(options = {})
+        attributes
       end
 
 
@@ -229,6 +228,11 @@ module Mongocore
       # Alias for _id but returns string
       def id
         @_id ? @_id.to_s : nil
+      end
+
+      # Replace _id with id, takes a hash
+      def string_id(a)
+        a.delete(:_id); {:id => id}.merge(a)
       end
 
     end

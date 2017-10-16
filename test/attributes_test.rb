@@ -9,7 +9,7 @@ is @model.to_s, :a? => String
 # Defaults
 a = @model.attributes
 is a, :a? => Hash
-is a[:_id], @model._id
+is a[:id], @model.id
 is a[:submittable], nil
 is a[:duration], 60
 is a[:reminders_sent], false
