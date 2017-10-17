@@ -22,3 +22,24 @@ is @p, :eq => @parent
 
 is @models, :a? => Array
 is @models.first, :a? => Model
+
+@model = @parent.models.first
+is @model, :a? => Model
+
+@model2 = @parent.models.find(@model.id).first
+is @model.id, @model2.id
+
+@model2 = @parent.models.first(@model.id)
+is @model.id, @model2.id
+
+@model2 = @parent.models.first(:id => @model.id)
+is @model.id, @model2.id
+
+@model2 = @parent.models.first(:_id => @model.id)
+is @model.id, @model2.id
+
+@model2 = @parent.models.first(:_id => @model._id)
+is @model.id, @model2.id
+
+@model2 = @parent.models.first(@model._id)
+is @model.id, @model2.id

@@ -15,15 +15,6 @@ module Mongocore
     # Mongocore query initializer
     def initialize(m, q = {}, o = {}, s = {})
 
-      # Support find passing an ID
-      q = {:_id => oid(q)} unless q.is_a?(Hash)
-
-      # Support passing :id as :_id
-      q[:_id] = q.delete(:id) if q[:id]
-
-      # Support passing _id as a string
-      q[:_id] = oid(q[:_id]) if q[:_id].is_a?(String)
-
       # Storing model class. The instance can be found in store[:source]
       @model = m
 
@@ -35,7 +26,7 @@ module Mongocore
 
       # Storing query and options. Sort and limit is stored in options
       s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil; s[:fields] ||= {}; s[:skip] ||= 0
-      @query, @options, @store = q, o, s
+      @query, @options, @store = normalize(q), o, s
 
       # Set up cache
       @cache = Mongocore::Cache.new(self)
@@ -43,7 +34,21 @@ module Mongocore
 
     # Find. Returns a Mongocore::Query
     def find(q = {}, o = {}, s = {})
-      Mongocore::Query.new(@model, @query.merge(q), @options.merge(o), @store.merge(s))
+      Mongocore::Query.new(@model, @query.merge(normalize(q)), @options.merge(o), @store.merge(s))
+    end
+
+    # Normalize query
+    def normalize(q)
+      # Support find passing an ID
+      q = {:_id => oid(q)} unless q.is_a?(Hash)
+
+      # Support passing :id as :_id
+      q[:_id] = q.delete(:id) if q[:id]
+
+      # Convert object ID's to BSON::ObjectIds
+      q.each{|k, v| q[k] = oid(v) if k =~ /_id$/}
+
+      q
     end
 
     # Cursor
@@ -68,7 +73,8 @@ module Mongocore
     end
 
     # Count. Returns the number of documents as an integer
-    def count
+    def count(*args)
+      find(*args) if args.any?
       counter || fetch(:count)
     end
 
@@ -78,18 +84,25 @@ module Mongocore
     end
 
     # Return first document
-    def first(doc = nil)
-      (doc ||= fetch(:first)) ? @model.new(doc.to_hash) : nil
+    def first(*args)
+      find(*args) if args.any?
+      modelize(fetch(:first))
     end
 
     # Return last document
-    def last
+    def last(*args)
+      find(*args) if args.any?
       sort(:_id => -1).limit(1).first
     end
 
     # Return all documents
     def all
-      fetch(:to_a).map{|d| first(d)}
+      fetch(:to_a).map{|d| modelize(d)}
+    end
+
+    # Doc to model
+    def modelize(doc)
+      doc ? @model.new(doc.to_hash) : nil
     end
 
     # Paginate
@@ -111,7 +124,7 @@ module Mongocore
       store[:limit] = o[:per_page]
 
       # Fetch the result as array
-      fetch(:to_a).map{|d| first(d)}.tap{|r| r.total = total}
+      fetch(:to_a).map{|d| modelize(d)}.tap{|r| r.total = total}
     end
 
     # Fetch docs, pass type :first, :to_a or :count

@@ -2,7 +2,7 @@ test 'Query'
 
 @query = Mongocore::Query.new(Model)
 
-test 'objectid'
+test ' * objectid'
 
 # Object ID converter
 is @query.oid('test1234'), :a? => String
@@ -11,7 +11,7 @@ is @query.oid(nil), :a? => BSON::ObjectId
 is @query.oid(false), :a? => BSON::ObjectId
 is @query.oid, :a? => BSON::ObjectId
 
-test 'cursor'
+test ' * cursor'
 
 # Cursor
 is @query.query, :eq => {}
@@ -23,7 +23,7 @@ is @query2.query, :eq => {:duration => 60}
 @query2 = @query2.find(:duration => 50, :goal => {'$ne' => nil})
 is @query2.query, :eq => {:duration => 50, :goal => {'$ne' => nil}}
 
-test 'first'
+test ' * first'
 
 # First
 @model = @query.first
