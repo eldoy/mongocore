@@ -34,11 +34,12 @@ module Mongocore
 
     # Find. Returns a Mongocore::Query
     def find(q = {}, o = {}, s = {})
-      Mongocore::Query.new(@model, @query.merge(normalize(q)), @options.merge(o), @store.merge(s))
+      self.class.new(@model, @query.merge(normalize(q)), @options.merge(o), @store.merge(s))
     end
 
     # Normalize query
     def normalize(q)
+
       # Support find passing an ID
       q = {:_id => oid(q)} unless q.is_a?(Hash)
 
@@ -73,8 +74,7 @@ module Mongocore
     end
 
     # Count. Returns the number of documents as an integer
-    def count(*args)
-      find(*args) if args.any?
+    def count
       counter || fetch(:count)
     end
 
@@ -85,14 +85,12 @@ module Mongocore
 
     # Return first document
     def first(*args)
-      find(*args) if args.any?
-      modelize(fetch(:first))
+      modelize(find(*args).fetch(:first))
     end
 
     # Return last document
     def last(*args)
-      find(*args) if args.any?
-      sort(:_id => -1).limit(1).first
+      sort(:_id => -1).limit(1).first(*args)
     end
 
     # Return all documents

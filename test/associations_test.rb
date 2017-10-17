@@ -23,6 +23,13 @@ is @p, :eq => @parent
 is @models, :a? => Array
 is @models.first, :a? => Model
 
+@last = Model.new
+@last.parent = @parent
+@last.save
+
+@model = @parent.models.first(@last.id)
+is @model.id, @last.id
+
 @model = @parent.models.first
 is @model, :a? => Model
 
