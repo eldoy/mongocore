@@ -85,8 +85,12 @@ test 'last'
 m = Model.last
 is m, :a? => Model
 
-m = Parent.first.models.last
+mp = Parent.first.models.last
+is mp, :a? => Model
+
+m2 = Model.last(m.id)
 is m, :a? => Model
+is m.id, m2.id
 
 test 'count'
 
@@ -95,6 +99,11 @@ is c, :gt => 0
 
 p = Parent.first
 c = Model.featured.count
+
+is c, :gt => 0
+
+m = Model.last
+c = Model.count(m.id)
 
 is c, :gt => 0
 

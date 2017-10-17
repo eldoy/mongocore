@@ -260,8 +260,8 @@ module Mongocore
       end
 
       # Last
-      def last
-        sort(:_id => -1).limit(1).first
+      def last(*args)
+        sort(:_id => -1).limit(1).first(*args)
       end
 
       # All
