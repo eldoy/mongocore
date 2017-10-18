@@ -30,6 +30,9 @@ is @models.first, :a? => Model
 @model = @parent.models.first(@last.id)
 is @model.id, @last.id
 
+@model = @parent.models.find(@last.id).first
+is @model.id, @last.id
+
 @model = @parent.models.first
 is @model, :a? => Model
 
