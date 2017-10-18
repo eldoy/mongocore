@@ -112,6 +112,5 @@ module Mongocore
       @klass.instance_eval t
     end
 
-
   end
 end

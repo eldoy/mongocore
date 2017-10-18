@@ -39,7 +39,6 @@ module Mongocore
 
     # Normalize query
     def normalize(q)
-
       # Support find passing an ID
       q = {:_id => oid(q)} unless q.is_a?(Hash)
 
@@ -105,7 +104,6 @@ module Mongocore
 
     # Paginate
     def paginate(o = {})
-
       # Get total count before applying pagination
       total = fetch(:count)
 

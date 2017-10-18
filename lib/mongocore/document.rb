@@ -43,26 +43,21 @@ module Mongocore
 
       attr_accessor :errors, :changes, :saved
 
-
       # # # # # # # # # # #
       # The class initializer, called when you write Model.new
       # Pass in attributes you want to set: Model.new(:duration => 60)
       # Defaults are filled in automatically.
       #
       def initialize(a = {})
-        a = a.deep_symbolize_keys
-
-        # The _id has the BSON object, create new unless it exists
-        a[:_id] ? @saved = true : a[:_id] = BSON::ObjectId.new
-
-        # The errors hash
-        @errors = Mongocore::Errors.new{|h, k| h[k] = []}
 
         # Defaults
-        self.class.schema.defaults.each{|k, v| write(k, v)}
+        self.attributes = self.class.schema.defaults.merge(a)
 
-        # Set the attributes
-        a.each{|k, v| write(k, v)}
+        # The _id is a BSON object, create new unless it exists
+        @_id ? @saved = true : @_id = BSON::ObjectId.new
+
+        # The errors hash
+        @errors = Hash.new{|h, k| h[k] = []}
 
         # The changes hash
         @changes = Hash.new{|h, k| h[k] = []}
@@ -86,7 +81,7 @@ module Mongocore
 
       # Update document in db
       def update(a = {})
-        a.each{|k, v| write(k, v)}; filter(:update){single.update(a).ok?}
+        self.attributes = a; filter(:update){single.update(a).ok?}
       end
 
       # Delete a document in db
