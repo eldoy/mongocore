@@ -61,3 +61,17 @@ is @model.attributes[:duration], 60
 @model.attributes = {:duration => 50}
 
 is @model.duration, 50
+
+@parent = Parent.new
+is @parent.save
+
+@model = Model.new
+@model.parent = @parent
+is @model.save
+is @model.parent.id, @parent.id
+is @parent.models.all.size, 1
+
+@model.attributes = {:parent_id => @parent.id}
+@model.save
+
+is @parent.models.all.size, 1

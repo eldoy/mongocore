@@ -121,7 +121,7 @@ module Mongocore
 
       # Set the attributes
       def attributes=(a)
-        a.each{|k, v| write!(k, v)}
+        a.deep_symbolize_keys.each{|k, v| write(k, v)}
       end
 
       # Changed?
