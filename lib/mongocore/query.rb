@@ -34,7 +34,7 @@ module Mongocore
 
     # Find. Returns a Mongocore::Query
     def find(q = {}, o = {}, s = {})
-      self.class.new(@model, @query.merge(normalize(q)), @options.merge(o), @store.merge(s))
+      self.class.new(@model, @query.merge(q.is_a?(Hash) ? q : {:_id => q}), @options.merge(o), @store.merge(s))
     end
 
     # Normalize query
