@@ -46,17 +46,18 @@ module Mongocore
     # Convert type if val and schema type is set
     def convert(key, val)
       return nil if val.nil?
-      type = @keys[key][:type].to_sym rescue nil
-      return val if type.nil?
+      type = @keys[key][:type].to_sym rescue :string
 
       # Convert to the same type as in the schema
-      return val.to_i if type == :integer
-      return val.to_f if type == :float
-      return !!val    if type == :boolean
-      if type == :object_id and !val.is_a?(BSON::ObjectId)
-        return BSON::ObjectId.from_string(val) rescue nil
+      if type == :string then val.to_s
+      elsif type == :integer then val.to_i
+      elsif type == :float then val.to_f
+      elsif type == :boolean then !!val
+      elsif type == :object_id && val.is_a?(String)
+        BSON::ObjectId.from_string(val) rescue nil
+      else
+        val
       end
-      val
     end
 
     # # # # # # # # #

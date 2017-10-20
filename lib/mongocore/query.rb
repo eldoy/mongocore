@@ -46,7 +46,7 @@ module Mongocore
       q[:_id] = q.delete(:id) if q[:id]
 
       # Convert object ID's to BSON::ObjectIds
-      q.each{|k, v| q[k] = oid(v) if k =~ /_id$/}
+      q.each{|k, v| q[k] = @model.schema.convert(k, v) if k =~ /_id$/}
 
       q
     end
