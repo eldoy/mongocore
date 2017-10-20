@@ -75,3 +75,78 @@ is @parent.models.all.size, 1
 @model.save
 
 is @parent.models.all.size, 1
+
+test 'boolean'
+
+@model = Model.new
+@model.reminders_sent = false
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, false
+
+@model.reminders_sent = 'false'
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, false
+
+@model.reminders_sent = 'true'
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, true
+
+@model.reminders_sent = '0'
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, false
+
+@model.reminders_sent = 'n'
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, false
+
+@model.reminders_sent = 'no'
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, false
+
+@model.reminders_sent = 'true'
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, true
+
+@model.reminders_sent = '1'
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, true
+
+@model.reminders_sent = 'y'
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, true
+
+@model.reminders_sent = 'yes'
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, true
+
+@model.reminders_sent = 1
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, true
+
+@model.reminders_sent = 2
+@model.save
+
+@model = @model.reload
+is @model.reminders_sent, true
