@@ -33,6 +33,11 @@ is @model.goal, 10
 
 @update = @model.update(:goal => nil)
 is @model.goal, nil
+is @update, true
+
+@update = @model.update({:goal => -1}, :validate => true)
+is @model.reload.goal, nil
+is @update, false
 
 test 'delete'
 

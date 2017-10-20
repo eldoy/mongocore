@@ -14,7 +14,7 @@ module Mongocore
     # The Model class, accessible from Model or m.class, holds the data
     # for your models like the schema and the keys.
     #
-    # The model instance, m, lets you do operations on a single model
+    # The model instance, m, lets you do operations on a model
     # like m.save, m.update, m.delete
     #
 
@@ -72,21 +72,17 @@ module Mongocore
 
       # Save attributes to db
       def save(o = {})
-        # Send :validate => true to validate
-        return false unless valid? if o[:validate]
-
-        # Create a new query
-        filter(:save){mq(self.class, {:_id => @_id}).update(attributes).ok?}
+        persist(:save, o)
       end
 
       # Update document in db
-      def update(a = {})
-        self.attributes = a; filter(:update){single.update(a).ok?}
+      def update(a = {}, o = {})
+        self.attributes = a; persist(:update, o)
       end
 
       # Delete a document in db
       def delete
-        filter(:delete, false){single.delete}
+        filter(:delete, false){one.delete}
       end
 
       # Run filters before and after accessing the db
@@ -96,7 +92,7 @@ module Mongocore
 
       # Reload the document from db and update attributes
       def reload
-        single.first.tap{|m| attributes = m.attributes}
+        one.first.tap{|m| attributes = m.attributes}
       end
 
       # Set the timestamps if enabled
@@ -160,8 +156,8 @@ module Mongocore
         Mongocore::Query.new(m, q, o, {:source => self}.merge(s))
       end
 
-      # Short cut for simple query with cache buster
-      def single(s = {:cache => false})
+      # Short cut for query needing only id
+      def one(s = {})
         mq(self.class, {:_id => @_id}, {}, s)
       end
 
@@ -228,6 +224,17 @@ module Mongocore
       # Replace _id with id, takes a hash
       def string_id(a)
         a.delete(:_id); {:id => id}.merge(a)
+      end
+
+      private
+
+      # Persist for save and update
+      def persist(type, o)
+        # Send :validate => true to validate
+        return false unless valid? if o[:validate]
+
+        # Create a new query
+        filter(type){one.update(attributes).ok?}
       end
 
     end
