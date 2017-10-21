@@ -234,7 +234,7 @@ module Mongocore
         return false unless valid? if o[:validate]
 
         # Create a new query
-        filter(type){one.update(attributes).ok?}
+        filter(type){one.send((@saved ? :update : :insert), attributes).ok?}
       end
 
     end
@@ -291,7 +291,10 @@ module Mongocore
         find({}, {}, :fields => o)
       end
 
-
+      # Insert
+      def insert(a = {}, o = {})
+        new(a).tap{|r| r.save(o)}
+      end
       # # # # # # # # #
       # After, before and validation filters
       # Pass a method name as symbol or a block

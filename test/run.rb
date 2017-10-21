@@ -15,6 +15,7 @@ begin
     'operators',
     'tags',
     'save',
+    'insert',
     'find',
     'scopes',
     'associations',

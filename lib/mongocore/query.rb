@@ -56,6 +56,11 @@ module Mongocore
       @collection.find(@query, @options).projection(@store[:fields]).skip(@store[:skip]).sort(@store[:sort]).limit(@store[:limit])
     end
 
+    # Insert
+    def insert(a)
+      @collection.insert_one(a.delete_if{|k, v| v.nil?})
+    end
+
     # Update
     def update(a)
       # We do $set on non nil, $unset on nil
