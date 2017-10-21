@@ -9,7 +9,8 @@ is @model.to_s, :a? => String
 # Defaults
 a = @model.attributes
 is a, :a? => Hash
-is a[:id], @model.id
+is a[:_id], @model._id
+is a[:_id].to_s, @model.id
 is a[:submittable], nil
 is a[:duration], 60
 is a[:reminders_sent], false
@@ -150,3 +151,12 @@ is @model.reminders_sent, true
 
 @model = @model.reload
 is @model.reminders_sent, true
+
+@model = Model.new
+@model.save
+
+is @model.reload.id
+
+bson = Mongocore.db[:models].find(:_id => @model._id).first
+is bson[:id], nil
+is bson[:_id]

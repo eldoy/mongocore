@@ -12,6 +12,7 @@ begin
     'query',
     'schema',
     'attributes',
+    'operators',
     'tags',
     'save',
     'find',

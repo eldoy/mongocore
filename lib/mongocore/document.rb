@@ -92,7 +92,7 @@ module Mongocore
 
       # Reload the document from db and update attributes
       def reload
-        one.first.tap{|m| attributes = m.attributes}
+        one.first.tap{|m| self.attributes = m.attributes}
       end
 
       # Set the timestamps if enabled
@@ -107,7 +107,7 @@ module Mongocore
 
       # Collect the attributes, pass tags like defined in your model yml
       def attributes(*tags)
-        a = {}; self.class.schema.attributes(tags.map(&:to_s)).each{|k| a[k] = read!(k)}; string_id(a)
+        a = {}; self.class.schema.attributes(tags.map(&:to_s)).each{|k| a[k] = read!(k)}; a
       end
 
       # Set the attributes
@@ -122,7 +122,7 @@ module Mongocore
 
       # JSON format
       def as_json(options = {})
-        attributes
+        string_id(attributes)
       end
 
 

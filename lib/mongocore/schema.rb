@@ -53,8 +53,10 @@ module Mongocore
       elsif type == :integer then val.to_i
       elsif type == :float then val.to_f
       elsif type == :boolean then val.to_s.to_bool
-      elsif type == :object_id && !val.is_a?(BSON::ObjectId)
-        BSON::ObjectId.from_string(val) rescue nil
+      elsif type == :object_id
+        # Convert string id to BSON::ObjectId
+        val.each{|k, v| val[k] = BSON::ObjectId.from_string(v) if v.is_a?(String)} if val.is_a?(Hash)
+        BSON::ObjectId.from_string(val) rescue val
       else
         val
       end
