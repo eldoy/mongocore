@@ -224,7 +224,7 @@ module Mongocore
 
       # Replace _id with id, takes a hash
       def string_id(a)
-        a.each{|k, v| a[k] = v.to_s}; a.delete(:_id); {:id => id}.merge(a)
+        a.each{|k, v| a[k] = v.to_s if v.is_a?(BSON::ObjectId)}; a.delete(:_id); {:id => id}.merge(a)
       end
 
       private

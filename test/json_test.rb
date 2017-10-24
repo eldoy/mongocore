@@ -10,3 +10,4 @@ json = JSON.parse(model.to_json)
 
 is json['id'], :a? => String
 is json['parent_id'], :a? => String
+is json['duration'], :a? => Integer
