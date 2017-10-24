@@ -16,4 +16,5 @@ class String
 
     raise ArgumentError.new %{invalid value: #{self}}
   end
+
 end
