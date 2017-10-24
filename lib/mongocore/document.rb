@@ -121,10 +121,9 @@ module Mongocore
       end
 
       # JSON format
-      def as_json(options = {})
-        string_id(attributes)
+      def as_json(o = {})
+        string_id(attributes(*o[:data]))
       end
-
 
       # # # # # # # # # # # # # # # #
       # Validation methods

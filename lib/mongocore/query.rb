@@ -161,6 +161,11 @@ module Mongocore
       find(@query, @options, @store.tap{store[:fields].merge!(o)})
     end
 
+    # JSON format
+    def as_json(o = {})
+      all
+    end
+
     # Cache key
     def key
       @key ||= "#{@model}#{@query.sort}#{@options.sort}#{@store.values}"
