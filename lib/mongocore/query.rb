@@ -136,6 +136,11 @@ module Mongocore
       cursor.send(t).tap{|r| cache.set(t, r) if Mongocore.cache}
     end
 
+    # Each
+    def each(&block)
+      cursor.each{|r| yield(modelize(r))}
+    end
+
     # Sort
     def sort(o = {})
       find(@query, @options, @store.tap{store[:sort].merge!(o)})

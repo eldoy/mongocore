@@ -295,6 +295,12 @@ module Mongocore
       def insert(a = {}, o = {})
         new(a).tap{|r| r.save(o)}
       end
+
+      # Each
+      def each(&block)
+        find.each{|r| yield(r)}
+      end
+
       # # # # # # # # #
       # After, before and validation filters
       # Pass a method name as symbol or a block
