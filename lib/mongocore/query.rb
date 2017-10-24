@@ -102,11 +102,6 @@ module Mongocore
       fetch(:to_a).map{|d| modelize(d)}
     end
 
-    # Doc to model
-    def modelize(doc)
-      doc ? @model.new(doc.to_hash) : nil
-    end
-
     # Paginate
     def paginate(o = {})
       # Get total count before applying pagination
@@ -125,7 +120,12 @@ module Mongocore
       store[:limit] = o[:per_page]
 
       # Fetch the result as array
-      fetch(:to_a).map{|d| modelize(d)}.tap{|r| r.total = total}
+      all.tap{|r| r.total = total}
+    end
+
+    # BSON::Document to model
+    def modelize(doc)
+      doc ? @model.new(doc.to_hash) : nil
     end
 
     # Fetch docs, pass type :first, :to_a or :count
