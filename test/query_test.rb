@@ -41,3 +41,9 @@ is @query.count, :gt => 0
 
 is @models, :a? => Array
 is @models.size, :gt => 0
+
+test ' * json'
+
+json = @query.to_json
+is json, :a? => String
+is JSON.parse(json), :a? => Array
