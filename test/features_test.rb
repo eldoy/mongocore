@@ -170,3 +170,11 @@ is q.first, :a? => Model
 
 m = Model.featured.first
 is m, :a? => Model
+
+test 'aliases'
+
+is Model.where
+is Model.where.where
+model = Model.first
+is model.new_record?, false
+is model.persisted?, true

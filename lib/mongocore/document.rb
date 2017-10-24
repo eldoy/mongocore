@@ -146,9 +146,11 @@ module Mongocore
 
       # Saved? Persisted?
       def saved?; !!@saved; end
+      alias_method :persisted?, :saved?
 
       # Unsaved? New record?
       def unsaved?; !@saved; end
+      alias_method :new_record?, :unsaved?
 
       # Short cut for setting up a Mongocore::Query object
       def mq(m, q = {}, o = {}, s = {})
@@ -249,6 +251,7 @@ module Mongocore
       def find(*args)
         mq(self, *args)
       end
+      alias_method :where, :find
 
       # Count
       def count(*args)
