@@ -115,7 +115,9 @@ m.duration = 33
 is m.changed?, :eq => true
 is m.duration_changed?, :eq => true
 is m.duration_was, 60
-is m.changes[:duration], 60
+is m.changes[:duration], :a? => Array
+is m.changes[:duration][0], 60
+is m.changes[:duration][1], 33
 is m.changes.any?, :eq => true
 is m.saved?, :eq => false
 is m.unsaved?, :eq => true
@@ -134,12 +136,24 @@ is m.errors[:duration].first, :a? => String
 m.errors.delete(:duration)
 m.duration = 33
 
+m = Model.new
+is m.changes, {}
+is m.duration, 60
+is m.duration_was, 60
+
+m.duration = 50
+is m.duration, 50
+is m.changes[:duration][0], 60
+is m.changes[:duration][1], 50
+is m.duration_changed?
+is m.duration_was, 60
+
 test 'update'
 
 m.update(:duration => 20)
 is m.duration, 20
 m = m.reload
-# is m.duration, 20
+is m.duration, 20
 
 test 'delete'
 

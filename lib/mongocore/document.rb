@@ -41,7 +41,7 @@ module Mongocore
       # @saved indicates whether this is saved or not
       #
 
-      attr_accessor :errors, :changes, :saved
+      attr_accessor :errors, :changes, :saved, :state
 
       # # # # # # # # # # #
       # The class initializer, called when you write Model.new
@@ -50,8 +50,8 @@ module Mongocore
       #
       def initialize(a = {})
 
-        # Defaults
-        self.attributes = self.class.schema.defaults.merge(a)
+        # Store attributes. Storing state state for dirty tracking.
+        self.attributes = self.class.schema.defaults.merge(a).tap{|r| self.state = r.dup}
 
         # The _id is a BSON object, create new unless it exists
         @_id ? @saved = true : @_id = BSON::ObjectId.new
@@ -117,7 +117,7 @@ module Mongocore
 
       # Changed?
       def changed?
-        changes.any?
+        @changes.any?
       end
 
       # JSON format
@@ -185,7 +185,7 @@ module Mongocore
         v = self.class.schema.convert(key, val)
 
         # Record change for dirty attributes
-        read!(key).tap{|r| @changes[key] = r if v != r} if @changes
+        read!(key).tap{|r| @changes[key] = [@state[key], v] if v != r} if @changes
 
         # Write attribute
         write!(key, v)
@@ -203,15 +203,14 @@ module Mongocore
 
         # Write or read
         if self.class.schema.keys.has_key?(key = $1.to_sym)
-          return write(key, args.first) if $2
-          return read(key)
+          return $2 ? write(key, args.first) : read(key)
         end
 
         # Attributes changed?
-        return changes.has_key?($1.to_sym) if key =~ /(.+)_changed\?/
+        return @changes.has_key?($1.to_sym) if key =~ /(.+)_changed\?/
 
         # Attributes was
-        return changes[$1.to_sym] if key =~ /(.+)_was/
+        return @state[$1.to_sym] if key =~ /(.+)_was/
 
         # Pass if nothing found
         super
