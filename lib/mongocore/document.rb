@@ -226,6 +226,11 @@ module Mongocore
         a.each{|k, v| a[k] = v.to_s if v.is_a?(BSON::ObjectId)}; a.delete(:_id); {:id => id}.merge(a)
       end
 
+      # Print info about the instance
+      def inspect
+        "#<#{self.class} #{attributes.sort.map{|r| %{#{r[0]}: #{r[1].inspect}}}.join(', ')}>"
+      end
+
       private
 
       # Persist for save and update
