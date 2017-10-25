@@ -87,6 +87,7 @@ m.save
 
 # Finding
 query = Model.find
+query = Model.where # Alias
 
 # Query doesn't get executed until you call all, count, last or first
 m = query.all
@@ -102,6 +103,14 @@ m = Model.find.all
 m = Model.find.paginate
 m = Model.find.paginate(:per_page => 10, :page => 5)
 m.total # => Total number of results
+
+# Use each to fetch one by one
+Model.each do |m|
+  puts m
+end
+
+# Works with finds, scopes and associations
+Model.find(:duration => 50).each{|m| puts m}
 
 # All of these can be used:
 # https://docs.mongodb.com/manual/reference/operator/query-comparison
@@ -148,7 +157,9 @@ m.duration_changed?
 m.duration_was
 m.changes
 m.saved?
+m.persisted? # Alias for saved?
 m.unsaved?
+m.new_record? # Alias for unsaved?
 
 # Validate
 m.valid?
