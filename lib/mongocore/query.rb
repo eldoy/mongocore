@@ -26,7 +26,7 @@ module Mongocore
 
       # Storing query and options. Sort and limit is stored in options
       s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil; s[:fields] ||= {}; s[:skip] ||= 0
-      @query, @options, @store = normalize(q), o, s
+      @query, @options, @store = ids(transform(hashify(q))), o, s
 
       # Set up cache
       @cache = Mongocore::Cache.new(self)
@@ -34,22 +34,35 @@ module Mongocore
 
     # Find. Returns a Mongocore::Query
     def find(q = {}, o = {}, s = {})
-      self.class.new(@model, @query.merge(q.is_a?(Hash) ? q : {:_id => q}), @options.merge(o), @store.merge(s))
+      self.class.new(@model, @query.merge(hashify(q)), @options.merge(o), @store.merge(s))
     end
     alias_method :where, :find
 
-    # Normalize query
-    def normalize(q)
-      # Support find passing an ID
-      q = {:_id => @model.schema.oid(q)} unless q.is_a?(Hash)
+    # Convert string query to hash
+    def hashify(q)
+      q.is_a?(Hash) ? q : {:_id => q}
+    end
 
-      # Support passing :id as :_id
-      q[:_id] = q.delete(:id) if q[:id]
-
-      # Convert object ID's to BSON::ObjectIds
-      q.each do |k, v|
-        q[k] = @model.schema.convert(k, v) if @model.schema.oid?(k)
+    # Setup query, replace :id with :_id, set up ObjectIds
+    def ids(h)
+      h.each do |k, v|
+        case v
+        when Hash
+          # Call hashes recursively
+          ids(transform(v))
+        when Array
+          # Return mapped array or recurse hashes
+          h[k] = v.map{|r| r.is_a?(Hash) ? ids(transform(r)) : oid(r)}
+        else
+          # Convert to object ID if applicable
+          h[k] = oid(v) if v.is_a?(String)
+        end
       end
+    end
+
+    # Transform :id to :_id
+    def transform(h)
+      h.transform_keys!{|k| k == :id ? :_id : k}
     end
 
     # Cursor
@@ -170,6 +183,16 @@ module Mongocore
     # Cache key
     def key
       @key ||= "#{@model}#{@query.sort}#{@options.sort}#{@store.values}"
+    end
+
+    # Schema short cut for oid
+    def oid(k)
+      @model.schema.oid(k)
+    end
+
+    # Schema short cut for oid?
+    def oid?(k)
+      @model.schema.oid?(k)
     end
 
     # Call and return the scope if it exists

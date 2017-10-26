@@ -56,10 +56,6 @@ module Mongocore
       when :boolean
         val.to_s.to_bool
       when :object_id
-        # Convert string id to BSON::ObjectId
-        val.each do |k, v|
-          val[k] = oid(v) if v.is_a?(String)
-        end if val.is_a?(Hash)
         oid(val)
       else
         val

@@ -30,7 +30,14 @@ model.save
 model2 = Model.find(:_id => {:$in => [model._id]}).first
 is model2.id, model.id
 
-# model2 = Model.find(:_id => {:$in => [model.id]}).first
-# is model2.id, model.id
+model2 = Model.find(:id => {:$in => [model._id]}).first
+is model2.id, model.id
 
-# model2 = Model.find([model._id])
+model2 = Model.find(:_id => {:$in => [model.id]}).first
+is model2.id, model.id
+
+model2 = Model.find(:$or => [{:_id => model.id}, {:duration => 1231234}]).first
+is model2.id, model.id
+
+model2 = Model.find(:$or => [{:id => model.id}, {:duration => 1231234}]).first
+is model2.id, model.id

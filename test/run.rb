@@ -10,6 +10,7 @@ begin
   [
     'connection',
     'query',
+    'ids',
     'schema',
     'attributes',
     'each',

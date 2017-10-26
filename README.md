@@ -21,7 +21,7 @@ Please read [the source code](https://github.com/fugroup/mongocore/tree/master/l
 | -------------------------------------- | ----- | ------- | ------------- |
 | [Mongoid](http://mongoid.com)          | 256   | 14371   | 10590         |
 | [MongoMapper](http://mongomapper.com)  | 91    | 200     | 4070          |
-| [Mongocore](http://mongocore.com)      | 8     | 230     | 360           |
+| [Mongocore](http://mongocore.com)      | 8     | 256     | 454           |
 
 <br>
 
