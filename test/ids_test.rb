@@ -1,4 +1,4 @@
-test 'Traverse'
+test 'Ids'
 
 query = Mongocore::Query.new(Model)
 

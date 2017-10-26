@@ -128,10 +128,10 @@ module Mongocore
       o[:per_page] = o[:per_page].to_i; o[:per_page] = Mongocore.per_page if o[:per_page] < 1
 
       # Skip results
-      store[:skip] = o[:per_page] * (o[:page] - 1)
+      @store[:skip] = o[:per_page] * (o[:page] - 1)
 
       # Apply limit
-      store[:limit] = o[:per_page]
+      @store[:limit] = o[:per_page]
 
       # Fetch the result as array
       all.tap{|r| r.total = total}
