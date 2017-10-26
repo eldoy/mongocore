@@ -58,9 +58,9 @@ module Mongocore
       when :object_id
         # Convert string id to BSON::ObjectId
         val.each do |k, v|
-          val[k] = BSON::ObjectId.from_string(v) if v.is_a?(String)
+          val[k] = oid(v) if v.is_a?(String)
         end if val.is_a?(Hash)
-        BSON::ObjectId.from_string(val) rescue val
+        oid(val)
       else
         val
       end
