@@ -22,3 +22,15 @@ is @models.size, :gt => 0
 # Find
 @models = Model.find(:duration => 60).all
 is @models, :a? => Array
+
+# Array
+model = Model.new
+model.save
+
+model2 = Model.find(:_id => {:$in => [model._id]}).first
+is model2.id, model.id
+
+# model2 = Model.find(:_id => {:$in => [model.id]}).first
+# is model2.id, model.id
+
+# model2 = Model.find([model._id])

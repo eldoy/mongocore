@@ -2,15 +2,6 @@ test 'Query'
 
 @query = Mongocore::Query.new(Model)
 
-test ' * objectid'
-
-# Object ID converter
-is @query.oid('test1234'), :a? => String
-is @query.oid('58563c7a0aec085e6974346c'), :a? => BSON::ObjectId
-is @query.oid(nil), :a? => BSON::ObjectId
-is @query.oid(false), :a? => BSON::ObjectId
-is @query.oid, :a? => BSON::ObjectId
-
 test ' * cursor'
 
 # Cursor

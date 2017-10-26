@@ -46,20 +46,41 @@ module Mongocore
     # Convert type if val and schema type is set
     def convert(key, val)
       return nil if val.nil?
-      type = @keys[key][:type].to_sym rescue :string
-
-      # Convert to the same type as in the schema
-      if type == :string then val.to_s
-      elsif type == :integer then val.to_i
-      elsif type == :float then val.to_f
-      elsif type == :boolean then val.to_s.to_bool
-      elsif type == :object_id
+      case find_type(key)
+      when :string
+        val.to_s
+      when :integer
+        val.to_i
+      when :float
+        val.to_f
+      when :boolean
+        val.to_s.to_bool
+      when :object_id
         # Convert string id to BSON::ObjectId
-        val.each{|k, v| val[k] = BSON::ObjectId.from_string(v) if v.is_a?(String)} if val.is_a?(Hash)
+        val.each do |k, v|
+          val[k] = BSON::ObjectId.from_string(v) if v.is_a?(String)
+        end if val.is_a?(Hash)
         BSON::ObjectId.from_string(val) rescue val
       else
         val
       end
+    end
+
+    # Find type as defined in schema
+    def find_type(key)
+      @keys[key][:type].to_sym rescue :string
+    end
+
+    # This key is a BSON::Object ID?
+    def oid?(key)
+      find_type(key) === :object_id
+    end
+
+    # Convert to BSON::ObjectId
+    def oid(id = nil)
+      return id if id.is_a?(BSON::ObjectId)
+      return BSON::ObjectId.new if !id
+      BSON::ObjectId.from_string(id) rescue id
     end
 
     # # # # # # # # #

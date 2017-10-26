@@ -41,15 +41,15 @@ module Mongocore
     # Normalize query
     def normalize(q)
       # Support find passing an ID
-      q = {:_id => oid(q)} unless q.is_a?(Hash)
+      q = {:_id => @model.schema.oid(q)} unless q.is_a?(Hash)
 
       # Support passing :id as :_id
       q[:_id] = q.delete(:id) if q[:id]
 
       # Convert object ID's to BSON::ObjectIds
-      q.each{|k, v| q[k] = @model.schema.convert(k, v) if k =~ /_id$/}
-
-      q
+      q.each do |k, v|
+        q[k] = @model.schema.convert(k, v) if @model.schema.oid?(k)
+      end
     end
 
     # Cursor
@@ -170,13 +170,6 @@ module Mongocore
     # Cache key
     def key
       @key ||= "#{@model}#{@query.sort}#{@options.sort}#{@store.values}"
-    end
-
-    # String id to BSON::ObjectId, or create a new by passing nothing or nil
-    def oid(id = nil)
-      return id if id.is_a?(BSON::ObjectId)
-      return BSON::ObjectId.new if !id
-      BSON::ObjectId.from_string(id) rescue id
     end
 
     # Call and return the scope if it exists
