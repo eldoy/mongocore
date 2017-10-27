@@ -8,7 +8,7 @@ model.parent = parent
 model.save
 parent.save
 
-is query.oid?(:parent_id)
+is query.model.schema.oid?(:parent_id)
 
 
 t = {
@@ -33,7 +33,7 @@ t = {
 
 query.ids(t)
 
-is query.oid?(:parent_id)
+is query.model.schema.oid?(:parent_id)
 
 is t[:$or][0][:parent_id], parent._id
 

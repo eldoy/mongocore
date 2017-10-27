@@ -52,10 +52,10 @@ module Mongocore
           ids(transform(v))
         when Array
           # Return mapped array or recurse hashes
-          h[k] = v.map{|r| r.is_a?(Hash) ? ids(transform(r)) : oid(r)}
+          h[k] = v.map{|r| r.is_a?(Hash) ? ids(transform(r)) : @model.schema.oid(r)}
         else
           # Convert to object ID if applicable
-          h[k] = oid(v) if v.is_a?(String)
+          h[k] = @model.schema.oid(v) if v.is_a?(String)
         end
       end
     end
@@ -183,16 +183,6 @@ module Mongocore
     # Cache key
     def key
       @key ||= "#{@model}#{@query.sort}#{@options.sort}#{@store.values}"
-    end
-
-    # Schema short cut for oid
-    def oid(k)
-      @model.schema.oid(k)
-    end
-
-    # Schema short cut for oid?
-    def oid?(k)
-      @model.schema.oid?(k)
     end
 
     # Call and return the scope if it exists
