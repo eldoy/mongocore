@@ -18,3 +18,13 @@ class String
   end
 
 end
+
+module BSON
+  class ObjectId
+
+    def as_json(o = {})
+      self.to_s
+    end
+
+  end
+end
