@@ -67,11 +67,6 @@ module Mongocore
       @keys[key][:type].to_sym rescue :string
     end
 
-    # This key is a BSON::Object ID?
-    def oid?(key)
-      find_type(key) === :object_id
-    end
-
     # Convert to BSON::ObjectId
     def oid(id = nil)
       return id if id.is_a?(BSON::ObjectId)
