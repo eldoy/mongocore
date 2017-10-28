@@ -62,6 +62,28 @@ module Mongocore
       end
     end
 
+    # Setup query, replace :id with :_id, set up ObjectIds
+    def ids(h)
+      transform(h).each do |k, v|
+        case v
+        when Hash
+          # Call hashes recursively
+          ids(v)
+        when Array
+          # Return mapped array or recurse hashes
+          v.map!{|r| r.is_a?(Hash) ? ids(r) : oid(r)}
+        else
+          # Convert to object ID if applicable
+          h[k] = oid(v) if v.is_a?(String)
+        end
+      end
+    end
+
+    # Transform :id to :_id
+    def transform(h)
+      h.transform_keys!{|k| k == :id ? :_id : k}
+    end
+
     # Find type as defined in schema
     def find_type(key)
       @keys[key][:type].to_sym rescue :string

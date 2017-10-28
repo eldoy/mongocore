@@ -221,11 +221,6 @@ module Mongocore
         @_id ? @_id.to_s : nil
       end
 
-      # Replace _id with id, takes a hash
-      def string_id(a)
-        a.each{|k, v| a[k] = v.to_s if v.is_a?(BSON::ObjectId)}; a.delete(:_id); {:id => id}.merge(a)
-      end
-
       # Print info about the instance
       def inspect
         "#<#{self.class} #{attributes.sort.map{|r| %{#{r[0]}: #{r[1].inspect}}}.join(', ')}>"
@@ -240,6 +235,11 @@ module Mongocore
 
         # Create a new query
         filter(type){one.send((@saved ? :update : :insert), attributes).ok?}
+      end
+
+      # Replace _id with id, takes a hash
+      def string_id(a)
+        a.delete(:_id); {:id => id}.merge(a)
       end
 
     end

@@ -26,7 +26,7 @@ module Mongocore
 
       # Storing query and options. Sort and limit is stored in options
       s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil; s[:fields] ||= {}; s[:skip] ||= 0
-      @query, @options, @store = ids(transform(hashify(q))), o, s
+      @query, @options, @store = @model.schema.ids(hashify(q)), o, s
 
       # Set up cache
       @cache = Mongocore::Cache.new(self)
@@ -41,28 +41,6 @@ module Mongocore
     # Convert string query to hash
     def hashify(q)
       q.is_a?(Hash) ? q : {:_id => q}
-    end
-
-    # Setup query, replace :id with :_id, set up ObjectIds
-    def ids(h)
-      h.each do |k, v|
-        case v
-        when Hash
-          # Call hashes recursively
-          ids(transform(v))
-        when Array
-          # Return mapped array or recurse hashes
-          h[k] = v.map{|r| r.is_a?(Hash) ? ids(transform(r)) : @model.schema.oid(r)}
-        else
-          # Convert to object ID if applicable
-          h[k] = @model.schema.oid(v) if v.is_a?(String)
-        end
-      end
-    end
-
-    # Transform :id to :_id
-    def transform(h)
-      h.transform_keys!{|k| k == :id ? :_id : k}
     end
 
     # Cursor

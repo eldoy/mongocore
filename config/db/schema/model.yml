@@ -39,6 +39,13 @@ keys:
   location_data:
     desc: Model location data
     type: hash
+    default: {}
+    read: all
+    write: user
+  lists:
+    desc: Model list
+    type: array
+    default: []
     read: all
     write: user
   reminders_sent:
