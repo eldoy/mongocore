@@ -239,6 +239,7 @@ keys:
 
   # Define the _id field for all your models. The id field (without _)
   # is an alias to _id, but always returns a string instead of a BSON::ObjectId
+  # Any object ids as strings will be automatically converted into ObjectIds
   # @desc: Describes the key, can be used for documentation.
   # @type: object_id, string, integer, float, boolean, time, hash, array
   # @default: the default value for the key when you call .new
