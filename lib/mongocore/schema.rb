@@ -46,23 +46,18 @@ module Mongocore
     # Convert type if val and schema type is set
     def convert(key, val)
       return nil if val.nil?
-      case find_type(key)
-      when :string
-        val.to_s
-      when :integer
-        val.to_i
-      when :float
-        val.to_f
-      when :boolean
-        val.to_s.to_bool
-      when :object_id
-        oid(val)
-      else
-        val
+      case type(key)
+      when :string       then val.to_s
+      when :integer      then val.to_i
+      when :float        then val.to_f
+      when :boolean      then val.to_s.to_bool
+      when :object_id    then oid(val)
+      when :array, :hash then ids(val)
+      else val
       end
     end
 
-    # Setup query, replace :id with :_id, set up ObjectIds
+    # Setup query, replace :id with :_id, set up object ids
     def ids(h)
       transform(h).each do |k, v|
         case v
@@ -79,13 +74,13 @@ module Mongocore
       end
     end
 
-    # Transform :id to :_id
-    def transform(h)
-      h.transform_keys!{|k| k == :id ? :_id : k}
+    # Transform :id to _id or id to object id
+    def transform(e)
+      e.is_a?(Hash) ? e.transform_keys!{|k| k == :id ? :_id : k} : e.map!{|r| oid(r)}
     end
 
     # Find type as defined in schema
-    def find_type(key)
+    def type(key)
       @keys[key][:type].to_sym rescue :string
     end
 

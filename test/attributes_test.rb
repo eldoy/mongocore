@@ -160,3 +160,27 @@ is @model.reload.id
 bson = Mongocore.db[:models].find(:_id => @model._id).first
 is bson[:id], nil
 is bson[:_id]
+
+parent = Parent.new
+
+@model.attributes = {
+  :lists => [parent.id]
+}
+
+is @model.attributes[:lists][0], parent._id
+
+@model.lists = []
+
+is @model.lists.empty?
+
+@model.lists = [parent.id]
+
+is @model.attributes[:lists][0], parent._id
+
+is @model.lists[0], parent._id
+
+@model.location_data = {:hello => parent.id}
+
+is @model.location_data[:hello], parent._id
+
+
