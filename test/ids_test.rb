@@ -61,7 +61,5 @@ t = {
   :parent_id=>nil
 }
 
-puts t.inspect
 query.model.schema.ids(t)
-puts t.inspect
 is t[:lists][0], model._id
