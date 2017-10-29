@@ -143,12 +143,11 @@ c = p.models.featured.count
 # Skip
 m = Model.find.skip(2).first
 
-# Tagged keys for attributes and to_json
+# Attributes
 m = Model.first
 m.attributes             # => All attributes
 m.attributes(:badge)     # => Attributes with the badge tag only
 m.to_json                # => All attributes as json
-m.to_json(:badge, :test) # => Pass multiple tags if needed
 
 # Track changes
 m.duration = 33
