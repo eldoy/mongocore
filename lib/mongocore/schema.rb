@@ -29,7 +29,7 @@ module Mongocore
       (@accessors = @schema[:accessor] || []).each{|a| @klass.send(:attr_accessor, a)}
 
       # Many
-      (@many = @schema[:many] || {}).each{|k, v| many(k, v)}
+      (@many = @schema[:many] || []).each{|k| many(k)}
 
       # Scopes
       (@scopes = @schema[:scopes] || {}).each{|k, v| scope(k, v)}
@@ -112,7 +112,7 @@ module Mongocore
     end
 
     # Many
-    def many(key, data)
+    def many(key)
       t = %Q{
         def #{key}
           mq(#{key.to_s.singularize.capitalize}, {:#{@klass.to_s.downcase}_id => @_id}, {}, :source => self)

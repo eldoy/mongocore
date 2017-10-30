@@ -63,7 +63,7 @@ module Mongocore
     end
 
     # Access block
-    # Run with Mongocore::Access(:user){ # Do something as :user}
+    # Run with Mongocore::Access.role(:user){ # Do something as :user}
     def self.role(level, &block)
       set(level); yield.tap{ set(nil)}
     end

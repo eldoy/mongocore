@@ -286,8 +286,7 @@ keys:
 # Many relationships lets you do:
 # Model.parents.all or model.parents.featured.all with scopes
 many:
-  models:
-    dependent: destroy
+  - models
 ```
 
 
