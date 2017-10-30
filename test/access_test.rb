@@ -20,3 +20,18 @@ model = Mongocore::Access.role(:dev) do
 end
 
 is model, :a? => Model
+
+
+model = Mongocore::Access.role(:all) do
+  model = Model.new
+  model.save
+  model.auth = '1'
+  is model.auth, '1'
+  model
+end
+
+is model, :a? => Model
+model.auth = nil
+
+model.auth = '1'
+is model.auth, '1'

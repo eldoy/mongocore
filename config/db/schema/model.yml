@@ -21,6 +21,8 @@ keys:
     write: user
     tags:
     - badge
+  auth:
+    desc: Model auth
   duration:
     desc: Model duration in days
     type: integer

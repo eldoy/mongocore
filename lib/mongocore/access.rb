@@ -24,12 +24,12 @@ module Mongocore
 
     # Key readable?
     def read?(key)
-      ok?(keys[key][:read]) rescue false
+      ok?(keys[key][:read] || :all) rescue false
     end
 
     # Key writable?
     def write?(key)
-      ok?(keys[key][:write]) rescue false
+      ok?(keys[key][:write] || :all) rescue false
     end
 
     # Ok?
