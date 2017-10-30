@@ -107,7 +107,7 @@ module Mongocore
 
       # Collect the attributes, pass tags like defined in your model yml
       def attributes(*tags)
-        a = {}; self.class.schema.attributes(tags.map(&:to_s)).each{|k| a[k] = read!(k)}; a
+        a = {}; self.class.schema.attributes(tags.map(&:to_s)).each{|k| a[k] = read(k)}; a
       end
 
       # Set the attributes
@@ -305,6 +305,11 @@ module Mongocore
       # Each
       def each(&block)
         find.each{|r| yield(r)}
+      end
+
+      # Role (access level)
+      def role(level)
+        @access.set(level)
       end
 
       # # # # # # # # #

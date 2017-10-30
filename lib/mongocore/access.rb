@@ -11,8 +11,8 @@ module Mongocore
     # where f.ex. you want to show the email to logged in users, but not to all.
     #
 
-    # Access levels (6)
-    AL = [:all, :user, :dev, :admin, :super, :app]
+    # Access levels (7)
+    AL = [:all, :user, :owner, :dev, :admin, :super, :app]
 
     # Holds the keys from the model schema
     attr_accessor :keys
@@ -51,12 +51,12 @@ module Mongocore
 
     # Set?
     def set?(level)
-      AL.index(level) > AL.index(get || :all)
+      AL.index(level) >= AL.index(get || :all)
     end
 
     # Ok?
     def ok?(level)
-      !Mongocore.access || AL.index(level.to_sym) <= AL.index(get || :app)
+      !Mongocore.access || get.nil? || AL.index(level.to_sym) <= AL.index(get || :app)
     end
 
   end
