@@ -307,10 +307,6 @@ module Mongocore
         find.each{|r| yield(r)}
       end
 
-      # Role (access level)
-      def role(level)
-        @access.set(level)
-      end
 
       # # # # # # # # #
       # After, before and validation filters

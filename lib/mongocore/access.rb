@@ -22,21 +22,6 @@ module Mongocore
       @keys = schema.keys
     end
 
-    # Set the current access level
-    def set(level = nil)
-      set?(level) ? RequestStore.store[:access] = level : get
-    end
-
-    # Get the current access level
-    def get
-      RequestStore.store[:access]
-    end
-
-    # Reset the access level
-    def reset
-      RequestStore.store[:access] = nil
-    end
-
     # Key readable?
     def read?(key)
       ok?(keys[key][:read]) rescue false
@@ -47,16 +32,40 @@ module Mongocore
       ok?(keys[key][:write]) rescue false
     end
 
-    private
+    # Ok?
+    def ok?(level)
+      !Mongocore.access || self.class.get.nil? || AL.index(level.to_sym) <= AL.index(self.class.get || :app)
+    end
+
+
+    ###########################
+    # Class methods
+    #
+
+    # Reset the access level
+    def self.reset
+      RequestStore.store[:access] = nil
+    end
+
+    # Get the current access level
+    def self.get
+      RequestStore.store[:access]
+    end
+
+    # Set the current access level
+    def self.set(level = nil)
+      (level.nil? || set?(level)) ? RequestStore.store[:access] = level : get
+    end
 
     # Set?
-    def set?(level)
+    def self.set?(level)
       AL.index(level) >= AL.index(get || :all)
     end
 
-    # Ok?
-    def ok?(level)
-      !Mongocore.access || get.nil? || AL.index(level.to_sym) <= AL.index(get || :app)
+    # Access block
+    # Run with Mongocore::Access(:user){ # Do something as :user}
+    def self.role(level, &block)
+      set(level); yield.tap{ set(nil)}
     end
 
   end

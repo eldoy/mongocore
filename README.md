@@ -181,6 +181,12 @@ q = p.models.featured.all
 q = p.models.featured.nested.all
 m = Model.featured.first
 
+# Access
+model = Mongocore::Access.role(:user) do
+  # Reads and writes in the block will be with the above access level
+  Model.first
+end
+
 # In your model
 class Model
   include Mongocore::Document
