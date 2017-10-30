@@ -85,7 +85,15 @@ test 'last'
 m = Model.last
 is m, :a? => Model
 
-mp = Parent.first.models.last
+p = Parent.new
+m.parent = p
+is m.save
+is p.save
+
+pl = Parent.last
+is pl.id, p.id
+
+mp = pl.models.last
 is mp, :a? => Model
 
 m2 = Model.last(m.id)
@@ -164,7 +172,13 @@ m = Model.find(id).first
 is m, :eq => nil
 
 test 'many'
-p = Parent.first
+p = Parent.new
+is p.save
+
+m = Model.new
+m.parent = p
+is m.save
+
 q = p.models.all
 is q.first, :a? => Model
 
