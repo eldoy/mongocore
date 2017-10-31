@@ -22,6 +22,7 @@ end
 module BSON
   class ObjectId
 
+    # Override the to_json method
     def as_json(o = {})
       self.to_s
     end
