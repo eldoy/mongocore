@@ -3,7 +3,7 @@ module Mongocore
 
     # # # # # # # #
     # The Access class is responsible for checking if an attribute
-    # can be read or written. It uses 6 access levels and the
+    # can be read or written. It uses 7 access levels and the
     # read and write attributes in the schema yml file for the model.
     #
     # If your current access level is above the key level, then you
