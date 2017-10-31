@@ -34,7 +34,7 @@ module Mongocore
 
     # Ok?
     def ok?(level)
-      !Mongocore.access || self.class.get.nil? || AL.index(level.to_sym) <= AL.index(self.class.get || :app)
+      !Mongocore.access || (g = self.class.get).nil? || AL.index(level.to_sym) <= AL.index(g || :app)
     end
 
 
