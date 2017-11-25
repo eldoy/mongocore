@@ -328,7 +328,7 @@ keys:
     default: 60
     read: dev
     write: user
-    # Add tags for keys for use with attributes and to_json
+    # Add tags for keys for use with attributes
     tags:
     - badge
 
@@ -338,7 +338,7 @@ keys:
     type: time
     read: all
     write: dev
-    # Multiple tags possible: to_json(:badge, :campaigns)
+    # Multiple tags possible: attributes(:badge, :campaigns)
     tags:
     - badge
     - campaigns
