@@ -55,8 +55,12 @@ is @model.id, @model2.id
 is @model.id, @model2.id
 
 @model = Model.last
-@model.parent = Parent.last
+@parent = Parent.last
+@model.parent = @parent
 is @model.parent
 
 @model.parent = nil
 is @model.parent_id, nil
+
+@model.parent = @parent.id
+is @model.parent_id, @parent._id

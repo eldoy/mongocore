@@ -104,7 +104,7 @@ module Mongocore
         end
 
         def #{$1}=(m)
-          @#{key} = m ? m._id : nil
+          @#{key} = m._id rescue (BSON::ObjectId.from_string(m) rescue m)
           @#{$1} = m
         end
       }
