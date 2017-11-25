@@ -1,7 +1,7 @@
 # Mongocore Ruby Database Driver
 A new MongoDB ORM implementation on top of the [MongoDB Ruby driver.](https://docs.mongodb.com/ruby-driver/master/quick-start/) Very fast and light weight.
 
-The perfect companion for Sinatra or other Rack-based web frameworks.
+The perfect companion for Rails, Sinatra, Susana or other Rack-based web frameworks.
 
 ### Features
 With Mongocore you can do:
@@ -70,7 +70,20 @@ Mongocore.debug = false
 
 ```ruby
 # Set up connection to database engine
-Mongocore.db = Mongo::Client.new(['127.0.0.1:27017'], :database => "mongocore_#{ENV['RACK_ENV']}")
+# Add this code to an initializer or in your environment file
+Mongocore.db = Mongo::Client.new(['127.0.0.1:27017'], :database => "dbname_#{ENV['RACK_ENV']}")
+
+# Ruby on Rails installation
+rails new your_app_name --skip-active-record
+
+In application.rb and the Gemfile, make sure to comment out active_model and active_record, they are not needed.
+
+# Logging options
+Mongo::Logger.logger.level = ::Logger::INFO
+Mongo::Logger.logger.level = ::Logger::FATAL
+
+# Write to log file instead of terminal
+Mongo::Logger.logger = ::Logger.new('./log/mongo.log')
 
 # Create a new document
 m = Model.new
