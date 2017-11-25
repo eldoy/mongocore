@@ -38,10 +38,10 @@ module Mongocore
       # Instance variables
       # @errors is used for validates
       # @changes keeps track of object changes
-      # @saved indicates whether this is saved or not
+      # @persisted indicates whether this is saved or not
       #
 
-      attr_accessor :errors, :changes, :saved, :original
+      attr_accessor :errors, :changes, :persisted, :original
 
       # # # # # # # # # # #
       # The class initializer, called when you write Model.new
@@ -54,7 +54,7 @@ module Mongocore
         self.attributes = self.class.schema.defaults.merge(a).tap{|r| @original = r.dup}
 
         # The _id is a BSON object, create new unless it exists
-        @_id ? @saved = true : @_id = BSON::ObjectId.new
+        @_id ? @persisted = true : @_id = BSON::ObjectId.new
 
         # The errors hash
         @errors = Hash.new{|h, k| h[k] = []}
@@ -86,8 +86,8 @@ module Mongocore
       end
 
       # Run filters before and after accessing the db
-      def filter(cmd, saved = true, &block)
-        run(:before, cmd); yield.tap{@saved = saved; run(:after, cmd)}
+      def filter(cmd, persisted = true, &block)
+        run(:before, cmd); yield.tap{@persisted = persisted; run(:after, cmd)}
       end
 
       # Reload the document from db and update attributes
@@ -145,11 +145,11 @@ module Mongocore
       #
 
       # Saved? Persisted?
-      def saved?; !!@saved; end
+      def saved?; !!@persisted; end
       alias_method :persisted?, :saved?
 
       # Unsaved? New record?
-      def unsaved?; !@saved; end
+      def unsaved?; !@persisted; end
       alias_method :new_record?, :unsaved?
 
       # Short cut for setting up a Mongocore::Query object
@@ -234,7 +234,7 @@ module Mongocore
         return false unless valid? if o[:validate]
 
         # Create a new query
-        filter(type){one.send((@saved ? :update : :insert), attributes).ok?}
+        filter(type){one.send((@persisted ? :update : :insert), attributes).ok?}
       end
 
       # Replace _id with id, takes a hash
