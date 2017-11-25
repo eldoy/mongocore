@@ -24,8 +24,8 @@ module Mongocore
       # Storing the Mongo::Collection object
       @collection = Mongocore.db[@colname]
 
-      # Storing query and options. Sort and limit is stored in options
-      s[:sort] ||= {}; s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil; s[:fields] ||= {}; s[:skip] ||= 0
+      # Storing query and options
+      s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil; s[:fields] ||= {}; s[:skip] ||= 0
       @query, @options, @store = @model.schema.ids(hashify(q)), o, s
 
       # Set up cache
@@ -45,7 +45,7 @@ module Mongocore
 
     # Cursor
     def cursor
-      @collection.find(@query, @options).projection(@store[:fields]).skip(@store[:skip]).sort(@store[:sort]).limit(@store[:limit])
+      @collection.find(@query, @options).projection(@store[:fields]).skip(@store[:skip]).sort(@store[:sort] || Mongocore.sort).limit(@store[:limit])
     end
 
     # Insert
@@ -86,7 +86,7 @@ module Mongocore
 
     # Return last document
     def last(*args)
-      sort(:_id => -1).limit(1).first(*args)
+      sort((a = Mongocore.sort.dup).each{|k, v| a[k] = v * -1}).limit(1).first(*args)
     end
 
     # Return all documents
@@ -135,7 +135,7 @@ module Mongocore
 
     # Sort
     def sort(o = {})
-      find(@query, @options, @store.tap{store[:sort].merge!(o)})
+      find(@query, @options, @store.tap{(store[:sort] ||= {}).merge!(o)})
     end
 
     # Limit

@@ -16,7 +16,7 @@ module Mongocore
   # @license:  MIT, contributions are welcome.
   # # # # # #
 
-  class << self; attr_accessor :db, :schema, :cache, :access, :timestamps, :per_page, :debug; end
+  class << self; attr_accessor :db, :schema, :cache, :access, :timestamps, :sort, :per_page, :debug; end
 
   # Schema path is $app_root/config/db/schema/:model_name.yml
   @schema = File.join(Dir.pwd, 'config', 'db', 'schema')
@@ -29,6 +29,9 @@ module Mongocore
 
   # Enable timestamps, auto-save created_at and updated_at fields
   @timestamps = true
+
+  # Default sorting, last will be opposite. Should be indexed.
+  @sort = {:_id => 1}
 
   # Pagination results per page
   @per_page = 20

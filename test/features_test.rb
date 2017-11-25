@@ -46,6 +46,7 @@ p = Parent.first
 m = Model.find({:duration => {:$gt => 40}}, {}, :sort => {:duration => -1}).all
 is m, :a? => Array
 
+is Model.find(:duration => {:$gt => 50}).count, :gt => 1
 m = Model.find(:duration => {:$gt => 50}).sort(:duration => -1).first
 a = Model.find(:duration => {:$gt => 50}).sort(:duration => 1).first
 
