@@ -183,4 +183,18 @@ is @model.lists[0], parent._id
 
 is @model.location_data[:hello], parent._id
 
+@model.duration = nil
+@model.write('duration', 50)
+is @model.duration, 50
+is @model.read('duration'), 50
+is @model.read(:duration), 50
+is @model.read!('duration'), 50
+is @model.read!(:duration), 50
 
+@model.duration = nil
+@model.write(:duration, 50)
+is @model.duration, 50
+is @model.read('duration'), 50
+is @model.read(:duration), 50
+is @model.read!('duration'), 50
+is @model.read!(:duration), 50

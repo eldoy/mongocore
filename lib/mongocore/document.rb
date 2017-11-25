@@ -169,7 +169,7 @@ module Mongocore
 
       # Get attribute if access
       def read(key)
-        self.class.access.read?(key) ? read!(key) : nil
+        self.class.access.read?((key = key.to_sym)) ? read!(key) : nil
       end
 
       # Get attribute
@@ -179,7 +179,7 @@ module Mongocore
 
       # Set attribute if access
       def write(key, val)
-        return nil unless self.class.access.write?(key)
+        return nil unless self.class.access.write?((key = key.to_sym))
 
         # Convert to type as in schema yml
         v = self.class.schema.convert(key, val)
