@@ -17,6 +17,9 @@ is @query2.query, :eq => {:duration => 50, :goal => {'$ne' => nil}}
 test ' * first'
 
 # First
+@model = Model.new
+is @model.save
+
 @model = @query.first
 is @model, :a? => Model
 

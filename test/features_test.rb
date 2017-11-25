@@ -193,6 +193,10 @@ test 'scopes'
 q = Model.featured.all
 is q.first, :a? => Model
 
+model = Model.last
+model.goal = 10
+is model.save
+
 q = Model.featured.nested.all
 is q.first, :a? => Model
 

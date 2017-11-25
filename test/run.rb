@@ -4,6 +4,14 @@ require './config/boot'
 
 include Futest::Helpers
 
+def delete_all
+  Mongocore.db[:parents].drop
+  Mongocore.db[:models].drop
+end
+
+# Delete all collections
+delete_all
+
 # Load tests. Comment out the ones you don't want to run.
 begin
   start = Time.now
