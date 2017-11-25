@@ -56,6 +56,9 @@ Mongocore.access = true
 # Enable timestamps, auto-save created_at and updated_at keys
 Mongocore.timestamps = true
 
+# Default sorting, last will be opposite. Should be indexed.
+Mongocore.sort = {:_id => 1}
+
 # Pagination results per page
 Mogocore.per_page = 20
 
