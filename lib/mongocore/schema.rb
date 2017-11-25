@@ -104,7 +104,7 @@ module Mongocore
         end
 
         def #{$1}=(m)
-          @#{key} = m._id
+          @#{key} = m ? m._id : nil
           @#{$1} = m
         end
       }

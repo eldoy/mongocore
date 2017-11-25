@@ -53,3 +53,10 @@ is @model.id, @model2.id
 
 @model2 = @parent.models.first(@model._id)
 is @model.id, @model2.id
+
+@model = Model.last
+@model.parent = Parent.last
+is @model.parent
+
+@model.parent = nil
+is @model.parent_id, nil
