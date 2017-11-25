@@ -131,7 +131,7 @@ module Mongocore
 
       # Valid?
       def valid?
-        self.class.filters.valid?(self)
+        @errors.clear; self.class.filters.valid?(self)
       end
 
       # Available filters are :save, :update, :delete
