@@ -301,6 +301,7 @@ module Mongocore
       def insert(a = {}, o = {})
         new(a).tap{|r| r.save(o)}
       end
+      alias_method :create, :insert
 
       # Each
       def each(&block)
