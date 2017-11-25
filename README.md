@@ -76,7 +76,7 @@ Mongocore.db = Mongo::Client.new(['127.0.0.1:27017'], :database => "dbname_#{ENV
 # Ruby on Rails installation
 rails new your_app_name --skip-active-record
 
-# In application.rb and the Gemfile, make sure to comment out active_model and active_record, they are not needed.
+# In application.rb and the Gemfile, comment out active_model and active_record.
 
 # Logging options
 Mongo::Logger.logger.level = ::Logger::INFO
