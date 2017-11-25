@@ -1,9 +1,15 @@
+**Version 0.3.2** - *2017-11-25*
+
+- Alias for insert is create
+
+
 **Version 0.3.1** - *2017-11-25*
 
 - Fixed bug where error didn't get reset on validation
 - Can set association = nil
 - Added default sort option
 - Renamed a few internal variables
+
 
 **Version 0.3.0** - *2017-10-30*
 
