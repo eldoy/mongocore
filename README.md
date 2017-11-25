@@ -87,7 +87,7 @@ m.save
 
 # Insert and save in one line
 m = Model.insert(:duration => 45, :goal => 55)
-m = Model.create(:duration => 45, :goal => 55) # Alias
+m = Model.create(params, :validate => true) # Alias
 
 # Create another document
 p = Parent.new(:house => 'Nice')
