@@ -1,5 +1,5 @@
 # Mongocore Ruby Database Driver
-A new MongoDB ORM implementation on top of the [MongoDB Ruby driver.](https://docs.mongodb.com/ruby-driver/master/quick-start/) Very fast and light weight.
+A new MongoDB ORM implementation on top of the [latest MongoDB Ruby driver.](https://docs.mongodb.com/ruby-driver/master/quick-start/) Very fast and light weight.
 
 The perfect companion for Rails, Sinatra, Susana or other Rack-based web frameworks.
 
@@ -21,7 +21,7 @@ Please read [the source code](https://github.com/fugroup/mongocore/tree/master/l
 | -------------------------------------- | ----- | ------- | ------------- |
 | [Mongoid](http://mongoid.com)          | 256   | 14371   | 10590         |
 | [MongoMapper](http://mongomapper.com)  | 91    | 200     | 4070          |
-| [Mongocore](http://mongocore.com)      | 8     | 260     | 450           |
+| [Mongocore](http://mongocore.com)      | 8     | 269     | 483           |
 
 <br>
 
