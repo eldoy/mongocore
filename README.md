@@ -124,6 +124,8 @@ Model.each do |m|
   puts m
 end
 
+# each_with_index, each_with_object and map works as well
+
 # Works with finds, scopes and associations
 Model.find(:duration => 50).each{|m| puts m}
 
