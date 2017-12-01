@@ -25,3 +25,11 @@ models = Model.find.paginate(:per_page => '2', :page => '1')
 is models.size, 2
 
 is models.last.id, all.last.id
+
+models = Model.paginate
+is models, :a? => Array
+
+models = Model.paginate(:per_page => '2', :page => '1')
+is models.size, 2
+
+is models.last.id, all.last.id

@@ -277,6 +277,11 @@ module Mongocore
         find(*args).all
       end
 
+      # Paginate
+      def paginate(*args)
+        find({}).paginate(*args)
+      end
+
       # Sort
       def sort(o = {})
         find({}, {}, :sort => o)
