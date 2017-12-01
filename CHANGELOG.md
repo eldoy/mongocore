@@ -1,3 +1,11 @@
+**Version 0.4.0** - *2017-12-01*
+
+- Added each_with_index, each_with_object and map
+- Added id = method
+- Refactored cursor, faster finds
+- Added paginate to model class methods
+
+
 **Version 0.3.2** - *2017-11-25*
 
 - Alias for insert is create

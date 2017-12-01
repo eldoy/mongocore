@@ -57,7 +57,7 @@ Mongocore.access = true
 Mongocore.timestamps = true
 
 # Default sorting, last will be opposite. Should be indexed.
-Mongocore.sort = {:_id => 1}
+Mongocore.sort = {}
 
 # Pagination results per page
 Mogocore.per_page = 20
