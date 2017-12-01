@@ -4,6 +4,22 @@ Model.each do |r|
   is r.duration
 end
 
+Model.each_with_index do |r, n|
+  is r.duration
+  is n, :a? => Integer
+end
+
+Model.each_with_object('test') do |r, o|
+  is r.duration
+  is o, 'test'
+end
+
+q = Model.map do |r|
+  is r.duration
+  r
+end
+is q, :a? => Array
+
 parent = Parent.new
 is parent.save
 

@@ -319,6 +319,21 @@ module Mongocore
         find.each{|r| yield(r)}
       end
 
+      # Each with index
+      def each_with_index(&block)
+        find.each_with_index{|r, n| yield(r, n)}
+      end
+
+      # Each with object
+      def each_with_object(obj, &block)
+        find.each_with_object(obj){|r, o| yield(r, o)}
+      end
+
+      # Map
+      def map(&block)
+        find.map{|r| yield(r)}
+      end
+
 
       # # # # # # # # #
       # After, before and validation filters

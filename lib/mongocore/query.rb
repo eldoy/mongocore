@@ -90,8 +90,10 @@ module Mongocore
     end
 
     # Return last document
+    # Uses the opposite of the Mongocore.sort setting
     def last(*args)
-      sort((a = Mongocore.sort.dup).each{|k, v| a[k] = v * -1}).limit(1).first(*args)
+      a = Mongocore.sort.any? ? Mongocore.sort.dup : {:_id => 1}
+      sort(a.each{|k, v| a[k] = v * -1}).limit(1).first(*args)
     end
 
     # Return all documents
