@@ -24,3 +24,25 @@ parent.models.each do |r|
 end
 
 is count, 2
+
+count = 0
+result = parent.models.map do |r|
+  count += 1
+  is r.duration, 999
+  r.duration
+end
+
+is result, :a? => Array
+
+count = 0
+parent.models.each_with_index do |r, n|
+  count += n
+  is r.duration, 999
+end
+
+is count > 0
+
+parent.models.each_with_object('test') do |r, s|
+  is s, 'test'
+  is r.duration, 999
+end

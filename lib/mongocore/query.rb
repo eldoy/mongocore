@@ -138,6 +138,21 @@ module Mongocore
       cursor.each{|r| yield(modelize(r))}
     end
 
+    # Each with index
+    def each_with_index(&block)
+      cursor.each_with_index{|r, n| yield(modelize(r), n)}
+    end
+
+    # Each with object
+    def each_with_object(obj, &block)
+      cursor.each_with_object(obj){|r, o| yield(modelize(r), o)}
+    end
+
+    # Map
+    def map(&block)
+      cursor.map{|r| yield(modelize(r))}
+    end
+
     # Sort
     def sort(o = {})
       find(@query, @options, @store.tap{(store[:sort] ||= {}).merge!(o)})
