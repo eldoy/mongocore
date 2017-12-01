@@ -221,6 +221,11 @@ module Mongocore
         @_id ? @_id.to_s : nil
       end
 
+      # Assign id
+      def id=(val)
+        @_id = val.is_a?(BSON::ObjectId) ? val : BSON::ObjectId.from_string(val)
+      end
+
       # Print info about the instance
       def inspect
         "#<#{self.class} #{attributes.sort.map{|r| %{#{r[0]}: #{r[1].inspect}}}.join(', ')}>"

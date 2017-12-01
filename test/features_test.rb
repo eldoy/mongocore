@@ -4,6 +4,16 @@ m = Model.new
 m.duration = 59
 m.save
 
+m2 = Model.new
+n = BSON::ObjectId.new
+m2.id = n
+is m2._id, :a? => BSON::ObjectId
+is m2.id, n.to_s
+m2.id = BSON::ObjectId.new
+is m2._id, :a? => BSON::ObjectId
+is m2.id, :a? => String
+is m2.id, m2._id.to_s
+
 is m.duration, 59
 
 p = Parent.new(:house => 'Nice')
