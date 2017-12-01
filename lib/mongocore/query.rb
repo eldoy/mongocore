@@ -25,7 +25,7 @@ module Mongocore
       @collection = Mongocore.db[@colname]
 
       # Storing query and options
-      s[:limit] ||= 0; s[:chain] ||= []; s[:source] ||= nil; s[:fields] ||= {}; s[:skip] ||= 0
+      s[:chain] ||= []; s[:source] ||= nil; s[:sort] ||= Mongocore.sort; s[:projection] ||= {}; s[:skip] ||= 0; s[:limit] ||= 0
       @query, @options, @store = @model.schema.ids(hashify(q)), o, s
 
       # Set up cache
@@ -45,7 +45,12 @@ module Mongocore
 
     # Cursor
     def cursor
-      @collection.find(@query, @options).projection(@store[:fields]).skip(@store[:skip]).sort(@store[:sort] || Mongocore.sort).limit(@store[:limit])
+      c = @collection.find(@query, @options)
+      c = c.sort(@store[:sort]) if @store[:sort].any?
+      c = c.projection(@store[:projection]) if @store[:projection].any?
+      c = c.skip(@store[:skip]) if @store[:skip] > 0
+      c = c.limit(@store[:limit]) if @store[:limit] > 0
+      c
     end
 
     # Insert
@@ -148,10 +153,11 @@ module Mongocore
       find(@query, @options, @store.tap{store[:skip] = n})
     end
 
-    # Fields (projection)
-    def fields(o = {})
-      find(@query, @options, @store.tap{store[:fields].merge!(o)})
+    # Projection
+    def projection(o = {})
+      find(@query, @options, @store.tap{store[:projection].merge!(o)})
     end
+    alias_method :fields, :projection
 
     # JSON format
     def as_json(o = {})

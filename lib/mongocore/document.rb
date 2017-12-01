@@ -302,10 +302,11 @@ module Mongocore
         find({}, {}, :skip => n)
       end
 
-      # Fields (projection)
-      def fields(o = {})
-        find({}, {}, :fields => o)
+      # Projection
+      def projection(o = {})
+        find({}, {}, :projection => o)
       end
+      alias_method :fields, :projection
 
       # Insert
       def insert(a = {}, o = {})

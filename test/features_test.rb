@@ -88,7 +88,7 @@ is m._id.to_s, :eq => id.to_s
 m = Model.find(id.to_s).first
 is m._id.to_s, :eq => id.to_s
 
-m = Model.find({}, :goal => {:$gt => 0}).first
+m = Model.find(:goal => {:$gt => 0}).first
 is m, :a? => Model
 
 test 'last'

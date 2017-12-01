@@ -31,7 +31,7 @@ module Mongocore
   @timestamps = true
 
   # Default sorting, last will be opposite. Should be indexed.
-  @sort = {:_id => 1}
+  @sort = {}
 
   # Pagination results per page
   @per_page = 20
