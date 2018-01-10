@@ -7,7 +7,7 @@ require 'mongo'
 require 'request_store'
 
 module Mongocore
-  VERSION = '0.4.0'
+  VERSION = '0.4.1'
 
   # # # # # #
   # Mongocore Ruby Database Driver.

@@ -1,3 +1,8 @@
+**Version 0.4.0** - *2018-01-10*
+
+- Automatically convert to Time for date if it's a Date or String
+
+
 **Version 0.4.0** - *2017-12-01*
 
 - Added each_with_index, each_with_object and map

@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'mongocore'
-  s.version     = '0.4.0'
-  s.date        = '2017-12-01'
+  s.version     = '0.4.1'
+  s.date        = '2018-01-10'
   s.summary     = "MongoDB ORM implementation on top of the Ruby MongoDB driver"
   s.description = "Does validations, associations, scopes, filters, pagination, counter cache, request cache, and nested queries. Using a YAML schema file, which supports default values, data types, and security levels for each key."
   s.authors     = ['Fugroup Limited']
