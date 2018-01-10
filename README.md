@@ -235,7 +235,7 @@ Mongocore.db[:models].find.to_a
 Mongocore.db[:models].find({:_id => m._id}).first
 
 # Indexing
-Mongocore.db[:models].indexes.create_one({:key => 1})
+Mongocore.db[:models].indexes.create_one(:key => 1)
 Mongocore.db[:models].indexes.create_one({:key => 1}, :unique => true)
 ```
 
