@@ -43,12 +43,23 @@ module Mongocore
       (tags[0] ? @keys.select{|k, v| v[:tags] & tags} : @keys).keys
     end
 
+    # Get time
+    def time(val)
+      case val
+      when Date then val.to_time.utc
+      when String then Time.parse(val).utc
+      when Time then val.utc
+      else nil
+      end
+    end
+
     # Convert type if val and schema type is set
     def convert(key, val)
       return nil if val.nil?
       case type(key)
       when :string       then val.to_s
       when :integer      then val.to_i
+      when :time         then time(val)
       when :float        then val.to_f
       when :boolean      then val.to_s.to_bool
       when :object_id    then oid(val)
