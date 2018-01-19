@@ -17,7 +17,7 @@ module Mongocore
       @before = Hash.new{|h, k| h[k] = []}
 
       # Add timestamp filters if enabled
-      [:save, :update].each{|f| @before[f] << :timestamps} if Mongocore.timestamps
+      @before[:save] << :timestamps if Mongocore.timestamps
 
       # The after filters
       @after = Hash.new{|h, k| h[k] = []}
@@ -31,7 +31,7 @@ module Mongocore
       @validate.each{|k| call(k, m)}; m.errors.empty?
     end
 
-    # Available filters are :save, :update, :delete
+    # Available filters are :save, :delete
     def run(m, f, key = nil)
       send(f)[key].each{|k| call(k, m)}
     end
