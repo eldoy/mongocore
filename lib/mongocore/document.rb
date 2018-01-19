@@ -92,7 +92,7 @@ module Mongocore
 
       # Reload the document from db and update attributes
       def reload
-        one.first.tap{|m| self.attributes = m.attributes}
+        one.first.tap{|m| self.attributes = m.attributes; @original = self.attributes.dup; @changes.clear; @errors.clear}
       end
 
       # Set the timestamps if enabled
