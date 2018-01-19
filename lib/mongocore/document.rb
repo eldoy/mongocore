@@ -50,8 +50,11 @@ module Mongocore
       #
       def initialize(a = {})
 
-        # Store attributes. Storing original state for dirty tracking.
-        self.attributes = self.class.schema.defaults.merge(a).tap{|r| @original = r.dup}
+        # Store attributes.
+        self.attributes = @_id ? a : self.class.schema.defaults.merge(a)
+
+        # Storing original state for dirty tracking.
+        @original = self.attributes
 
         # The _id is a BSON object, create new unless it exists
         @_id ? @persisted = true : @_id = BSON::ObjectId.new

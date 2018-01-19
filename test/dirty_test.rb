@@ -40,3 +40,7 @@ is @model.auth, 'Hello'
 is @model.changed?, :eq => true
 is @model.auth_changed?, :eq => true
 is @model.auth_was, :eq => 'Hello'
+
+@model = Model.last
+is @model.auth, 'Hello'
+is @model.original[:auth], 'Hello'
