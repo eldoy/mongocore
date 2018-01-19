@@ -1,13 +1,13 @@
 Gem::Specification.new do |s|
   s.name        = 'mongocore'
-  s.version     = '0.4.2'
+  s.version     = '0.4.3'
   s.date        = '2018-01-19'
   s.summary     = "MongoDB ORM implementation on top of the Ruby MongoDB driver"
   s.description = "Does validations, associations, scopes, filters, pagination, counter cache, request cache, and nested queries. Using a YAML schema file, which supports default values, data types, and security levels for each key."
   s.authors     = ['Fugroup Limited']
   s.email       = 'mail@fugroup.net'
 
-  s.add_runtime_dependency 'mongo', '~> 2.2'
+  s.add_runtime_dependency 'mongo', ['>= 2.2.0', '< 2.5']
   s.add_runtime_dependency 'request_store', '>= 0'
   s.add_runtime_dependency 'activesupport', '>= 0'
   s.add_development_dependency 'futest', '>= 0'

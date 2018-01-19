@@ -1,4 +1,4 @@
-**Version 0.4.2** - *2018-01-19*
+**Version 0.4.3** - *2018-01-19*
 
 - Reset model properly when doing a reload
 - Removed update filter, both save and update uses the :save filter
