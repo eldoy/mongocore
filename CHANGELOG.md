@@ -1,3 +1,7 @@
+**Version 0.4.4** - *2018-01-19*
+
+- Fixed dirty tracking clearing after save
+
 **Version 0.4.3** - *2018-01-19*
 
 - Reset model properly when doing a reload

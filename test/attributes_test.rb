@@ -52,7 +52,7 @@ is @model.saved?, :eq => true
 is @model.changed?, :eq => true
 @model.save
 
-is @model.changed?, :eq => true
+is @model.changed?, :eq => false
 is @model.saved?, :eq => true
 
 test 'attributes'

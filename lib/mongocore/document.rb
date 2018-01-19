@@ -90,17 +90,22 @@ module Mongocore
 
       # Run filters before and after accessing the db
       def filter(cmd, persisted = true, &block)
-        run(:before, cmd); yield.tap{@persisted = persisted; run(:after, cmd)}
+        run(:before, cmd); yield.tap{@persisted = persisted; run(:after, cmd); reset!}
       end
 
       # Reload the document from db and update attributes
       def reload
-        one.first.tap{|m| self.attributes = m.attributes; @original = m.attributes.dup; @changes.clear; @errors.clear}
+        one.first.tap{|m| self.attributes = m.attributes; reset!}
       end
 
       # Set the timestamps if enabled
       def timestamps
         t = Time.now.utc; @updated_at = t; @created_at = t if unsaved?
+      end
+
+      # Reset internals
+      def reset!
+        @original = self.attributes; @changes.clear; @errors.clear
       end
 
 

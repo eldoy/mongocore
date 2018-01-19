@@ -28,9 +28,10 @@ is @model.duration_was, :eq => 40
 
 @model.auth = 'Hello'
 is @model.save
-is @model.changed?, :eq => true
-is @model.auth_changed?, :eq => true
-is @model.auth_was, :eq => nil
+is @model.changed?, :eq => false
+is @model.changes.empty?, :eq => true
+is @model.auth_changed?, :eq => false
+is @model.auth_was, :eq => 'Hello'
 
 @model.reload
 is @model.changes.empty?, :eq => true
