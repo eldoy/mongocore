@@ -77,7 +77,7 @@ module Mongocore
 
       # Update document in db
       def update(a = {}, o = {})
-        self.attributes = a; persist(:update, o)
+        self.attributes = a; save(o)
       end
 
       # Delete a document in db
@@ -92,7 +92,7 @@ module Mongocore
 
       # Reload the document from db and update attributes
       def reload
-        one.first.tap{|m| self.attributes = m.attributes; @original = self.attributes.dup; @changes.clear; @errors.clear}
+        one.first.tap{|m| self.attributes = m.attributes; @original = m.attributes.dup; @changes.clear; @errors.clear}
       end
 
       # Set the timestamps if enabled

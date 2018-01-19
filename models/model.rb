@@ -14,10 +14,6 @@ class Model
     (@list ||= []) << 'before_save'
   end
 
-  before :update do
-    (@list ||= []) << 'before_update'
-  end
-
   before :delete do
     (@list ||= []) << 'before_delete'
   end
@@ -26,15 +22,11 @@ class Model
     (@list ||= []) << 'after_save'
   end
 
-  after :update do
-    (@list ||= []) << 'after_update'
-  end
-
   after :delete do
     (@list ||= []) << 'after_delete'
   end
 
-  # Save, update, delete
+  # Save, delete
   # before :delete, :hello
   # after(:delete){ puts "Hello" }
 

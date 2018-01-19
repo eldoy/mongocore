@@ -217,7 +217,7 @@ class Model
     errors[:goal] << 'you need a higher goal' if goal and goal < 5
   end
 
-  # Before and after, filters: :save, :update, :delete
+  # Before and after filters: :save, :delete
   # You can have multiple blocks for each filter if needed
   before :save, :setup
 
