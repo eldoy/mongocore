@@ -46,10 +46,10 @@ module Mongocore
     # Cursor
     def cursor
       c = @collection.find(@query, @options)
-      c = c.sort(@store[:sort]) if @store[:sort].any?
       c = c.projection(@store[:projection]) if @store[:projection].any?
       c = c.skip(@store[:skip]) if @store[:skip] > 0
       c = c.limit(@store[:limit]) if @store[:limit] > 0
+      c = c.sort(@store[:sort]) if @store[:sort].any?
       c
     end
 
