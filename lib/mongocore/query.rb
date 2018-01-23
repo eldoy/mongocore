@@ -27,10 +27,10 @@ module Mongocore
       # Default options
       o[:chain] ||= []
       o[:source] ||= nil
-      o[:sort] ||= Mongocore.sort
+      o[:sort] ||= Mongocore.sort.dup
       o[:projection] ||= {}
       o[:skip] ||= 0
-      o[:limit] ||= -1
+      o[:limit] ||= 0
 
       # Storing query and options
       @query, @options = @model.schema.ids(hashify(q)), o
