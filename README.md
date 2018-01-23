@@ -134,13 +134,13 @@ Model.find(:duration => 50).each{|m| puts m}
 m = Model.find(:house => {:$ne => nil, :$eq => 'Nice'}).last
 
 # Sorting, use -1 for descending, 1 for ascending
-m = Model.find({:duration => {:$gt => 40}}, {}, :sort => {:duration => -1}).all
+m = Model.find({:duration => {:$gt => 40}}, :sort => {:duration => -1}).all
 m = p.models.find(:duration => 10).sort(:duration => -1).first
 
 # Limit, pass as third option to find or chain, up to you
 p = Parent.find.sort(:duration => 1).limit(5).all
 p = Parent.limit(1).last
-m = p.models.find({}, {}, :sort => {:goal => 1}, :limit => 1).first
+m = p.models.find({}, :sort => {:goal => 1}, :limit => 1).first
 m = Model.sort(:goal => 1, :duration => -1).limit(10).all
 
 # First

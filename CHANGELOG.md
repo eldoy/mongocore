@@ -1,6 +1,14 @@
+**Version 0.4.5** - *2018-01-23*
+
+- Fixed memory bug with Mongocore.sort option
+- Removed unused option
+- Optimized cursor query
+
+
 **Version 0.4.4** - *2018-01-19*
 
 - Fixed dirty tracking clearing after save
+
 
 **Version 0.4.3** - *2018-01-19*
 
