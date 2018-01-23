@@ -10,12 +10,12 @@ module Mongocore
     # it's only the parameters that change.
     #
 
-    attr_accessor :model, :collection, :colname, :query, :options, :store, :cache
+    attr_accessor :model, :collection, :colname, :query, :options, :cache
 
     # Mongocore query initializer
-    def initialize(m, q = {}, o = {}, s = {})
+    def initialize(m, q = {}, o = {})
 
-      # Storing model class. The instance can be found in store[:source]
+      # Storing model class. The instance can be found in options[:source]
       @model = m
 
       # The model name is singular, the collection name is plural
@@ -25,16 +25,22 @@ module Mongocore
       @collection = Mongocore.db[@colname]
 
       # Storing query and options
-      s[:chain] ||= []; s[:source] ||= nil; s[:sort] ||= Mongocore.sort; s[:projection] ||= {}; s[:skip] ||= 0; s[:limit] ||= 0
-      @query, @options, @store = @model.schema.ids(hashify(q)), o, s
+      o[:chain] ||= []
+      o[:source] ||= nil
+      o[:sort] ||= Mongocore.sort
+      o[:projection] ||= {}
+      o[:skip] ||= 0
+      o[:limit] ||= 0
+
+      @query, @options = @model.schema.ids(hashify(q)), o
 
       # Set up cache
       @cache = Mongocore::Cache.new(self)
     end
 
     # Find. Returns a Mongocore::Query
-    def find(q = {}, o = {}, s = {})
-      self.class.new(@model, @query.merge(hashify(q)), @options.merge(o), @store.merge(s))
+    def find(q = {}, o = {})
+      self.class.new(@model, @query.merge(hashify(q)), @options.merge(o))
     end
     alias_method :where, :find
 
@@ -45,11 +51,11 @@ module Mongocore
 
     # Cursor
     def cursor
-      c = @collection.find(@query, @options)
-      c = c.projection(@store[:projection]) if @store[:projection].any?
-      c = c.skip(@store[:skip]) if @store[:skip] > 0
-      c = c.limit(@store[:limit]) if @store[:limit] > 0
-      c = c.sort(@store[:sort]) if @store[:sort].any?
+      c = @collection.find(@query)
+      c = c.projection(@options[:projection]) if @options[:projection].any?
+      c = c.skip(@options[:skip]) if @options[:skip] > 0
+      c = c.limit(@options[:limit]) if @options[:limit] > 0
+      c = c.sort(@options[:sort]) if @options[:sort].any?
       c
     end
 
@@ -80,7 +86,7 @@ module Mongocore
     end
 
     # Check if there's a corresponding counter for this count
-    def counter(s = @store[:source], c = @store[:chain])
+    def counter(s = @options[:source], c = @options[:chain])
       s.send(%{#{@colname}#{c.present? ? "_#{c.join('_')}" : ''}_count}) rescue nil
     end
 
@@ -113,10 +119,10 @@ module Mongocore
       o[:per_page] = o[:per_page].to_i; o[:per_page] = Mongocore.per_page if o[:per_page] < 1
 
       # Skip results
-      @store[:skip] = o[:per_page] * (o[:page] - 1)
+      @options[:skip] = o[:per_page] * (o[:page] - 1)
 
       # Apply limit
-      @store[:limit] = o[:per_page]
+      @options[:limit] = o[:per_page]
 
       # Fetch the result as array
       all.tap{|r| r.total = total}
@@ -157,22 +163,22 @@ module Mongocore
 
     # Sort
     def sort(o = {})
-      find(@query, @options, @store.tap{(store[:sort] ||= {}).merge!(o)})
+      find(@query, @options.tap{(@options[:sort] ||= {}).merge!(o)})
     end
 
     # Limit
     def limit(n = 1)
-      find(@query, @options, @store.tap{store[:limit] = n})
+      find(@query, @options.tap{@options[:limit] = n})
     end
 
     # Skip
     def skip(n = 0)
-      find(@query, @options, @store.tap{store[:skip] = n})
+      find(@query, @options.tap{@options[:skip] = n})
     end
 
     # Projection
     def projection(o = {})
-      find(@query, @options, @store.tap{store[:projection].merge!(o)})
+      find(@query, @options.tap{@options[:projection].merge!(o)})
     end
     alias_method :fields, :projection
 
@@ -183,12 +189,12 @@ module Mongocore
 
     # Cache key
     def key
-      @key ||= "#{@model}#{@query.sort}#{@options.sort}#{@store.values}"
+      @key ||= "#{@model}#{@query.sort}#{@options.values}"
     end
 
     # Call and return the scope if it exists
     def method_missing(name, *arguments, &block)
-      return @model.send(name, @query, @options, @store.tap{|r| r[:chain] << name}) if @model.schema.scopes.has_key?(name)
+      return @model.send(name, @query, @options.tap{|r| r[:chain] << name}) if @model.schema.scopes.has_key?(name)
       super
     end
 

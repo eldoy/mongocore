@@ -126,7 +126,7 @@ module Mongocore
     def many(key)
       t = %Q{
         def #{key}
-          mq(#{key.to_s.singularize.capitalize}, {:#{@klass.to_s.downcase}_id => @_id}, {}, :source => self)
+          mq(#{key.to_s.singularize.capitalize}, {:#{@klass.to_s.downcase}_id => @_id}, :source => self)
         end
       }
       @klass.class_eval t
@@ -148,8 +148,8 @@ module Mongocore
       # Define the scope method so we can call it
       j = pm.any? ? %{#{pm.join(', ')},} : ''
       t = %Q{
-        def #{key}(#{j} q = {}, o = {}, s = {})
-          mq(self, q.merge(#{d}), o, {:scope => [:#{key}]}.merge(s))
+        def #{key}(#{j} q = {}, o = {})
+          mq(self, q.merge(#{d}), {:scope => [:#{key}]}.merge(o))
         end
       }
       @klass.instance_eval t

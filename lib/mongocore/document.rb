@@ -161,13 +161,13 @@ module Mongocore
       alias_method :new_record?, :unsaved?
 
       # Short cut for setting up a Mongocore::Query object
-      def mq(m, q = {}, o = {}, s = {})
-        Mongocore::Query.new(m, q, o, {:source => self}.merge(s))
+      def mq(m, q = {}, o = {})
+        Mongocore::Query.new(m, q, {:source => self}.merge(o))
       end
 
       # Short cut for query needing only id
-      def one(s = {})
-        mq(self.class, {:_id => @_id}, {}, s)
+      def one(o = {})
+        mq(self.class, {:_id => @_id}, o)
       end
 
 
@@ -297,22 +297,22 @@ module Mongocore
 
       # Sort
       def sort(o = {})
-        find({}, {}, :sort => o)
+        find({}, :sort => o)
       end
 
       # Limit
       def limit(n = 1)
-        find({}, {}, :limit => n)
+        find({}, :limit => n)
       end
 
       # Skip
       def skip(n = 0)
-        find({}, {}, :skip => n)
+        find({}, :skip => n)
       end
 
       # Projection
       def projection(o = {})
-        find({}, {}, :projection => o)
+        find({}, :projection => o)
       end
       alias_method :fields, :projection
 

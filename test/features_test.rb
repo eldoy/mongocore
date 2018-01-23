@@ -53,7 +53,7 @@ is m, :eq => nil
 test 'sort'
 
 p = Parent.first
-m = Model.find({:duration => {:$gt => 40}}, {}, :sort => {:duration => -1}).all
+m = Model.find({:duration => {:$gt => 40}}, :sort => {:duration => -1}).all
 is m, :a? => Array
 
 is Model.find(:duration => {:$gt => 50}).count, :gt => 1
@@ -70,7 +70,7 @@ test 'limit'
 p = Parent.limit(1).last
 is p, :a? => Parent
 
-m = Model.find({}, {}, :sort => {:goal => 1}, :limit => 2).all
+m = Model.find({}, :sort => {:goal => 1}, :limit => 2).all
 is m.size, 2
 
 m = Model.sort(:goal => 1, :duration => -1).limit(10).all
