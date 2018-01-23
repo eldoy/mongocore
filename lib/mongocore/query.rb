@@ -24,14 +24,15 @@ module Mongocore
       # Storing the Mongo::Collection object
       @collection = Mongocore.db[@colname]
 
-      # Storing query and options
+      # Default options
       o[:chain] ||= []
       o[:source] ||= nil
       o[:sort] ||= Mongocore.sort
       o[:projection] ||= {}
       o[:skip] ||= 0
-      o[:limit] ||= 0
+      o[:limit] ||= -1
 
+      # Storing query and options
       @query, @options = @model.schema.ids(hashify(q)), o
 
       # Set up cache
@@ -51,12 +52,16 @@ module Mongocore
 
     # Cursor
     def cursor
-      c = @collection.find(@query)
-      c = c.projection(@options[:projection]) if @options[:projection].any?
-      c = c.skip(@options[:skip]) if @options[:skip] > 0
-      c = c.limit(@options[:limit]) if @options[:limit] > 0
-      c = c.sort(@options[:sort]) if @options[:sort].any?
-      c
+      o = @options.dup
+
+      # Remove blank options
+      o.delete(:projection) if o[:projection].empty?
+      o.delete(:skip) if o[:skip] < 1
+      o.delete(:limit) if o[:limit] < 1
+      o.delete(:sort) if o[:sort].empty?
+
+      # Return view
+      @collection.find(@query, o)
     end
 
     # Insert
