@@ -25,12 +25,12 @@ module Mongocore
       @collection = Mongocore.db[@colname]
 
       # Default options
-      o[:chain] ||= []
       o[:source] ||= nil
-      o[:sort] ||= Mongocore.sort.dup
-      o[:projection] ||= {}
+      o[:chain] ||= []
       o[:skip] ||= 0
       o[:limit] ||= 0
+      o[:sort] ||= Mongocore.sort.dup
+      o[:projection] ||= {}
 
       # Storing query and options
       @query, @options = @model.schema.ids(hashify(q)), o
@@ -55,10 +55,10 @@ module Mongocore
       o = @options.dup
 
       # Remove blank options
-      o.delete(:projection) if o[:projection].empty?
       o.delete(:skip) if o[:skip] < 1
       o.delete(:limit) if o[:limit] < 1
       o.delete(:sort) if o[:sort].empty?
+      o.delete(:projection) if o[:projection].empty?
 
       # Return view
       @collection.find(@query, o)
@@ -118,10 +118,12 @@ module Mongocore
       total = fetch(:count)
 
       # Set page, defaults to 1
-      o[:page] = o[:page].to_i; o[:page] = 1 if o[:page] < 1
+      o[:page] = o[:page].to_i
+      o[:page] = 1 if o[:page] < 1
 
       # Set results per page, defaults to 20 in Mongocore.per_page setting
-      o[:per_page] = o[:per_page].to_i; o[:per_page] = Mongocore.per_page if o[:per_page] < 1
+      o[:per_page] = o[:per_page].to_i
+      o[:per_page] = Mongocore.per_page if o[:per_page] < 1
 
       # Skip results
       @options[:skip] = o[:per_page] * (o[:page] - 1)
