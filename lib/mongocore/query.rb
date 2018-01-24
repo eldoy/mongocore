@@ -170,22 +170,26 @@ module Mongocore
 
     # Sort
     def sort(o = {})
-      find(@query, @options.tap{(@options[:sort] ||= {}).merge!(o)})
+      (@options[:sort] ||= {}).merge!(o)
+      find(@query, @options)
     end
 
     # Limit
     def limit(n = 1)
-      find(@query, @options.tap{@options[:limit] = n})
+      @options[:limit] = n
+      find(@query, @options)
     end
 
     # Skip
     def skip(n = 0)
-      find(@query, @options.tap{@options[:skip] = n})
+      @options[:skip] = n
+      find(@query, @options)
     end
 
     # Projection
     def projection(o = {})
-      find(@query, @options.tap{@options[:projection].merge!(o)})
+      @options[:projection].merge!(o)
+      find(@query, @options)
     end
     alias_method :fields, :projection
 
@@ -201,7 +205,10 @@ module Mongocore
 
     # Call and return the scope if it exists
     def method_missing(name, *arguments, &block)
-      return @model.send(name, @query, @options.tap{|r| r[:chain] << name}) if @model.schema.scopes.has_key?(name)
+      if @model.schema.scopes.has_key?(name)
+        @options[:chain] << name
+        return @model.send(name, @query, @options)
+      end
       super
     end
 

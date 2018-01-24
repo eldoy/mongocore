@@ -50,11 +50,11 @@ module Mongocore
       #
       def initialize(a = {})
 
+        # Storing original state for dirty tracking
+        @original = {}
+
         # Store attributes.
         self.attributes = @_id ? a : self.class.schema.defaults.merge(a)
-
-        # Storing original state for dirty tracking.
-        @original = self.attributes
 
         # The _id is a BSON object, create new unless it exists
         @_id ? @persisted = true : @_id = BSON::ObjectId.new
@@ -95,12 +95,12 @@ module Mongocore
 
       # Reload the document from db and update attributes
       def reload
-        one.first.tap{|m| self.attributes = m.attributes; reset!}
+        m = one.first; self.attributes = m.attributes; reset!; self
       end
 
       # Set the timestamps if enabled
       def timestamps
-        t = Time.now.utc; @updated_at = t; @created_at = t if unsaved?
+        t = Time.now.utc; write(:updated_at, t); write(:created_at, t) if unsaved?
       end
 
       # Reset internals
@@ -142,7 +142,7 @@ module Mongocore
         @errors.clear; self.class.filters.valid?(self)
       end
 
-      # Available filters are :save, :update, :delete
+      # Available filters are :save, :delete
       def run(filter, key = nil)
         self.class.filters.run(self, filter, key)
       end
@@ -192,8 +192,13 @@ module Mongocore
         # Convert to type as in schema yml
         v = self.class.schema.convert(key, val)
 
-        # Record change for dirty attributes
-        read!(key).tap{|r| @changes[key] = [@original[key], v] if v != r} if @changes
+        if @changes
+          # Record change for dirty attributes
+          @changes[key] = [@original[key], v] if v != read!(key)
+        else
+          # Store original values for dirty tracking support
+          @original[key] = v
+        end
 
         # Write attribute
         write!(key, v)
@@ -318,7 +323,7 @@ module Mongocore
 
       # Insert
       def insert(a = {}, o = {})
-        new(a).tap{|r| r.save(o)}
+        r = new(a); r.save(o); r
       end
       alias_method :create, :insert
 
@@ -347,7 +352,7 @@ module Mongocore
       # After, before and validation filters
       # Pass a method name as symbol or a block
       #
-      # Possible events for after and before are :save, :update, :delete
+      # Possible events for after and before are :save, :delete
       #
 
       # After

@@ -46,9 +46,9 @@ module Mongocore
     # Get time
     def time(val)
       case val
-      when Date then val.to_time.utc
-      when String then Time.parse(val).utc
       when Time then val.utc
+      when String then Time.parse(val).utc
+      when Date, DateTime then val.to_time.utc
       else nil
       end
     end
