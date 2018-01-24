@@ -1,3 +1,8 @@
+**Version 0.5.1** - *2018-01-24*
+
+- Fixed and refactored dirty tracking
+
+
 **Version 0.5.0** - *2018-01-24*
 
 - Speed optimizations
