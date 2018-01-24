@@ -186,7 +186,7 @@ module Mongocore
 
         if @changes
           # Record change for dirty attributes
-          r = read!(key)
+          r = @changes.has_key?(key) ? @changes[key][0] : read!(key)
           @changes[key] = [r, v] if r != v
         end
 

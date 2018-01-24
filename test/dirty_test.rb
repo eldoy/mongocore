@@ -44,3 +44,16 @@ is @model.auth_was, :eq => 'Hello'
 
 @model = Model.last
 is @model.auth, 'Hello'
+
+@model = Model.new
+is @model.duration, :eq => 60
+is @model.changes.empty?
+@model.duration = 40
+
+is @model.changes.any?
+is @model.changes[:duration][0], 60
+is @model.changes[:duration][1], 40
+
+@model.duration = 30
+is @model.changes[:duration][0], 60
+is @model.changes[:duration][1], 30
