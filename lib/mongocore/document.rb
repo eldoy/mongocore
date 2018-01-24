@@ -41,7 +41,7 @@ module Mongocore
       # @persisted indicates whether this is saved or not
       #
 
-      attr_accessor :errors, :changes, :persisted, :original
+      attr_accessor :errors, :changes, :persisted
 
       # # # # # # # # # # #
       # The class initializer, called when you write Model.new
@@ -49,9 +49,6 @@ module Mongocore
       # Defaults are filled in automatically.
       #
       def initialize(a = {})
-
-        # Storing original state for dirty tracking
-        @original = {}
 
         # Store attributes.
         self.attributes = @_id ? a : self.class.schema.defaults.merge(a)
@@ -105,7 +102,7 @@ module Mongocore
 
       # Reset internals
       def reset!
-        @original = self.attributes; @changes.clear; @errors.clear
+        @changes.clear; @errors.clear
       end
 
 
@@ -189,10 +186,8 @@ module Mongocore
 
         if @changes
           # Record change for dirty attributes
-          @changes[key] = [@original[key], v] if v != read!(key)
-        else
-          # Store original values for dirty tracking support
-          @original[key] = v
+          r = read!(key)
+          @changes[key] = [r, v] if r != v
         end
 
         # Write attribute
@@ -206,17 +201,17 @@ module Mongocore
 
         # Write or read
         if self.class.schema.keys.has_key?(key = $1.to_sym)
-          return $2 ? write(key, args.first) : read(key)
+          $2 ? write(key, args.first) : read(key)
+        elsif key =~ /(.+)_changed\?/
+          # Attributes changed?
+          @changes.has_key?($1.to_sym)
+        elsif key =~ /(.+)_was/
+          # Attributes was
+          @changes.empty? ? read($1) : @changes[$1.to_sym][0]
+        else
+          # Pass if nothing found
+          super
         end
-
-        # Attributes changed?
-        return @changes.has_key?($1.to_sym) if key =~ /(.+)_changed\?/
-
-        # Attributes was
-        return @original[$1.to_sym] if key =~ /(.+)_was/
-
-        # Pass if nothing found
-        super
       end
 
       # Alias for _id but returns string

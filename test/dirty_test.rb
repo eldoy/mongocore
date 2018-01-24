@@ -44,4 +44,3 @@ is @model.auth_was, :eq => 'Hello'
 
 @model = Model.last
 is @model.auth, 'Hello'
-is @model.original[:auth], 'Hello'
