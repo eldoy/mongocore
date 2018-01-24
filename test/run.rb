@@ -33,6 +33,7 @@ begin
     'validate',
     'filters',
     'timestamps',
+    'binary',
     'counter',
     'cache',
     'dirty',

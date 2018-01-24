@@ -188,13 +188,13 @@ is @model.location_data[:hello], parent._id
 is @model.duration, 50
 is @model.read('duration'), 50
 is @model.read(:duration), 50
-is @model.read!('duration'), 50
-is @model.read!(:duration), 50
+is @model.send('read!', 'duration'), 50
+is @model.send('read!', 'duration'), 50
 
 @model.duration = nil
 @model.write(:duration, 50)
 is @model.duration, 50
 is @model.read('duration'), 50
 is @model.read(:duration), 50
-is @model.read!('duration'), 50
-is @model.read!(:duration), 50
+is @model.send('read!', 'duration'), 50
+is @model.send('read!', 'duration'), 50

@@ -56,6 +56,11 @@ keys:
     default: false
     read: user
     write: dev
+  zip_file:
+    desc: Zip file
+    type: binary
+    read: user
+    write: user
   votes_count:
     desc: Votes count
     type: integer

@@ -53,8 +53,13 @@ module Mongocore
       end
     end
 
-    # Convert type if val and schema type is set
-    def convert(key, val)
+    # Convert to binary
+    def bin(val)
+      val.is_a?(BSON::Binary) ? val : BSON::Binary.new(val)
+    end
+
+    # Set value based on type
+    def set(key, val)
       return nil if val.nil?
       case type(key)
       when :string       then val.to_s
@@ -64,6 +69,7 @@ module Mongocore
       when :boolean      then val.to_s.to_bool
       when :object_id    then oid(val)
       when :array, :hash then ids(val)
+      when :binary       then bin(val)
       else val
       end
     end
@@ -103,7 +109,7 @@ module Mongocore
     end
 
     # # # # # # # # #
-    # Templates for foreign key, many-associations and scopes.
+    # Templates for foreign key, many-associations and scopes
     #
 
     # Foreign keys

@@ -263,7 +263,7 @@ keys:
   # is an alias to _id, but always returns a string instead of a BSON::ObjectId
   # Any object ids as strings will be automatically converted into ObjectIds
   # @desc: Describes the key, can be used for documentation.
-  # @type: object_id, string, integer, float, boolean, time, hash, array
+  # @type: object_id, string, integer, float, boolean, time, binary, hash, array
   # @default: the default value for the key when you call .new
   # @read: access level for read: all, user, owner, dev, admin, super, app
   # @write: access level for write. Returns nil if no access, as on read

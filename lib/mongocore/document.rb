@@ -177,12 +177,7 @@ module Mongocore
 
       # Get attribute if access
       def read(key)
-        self.class.access.read?((key = key.to_sym)) ? read!(key) : nil
-      end
-
-      # Get attribute
-      def read!(key)
-        instance_variable_get("@#{key}")
+        read!(key) if self.class.access.read?((key = key.to_sym))
       end
 
       # Set attribute if access
@@ -190,7 +185,7 @@ module Mongocore
         return nil unless self.class.access.write?((key = key.to_sym))
 
         # Convert to type as in schema yml
-        v = self.class.schema.convert(key, val)
+        v = self.class.schema.set(key, val)
 
         if @changes
           # Record change for dirty attributes
@@ -202,11 +197,6 @@ module Mongocore
 
         # Write attribute
         write!(key, v)
-      end
-
-      # Set attribute
-      def write!(key, v)
-        instance_variable_set("@#{key}", v)
       end
 
       # Dynamically read or write attributes
@@ -258,6 +248,16 @@ module Mongocore
       # Replace _id with id, takes a hash
       def string_id(a)
         a.delete(:_id); {:id => id}.merge(a)
+      end
+
+      # Set attribute
+      def write!(key, v)
+        instance_variable_set("@#{key}", v)
+      end
+
+      # Get attribute
+      def read!(key)
+        instance_variable_get("@#{key}")
       end
 
     end
