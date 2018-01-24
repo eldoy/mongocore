@@ -1,3 +1,9 @@
+**Version 0.5.0** - *2018-01-24*
+
+- Speed optimizations
+- Support for binary type
+
+
 **Version 0.4.5** - *2018-01-23*
 
 - Fixed memory bug with Mongocore.sort option
